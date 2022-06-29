@@ -9,5 +9,8 @@
     "permissions": [
         "contextMenus",
         "storage"
-    ]
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    }
 }
