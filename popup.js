@@ -1,8 +1,13 @@
 let wordsDiv = document.getElementById("wordsDiv");
 let clearAll = document.getElementById("clearAll");
+let refresh = document.getElementById("refresh");
 
 function clearAllData(event) {
     chrome.storage.sync.set({"words": []});
+    document.location.reload();
+}
+
+function refreshData(event) {
     document.location.reload();
 }
 
@@ -18,3 +23,4 @@ chrome.storage.sync.get("words", (data) => {
 });
 
 clearAll.addEventListener("click", clearAllData);
+refresh.addEventListener("click", refreshData);
