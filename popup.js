@@ -16,7 +16,7 @@ chrome.storage.sync.get("words", (data) => {
     if (typeof data.words !== "undefined") {
         for (let i = 0; i < data.words.length; i++) {
             let word = document.createElement("p");
-            word.innerText = data.words[i];
+            word.innerText = data.words[i].text;
             wordsDiv.appendChild(word);
         }
     }
