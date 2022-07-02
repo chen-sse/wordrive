@@ -15,9 +15,13 @@ chrome.storage.sync.get("words", (data) => {
     // if word bank array has been initialized
     if (typeof data.words !== "undefined") {
         for (let i = 0; i < data.words.length; i++) {
-            let word = document.createElement("p");
+            let word = document.createElement("a");
+            let newline = document.createElement("br");
+
+            word.setAttribute("href", data.words[i].url);
             word.innerText = data.words[i].text;
             wordsDiv.appendChild(word);
+            wordsDiv.appendChild(newline);
         }
     }
 });
