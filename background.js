@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
-// click handler--add text to Wordrive
+// click handler: add text to Wordrive
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     chrome.storage.sync.get("words", (data) => {
         // if word bank array has not been initialized
@@ -38,4 +38,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             });
         }
     });
+});
+
+// click handler: open hyperlink to original word URL
+chrome.runtime.onMessage.addListener((request) => {
+    if (request.msg === "new tab") {
+        chrome.tabs.create({url: request.url, active: false});
+    }
 });

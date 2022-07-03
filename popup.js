@@ -17,12 +17,19 @@ chrome.storage.sync.get("words", (data) => {
         for (let i = 0; i < data.words.length; i++) {
             let word = document.createElement("a");
             let newline = document.createElement("br");
+            let wordUrl = data.words[i].url;
 
-            word.setAttribute("href", data.words[i].url);
-            word.setAttribute("target", "_blank");
-
+            word.setAttribute("href", wordUrl);
             word.innerText = data.words[i].text;
-            
+
+            // click handler: tell background script to open hyperlink
+            word.addEventListener("click", () => {
+                chrome.runtime.sendMessage({
+                    msg: "new tab",
+                    url: wordUrl
+                });
+            });
+
             wordsDiv.appendChild(word);
             wordsDiv.appendChild(newline);
         }
