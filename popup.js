@@ -19,7 +19,10 @@ chrome.storage.sync.get("words", (data) => {
             let newline = document.createElement("br");
 
             word.setAttribute("href", data.words[i].url);
+            word.setAttribute("target", "_blank");
+
             word.innerText = data.words[i].text;
+            
             wordsDiv.appendChild(word);
             wordsDiv.appendChild(newline);
         }
