@@ -43,6 +43,16 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 // click handler: open hyperlink to original word URL
 chrome.runtime.onMessage.addListener((request) => {
     if (request.msg === "new tab") {
-        chrome.tabs.create({url: request.url, active: false});
+        // retrieve user preference
+        chrome.storage.sync.get({
+            // default values
+            activeTab: false
+        }, (settings) => {
+            if (settings.activeTab === true) {
+                chrome.tabs.create({url: request.url, active: true});
+            } else {
+                chrome.tabs.create({url: request.url, active: false});
+            }
+        });
     }
 });
