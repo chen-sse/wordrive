@@ -16,25 +16,35 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             chrome.storage.sync.set({"words": []});
             chrome.storage.sync.get("words", (updatedData) => {
                 chrome.tabs.query({active: true, lastFocusedWindow: true}, (tabs) => {
-                    // add new word object to array
-                    updatedData.words.push({
-                        text: info.selectionText,
-                        url: tabs[0].url
-                    })
-                    // set key to updated array
-                    chrome.storage.sync.set({"words": updatedData.words});
+                    chrome.storage.sync.get({"lowercase": true}, (settings) => {
+                        // add new word object to array
+                        updatedData.words.push({
+                            text: (settings.lowercase === true) 
+                            ? info.selectionText.toLowerCase() 
+                            : info.selectionText,
+
+                            url: tabs[0].url
+                        });
+                        // set key to updated array
+                        chrome.storage.sync.set({"words": updatedData.words});
+                    });
                 });
             });
         // if word bank array already exists
         } else {
             chrome.tabs.query({active: true, lastFocusedWindow: true}, (tabs) => {
+                chrome.storage.sync.get({"lowercase": true}, (settings) => {
                 // add new word object to array
                 data.words.push({
-                    text: info.selectionText,
+                    text: (settings.lowercase === true)
+                    ? info.selectionText.toLowerCase()
+                    : info.selectionText,
+                    
                     url: tabs[0].url
                 });
                 // set key to updated array
                 chrome.storage.sync.set({"words": data.words});
+                });
             });
         }
     });
