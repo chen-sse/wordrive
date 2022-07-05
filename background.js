@@ -13,10 +13,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         chrome.tabs.query({active: true, lastFocusedWindow: true}, (tabs) => {
             chrome.storage.sync.get({"lowercase": true}, (settings) => {
             // add new word object to array
+            let word = info.selectionText.trim();
             data.words.push({
                 text: (settings.lowercase === true)
-                ? info.selectionText.toLowerCase()
-                : info.selectionText,
+                ? word.toLowerCase()
+                : word,
 
                 url: tabs[0].url
             });
