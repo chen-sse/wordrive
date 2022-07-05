@@ -11,18 +11,19 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     chrome.storage.sync.get({"words": []}, (data) => {
         chrome.tabs.query({active: true, lastFocusedWindow: true}, (tabs) => {
+            // retrieve user preference
             chrome.storage.sync.get({"lowercase": true}, (settings) => {
-            // add new word object to array
-            let word = info.selectionText.trim();
-            data.words.push({
-                text: (settings.lowercase === true)
-                ? word.toLowerCase()
-                : word,
+                // add new word object to array
+                let word = info.selectionText.trim();
+                data.words.push({
+                    text: (settings.lowercase === true)
+                    ? word.toLowerCase()
+                    : word,
 
-                url: tabs[0].url
-            });
-            // set key to updated array
-            chrome.storage.sync.set({"words": data.words});
+                    url: tabs[0].url
+                });
+                // set key to updated array
+                chrome.storage.sync.set({"words": data.words});
             });
         });
     });
