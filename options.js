@@ -1,13 +1,15 @@
 const SAVE_DISPLAY_TIME = 2000;
+let activeTabCheckbox = document.getElementById("activeTabCheckbox");
+let lowercaseCheckbox = document.getElementById("lowercaseCheckbox");
 
 // save options to Chrome sync
 function saveOptions() {
-    let activeTab = document.getElementById("activeTab").checked;
-    let lowercase = document.getElementById("lowercase").checked;
+    let activeTabChecked = activeTabCheckbox.checked;
+    let lowercaseChecked = lowercaseCheckbox.checked;
 
     chrome.storage.sync.set({
-        "activeTab": activeTab,
-        "lowercase": lowercase
+        "activeTabChecked": activeTabChecked,
+        "lowercaseChecked": lowercaseChecked
     }, () => {
         let status = document.getElementById("status");
         status.innerHTML = "Options saved.";
@@ -21,11 +23,11 @@ function saveOptions() {
 function restoreOptions() {
     chrome.storage.sync.get({
         // default values
-        "activeTab": false,
-        "lowercase": true
+        "activeTabChecked": false,
+        "lowercaseChecked": true
     }, (settings) => {
-        document.getElementById("activeTab").checked = settings.activeTab;
-        document.getElementById("lowercase").checked = settings.lowercase;
+        activeTabCheckbox.checked = settings.activeTabChecked;
+        lowercaseCheckbox.checked = settings.lowercaseChecked;
     });
 }
 
