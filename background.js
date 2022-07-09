@@ -3,15 +3,15 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
         id: "contextMenu",
         title: "Add to Wordrive",
-        contexts: ["selection"],
+        contexts: ["selection"]
     });
 });
 
 // click handler: add text to Wordrive
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-    //retrieve word bank and user capitalization preference (initialize default values for both)
-    chrome.storage.sync.get({"wordBank": [],"lowercaseChecked": true}, async (data) => {
-        let [currentTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true})
+    // retrieve word bank and user capitalization preference (initialize default values for both)
+    chrome.storage.sync.get({"wordBank": [], "lowercaseChecked": true}, async (data) => {
+        let [currentTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
         // add new word object to array
         let selectedWord = info.selectionText.trim();
         data.wordBank.push({
