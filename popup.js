@@ -16,7 +16,7 @@ chrome.storage.sync.get("wordBank", (data) => {
     if (typeof data.wordBank !== "undefined") {
         for (let i = 0; i < data.wordBank.length; i++) {
             let box = document.createElement("div");
-            let word = document.createElement("a");
+            let word = document.createElement("span");
             let button = document.createElement("button");
 
             let wordUrl = data.wordBank[i].url;
@@ -25,6 +25,7 @@ chrome.storage.sync.get("wordBank", (data) => {
             box.classList.add("entry");
 
             word.setAttribute("href", wordUrl);
+            word.setAttribute("contenteditable", false);
             word.innerText = data.wordBank[i].text;
             button.innerHTML = "Edit";
 
@@ -34,10 +35,30 @@ chrome.storage.sync.get("wordBank", (data) => {
 
             // click handler: tell background script to open hyperlink
             word.addEventListener("click", () => {
-                chrome.runtime.sendMessage({
-                    msg: "new tab",
-                    url: wordUrl
-                });
+                // if not in edit mode
+                if (word.isContentEditable === false) {
+                    chrome.runtime.sendMessage({
+                        msg: "new tab",
+                        url: wordUrl
+                    });
+                }
+            });
+
+            // toggle edit/save button
+            button.addEventListener("click", () => {
+                // enter edit mode, generate 'Save' button
+                if (word.isContentEditable === false) {
+                    word.contentEditable = true;
+                    button.innerHTML = "Save";
+                } else {
+                    // save changes
+                    data.wordBank[i].text = word.innerText;
+                    chrome.storage.sync.set({"wordBank": data.wordBank});
+
+                    // reset to 'Edit' button
+                    word.contentEditable = false;
+                    button.innerHTML = "Edit";
+                }
             });
         }
     }
