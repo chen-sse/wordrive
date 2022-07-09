@@ -1,12 +1,17 @@
-// create context menu
 chrome.runtime.onInstalled.addListener(() => {
+    // create context menu
     chrome.contextMenus.create({
         id: "contextMenu",
         title: "Add to Wordrive",
         contexts: ["selection"]
     });
-    //set default values
-    chrome.storage.sync.set({"wordBank": [], "lowercaseChecked": true, "activeTabChecked": false});
+
+    // set default values
+    chrome.storage.sync.set({
+        "wordBank": [], 
+        "lowercaseChecked": true, 
+        "activeTabChecked": false
+    });
 });
 
 // click handler: add text to Wordrive
