@@ -5,12 +5,14 @@ chrome.runtime.onInstalled.addListener(() => {
         title: "Add to Wordrive",
         contexts: ["selection"]
     });
+    //set default values
+    chrome.storage.sync.set({"wordBank": [], "lowercaseChecked": true, "activeTabChecked": false});
 });
 
 // click handler: add text to Wordrive
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     // retrieve word bank and user capitalization preference (initialize default values for both)
-    chrome.storage.sync.get({"wordBank": [], "lowercaseChecked": true}, async (data) => {
+    chrome.storage.sync.get(["wordBank", "lowercaseChecked"], async (data) => {
         let [currentTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
         // add new word object to array
         let selectedWord = info.selectionText.trim();
@@ -29,10 +31,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 chrome.runtime.onMessage.addListener((request) => {
     if (request.msg === "new tab") {
         // retrieve user preference
-        chrome.storage.sync.get({
-            // default values
-            activeTabChecked: false
-        }, (settings) => {
+        chrome.storage.sync.get("activeTabChecked", (settings) => {
             chrome.tabs.create({
                 url: request.url,
                 active: (settings.activeTabChecked) ? true : false
