@@ -1,0 +1,28 @@
+html {
+    width: 200px;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+    overflow-wrap: break-word;
+    overflow-y: auto;
+}
+
+.edit {
+    float: right;
+    visibility: hidden;
+}
+
+.entry {
+    font-size: medium;
+}
+
+.entry:hover > button {
+    visibility: visible;
+}

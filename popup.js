@@ -15,12 +15,22 @@ chrome.storage.sync.get("words", (data) => {
     // if word bank array has been initialized
     if (typeof data.words !== "undefined") {
         for (let i = 0; i < data.words.length; i++) {
+            let box = document.createElement("div");
             let word = document.createElement("a");
-            let newline = document.createElement("br");
+            let button = document.createElement("button");
+
             let wordUrl = data.words[i].url;
+
+            button.classList.add("edit");
+            box.classList.add("entry");
 
             word.setAttribute("href", wordUrl);
             word.innerText = data.words[i].text;
+            button.innerHTML = "Edit";
+
+            box.appendChild(button);
+            box.appendChild(word);
+            wordsDiv.appendChild(box);
 
             // click handler: tell background script to open hyperlink
             word.addEventListener("click", () => {
@@ -29,9 +39,6 @@ chrome.storage.sync.get("words", (data) => {
                     url: wordUrl
                 });
             });
-
-            wordsDiv.appendChild(word);
-            wordsDiv.appendChild(newline);
         }
     }
 });
