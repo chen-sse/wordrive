@@ -20,7 +20,7 @@ chrome.runtime.onInstalled.addListener(() => {
 // click handler: add text to Wordrive
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     // retrieve word bank and user capitalization preference (initialize default values for both)
-    chrome.storage.sync.get(["wordBank", "lowercaseChecked"],  async (data) => {
+    chrome.storage.sync.get(["wordBank", "lowercaseChecked"], async (data) => {
         let [currentTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
         // add new word object to array
         let selectedWord = info.selectionText.trim();
