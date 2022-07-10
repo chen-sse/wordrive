@@ -14,17 +14,15 @@ function refreshData(event) {
 function toggleButton(word, button, data, i) {
     // enter edit mode, generate 'Save' button
     if (word.isContentEditable === false) {
-        word.contentEditable = true;
         button.innerHTML = "Save";
     } else {
         // save changes
         data.wordBank[i].text = word.innerText;
         chrome.storage.sync.set({"wordBank": data.wordBank});
-
-        // reset to 'Edit' button
-        word.contentEditable = false;
         button.innerHTML = "Edit";
     }
+
+    word.setAttribute("contenteditable", !word.isContentEditable);
 }
 
 chrome.storage.sync.get("wordBank", (data) => {
