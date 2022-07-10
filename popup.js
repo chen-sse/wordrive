@@ -63,6 +63,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                 }
             });
 
+            // save changes and exit edit mode with 'Enter'
             word.addEventListener("keydown", (event) => {
                 if (event.code === "Enter") {
                     toggleButton(word, button, data, i);
