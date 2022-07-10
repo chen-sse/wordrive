@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 
     // set default values
-    chrome.storage.sync.get({
+    chrome.storage.sync.set({
         "wordBank": [], 
         "lowercaseChecked": true, 
         "activeTabChecked": false

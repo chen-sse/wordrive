@@ -11,6 +11,22 @@ function refreshData(event) {
     document.location.reload();
 }
 
+function toggleButton(word, button, data, i) {
+    // enter edit mode, generate 'Save' button
+    if (word.isContentEditable === false) {
+        word.contentEditable = true;
+        button.innerHTML = "Save";
+    } else {
+        // save changes
+        data.wordBank[i].text = word.innerText;
+        chrome.storage.sync.set({"wordBank": data.wordBank});
+
+        // reset to 'Edit' button
+        word.contentEditable = false;
+        button.innerHTML = "Edit";
+    }
+}
+
 chrome.storage.sync.get("wordBank", (data) => {
     // if word bank array has been initialized
     if (typeof data.wordBank !== "undefined") {
@@ -44,21 +60,15 @@ chrome.storage.sync.get("wordBank", (data) => {
                 }
             });
 
+            word.addEventListener("keydown", (event) => {
+                if (event.code === "Enter") {
+                    toggleButton(word, button, data, i);
+                }
+            });
+
             // toggle edit/save button
             button.addEventListener("click", () => {
-                // enter edit mode, generate 'Save' button
-                if (word.isContentEditable === false) {
-                    word.contentEditable = true;
-                    button.innerHTML = "Save";
-                } else {
-                    // save changes
-                    data.wordBank[i].text = word.innerText;
-                    chrome.storage.sync.set({"wordBank": data.wordBank});
-
-                    // reset to 'Edit' button
-                    word.contentEditable = false;
-                    button.innerHTML = "Edit";
-                }
+                toggleButton(word, button, data, i);
             });
         }
     }
