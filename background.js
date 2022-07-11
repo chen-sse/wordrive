@@ -14,7 +14,6 @@ chrome.runtime.onInstalled.addListener(() => {
     }, (data) => {
         chrome.storage.sync.set(data);
     });
-
 });
 
 // click handler: add text to Wordrive
