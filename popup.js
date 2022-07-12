@@ -3,6 +3,7 @@ let clearAll = document.getElementById("clearAll");
 let refresh = document.getElementById("refresh");
 let wordAdder = document.getElementById("wordAdder");
 let exportButton = document.getElementById("exportButton")
+let settings = document.getElementById("settings");
 
 let editMode = false;
 
@@ -162,3 +163,6 @@ chrome.storage.sync.get("wordBank", (data) => {
 clearAll.addEventListener("click", clearAllData);
 refresh.addEventListener("click", refreshData);
 exportButton.addEventListener("click", exportData);
+settings.addEventListener("click", () => {
+    window.location.href = "options.html";
+});

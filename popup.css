@@ -1,6 +1,6 @@
 html {
     width: 230px;
-    height: 190px;
+    height: 250px;
 }
 
 body {
@@ -38,12 +38,10 @@ button:hover {
     outline: 1px solid transparent;
 }
 
-
-
 .flex-container {
     display: flex;
     flex-direction: column;
-    height: 100px;
+    height: 160px;
     overflow-wrap: break-word;
     overflow-y: auto;
 }
@@ -64,7 +62,7 @@ button:hover {
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
 }
 
-.entry:hover {
+.entry:hover, #wordAdder:hover {
     background-color: #ACCCE6
 }
 
@@ -73,8 +71,29 @@ button:hover {
 }
 
 #wordAdder {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
     font-size: 15px;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+}
+
+.navDiv {
+    flex: 1;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 15px;
+    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
+}
+
+.navDiv:hover {
+    background-color: #ACCCE6;
 }
