@@ -34,8 +34,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     });
 });
 
-// click handler: open hyperlink to original word URL
-chrome.runtime.onMessage.addListener((request) => {
+// message listener: listens to messages from content script
+chrome.runtime.onMessage.addListener((request, sender) => {
+    // word url click handler: open hyperlink to original word URL
     if (request.msg === "new tab") {
         // retrieve user preference
         chrome.storage.sync.get("activeTabChecked", (settings) => {
@@ -45,4 +46,13 @@ chrome.runtime.onMessage.addListener((request) => {
             });
         });
     }
+    // export button click handler: download .txt file of word list
+    else if (request.msg === "download") {
+        chrome.downloads.download({
+            filename: "wordlist.txt",
+            url: request.url
+        });
+    }
 });
+
+
