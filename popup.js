@@ -67,7 +67,7 @@ chrome.storage.sync.get("wordBank", (data) => {
         button.classList.add("edit");
         box.classList.add("entry");
 
-        // init attributes 'href' and 'contenteditable' to span element
+        // init attribute 'contenteditable' to span element
         word.setAttribute("contenteditable", false);
         word.innerText = data.wordBank[i].text;
         button.innerHTML = "Edit";
