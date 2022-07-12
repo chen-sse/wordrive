@@ -26,3 +26,8 @@ body {
 .entry:hover > button {
     visibility: visible;
 }
+
+#wordAdder {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

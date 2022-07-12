@@ -1,6 +1,9 @@
 let wordsDiv = document.getElementById("wordsDiv");
 let clearAll = document.getElementById("clearAll");
 let refresh = document.getElementById("refresh");
+let wordAdder = document.getElementById("wordAdder");
+
+let editMode = false;
 
 function clearAllData(event) {
     chrome.storage.sync.set({"wordBank": []});
@@ -38,7 +41,6 @@ chrome.storage.sync.get("wordBank", (data) => {
         box.classList.add("entry");
 
         // init attributes 'href' and 'contenteditable' to span element
-        word.setAttribute("href", wordUrl);
         word.setAttribute("contenteditable", false);
         word.innerText = data.wordBank[i].text;
         button.innerHTML = "Edit";
@@ -71,6 +73,63 @@ chrome.storage.sync.get("wordBank", (data) => {
             toggleButton(word, button, data, i);
         });
     }
+
+    wordAdder.addEventListener("click", () => {
+        // if not in edit mode, enter it
+        if (!editMode) {
+            // create inputs, labels, and button
+            let word = document.createElement("input");
+            let url = document.createElement("input");
+            let wordLabel = document.createElement("label");
+            let urlLabel = document.createElement("label");
+            let save = document.createElement("button");
+
+            // edit innerHTML
+            wordAdder.innerHTML = "";
+            wordLabel.innerHTML = "Word: ";
+            urlLabel.innerHTML = "URL: ";
+            save.innerHTML = "Save";
+
+            // update DOM tree
+            wordAdder.appendChild(wordLabel);
+            wordAdder.appendChild(word);
+            wordAdder.appendChild(urlLabel);
+            wordAdder.appendChild(url);
+            wordAdder.appendChild(save);
+
+            // set attributes
+            word.setAttribute("id", "word");
+            word.setAttribute("type", "text");
+            url.setAttribute("id", "url");
+            url.setAttribute("type", "url");
+            wordLabel.setAttribute("for", "word");
+            urlLabel.setAttribute("for", "url");
+
+            save.addEventListener("click", (event) => {
+                // save new word and url
+                data.wordBank.push({
+                    text: word.value.trim(),
+                    url: url.value.trim()
+                });
+                chrome.storage.sync.set({"wordBank": data.wordBank});
+
+                // refresh popup
+                refreshData();
+                
+                // revert to original button
+                wordAdder.innerHTML = "+ ... add new word to Wordrive ...";
+
+                // turn off edit mode
+                editMode = false;
+
+                // prevent event bubbling up to parent element
+                event.stopPropagation();
+            });
+
+            // turn on edit mode
+            editMode = true;
+        }
+    });
 });
 
 clearAll.addEventListener("click", clearAllData);
