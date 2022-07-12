@@ -1,5 +1,5 @@
 html {
-    width: 210px;
+    width: 230px;
     height: 190px;
 }
 
@@ -75,4 +75,6 @@ button:hover {
 #wordAdder {
     padding-top: 20px;
     padding-bottom: 20px;
+    font-size: 15px;
+    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
 }
