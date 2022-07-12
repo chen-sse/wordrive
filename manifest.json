@@ -9,10 +9,12 @@
     "permissions": [
         "contextMenus",
         "storage",
-        "tabs"
+        "tabs",
+        "downloads"
     ],
     "action": {
         "default_popup": "popup.html"
     },
     "options_page": "options.html"
+
 }
