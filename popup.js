@@ -164,5 +164,5 @@ clearAll.addEventListener("click", clearAllData);
 refresh.addEventListener("click", refreshData);
 exportButton.addEventListener("click", exportData);
 settings.addEventListener("click", () => {
-    window.location.href = "options.html";
+    window.location.href = "options-popup.html";
 });

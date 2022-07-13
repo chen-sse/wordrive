@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wordrive Options</title>
+        <link rel="stylesheet" href="popup.css">
+    </head>
+    <body>
+        <h1>Wordrive Options:</h1>
+
+        <label>
+            <input type="checkbox" id="activeTabCheckbox">
+            Clicked hyperlinks automatically become active tab
+        </label>
+        <br>
+        <label>
+            <input type="checkbox" id="lowercaseCheckbox">
+            Auto-lowercase saved words
+        </label>
+
+        <div id="status"></div>
+        <br>
+        <button id="save">Save</button>
+
+        <nav>
+            <div class="navDiv" id="home">Home</div>
+            <div class="navDiv" id="settings">Settings</div>
+        </nav>
+
+        <script src="options-popup.js"></script>
+    </body>
+</html>
