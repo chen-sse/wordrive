@@ -1,45 +1,12 @@
 let wordsDiv = document.getElementById("wordsDiv");
-let clearAll = document.getElementById("clearAll");
 let refresh = document.getElementById("refresh");
 let wordAdder = document.getElementById("wordAdder");
-let exportButton = document.getElementById("exportButton")
 let settings = document.getElementById("settings");
 
 let editMode = false;
 
-function clearAllData(event) {
-    chrome.storage.sync.set({"wordBank": []});
-    document.location.reload();
-}
-
 function refreshData(event) {
     document.location.reload();
-}
-
-function exportData(event) {
-    chrome.storage.sync.get("wordBank", ({wordBank}) => {
-        let builder = "Your Wordrive: \n\n"
-        for (let i = 0; i<wordBank.length; i++) {
-            // concatenate builder string
-            let word = wordBank[i].text;
-            let theUrl = wordBank[i].url;
-            builder = builder + `WORD ${i+1}: ${word} | URL: ${theUrl}` + "\n\n";
-            console.log(builder);
-        }
-        // instantiate blob w/ word bank and create url for it
-        let listBlob = new Blob([builder], {type: "text/plain"});
-        let fileUrl = URL.createObjectURL(listBlob);
-        console.log(fileUrl)
-
-        // send message to service worker to download file
-        chrome.runtime.sendMessage({
-            msg: "download",
-            url: fileUrl
-        }, () => {
-            // revoke url from browser storage
-            URL.revokeObjectURL(fileUrl);
-        });
-    })
 }
 
 function toggleButton(word, button, data, i) {
@@ -160,9 +127,7 @@ chrome.storage.sync.get("wordBank", (data) => {
     });
 });
 
-clearAll.addEventListener("click", clearAllData);
 refresh.addEventListener("click", refreshData);
-exportButton.addEventListener("click", exportData);
 settings.addEventListener("click", () => {
     window.location.href = "options-popup.html";
 });
