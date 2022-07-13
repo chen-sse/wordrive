@@ -12,7 +12,7 @@ body {
     font-weight: 500;
     font-size: 23px;
     padding-left: 3.5px;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
     margin-top: 10px;
 }
 
@@ -46,14 +46,14 @@ button:hover {
     overflow-y: auto;
 }
 
-.edit {
+.editButton {
     float: right;
     visibility: hidden;
     font-family: 'Raleway', sans-serif; font-weight: 500;
     font-size: 12px
 }
 
-.entry {
+.entryBox {
     font-size: medium;
     border-radius: 5px;
     padding: 5px;
@@ -62,11 +62,11 @@ button:hover {
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
 }
 
-.entry:hover, #wordAdder:hover {
+.entryBox:hover, #wordAdder:hover {
     background-color: #ACCCE6
 }
 
-.entry:hover > button {
+.entryBox:hover > button {
     visibility: visible;
 }
 

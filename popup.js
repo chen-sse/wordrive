@@ -8,46 +8,48 @@ function refreshData(event) {
     document.location.reload();
 }
 
-function toggleButton(word, button, data, i) {
-    // enter edit mode, generate 'Save' button
-    if (word.isContentEditable === false) {
-        button.innerHTML = "Save";
+function toggleButton(wordContainer, editButton, data, i) {
+    if (wordContainer.isContentEditable === false) {
+        // enter edit mode, generate 'Save' button
+        editButton.innerHTML = "Save";
     } else {
-        // save changes
-        data.wordBank[i].text = word.innerText;
+        // exit edit mode, save changes
+        data.wordBank[i].text = wordContainer.innerText;
         chrome.storage.sync.set({"wordBank": data.wordBank});
-        button.innerHTML = "Edit";
+        editButton.innerHTML = "Edit";
     }
 
-    word.setAttribute("contenteditable", !word.isContentEditable);
+    wordContainer.setAttribute("contenteditable", !wordContainer.isContentEditable);
 }
 
 chrome.storage.sync.get("wordBank", (data) => {
     for (let i = 0; i < data.wordBank.length; i++) {
-        // init a div-span-button set for given word (box div as parent element)
-        let box = document.createElement("div");
-        let word = document.createElement("span");
-        let button = document.createElement("button");
+        /* init a div-span-button set for given word
+           Note: an entryBox is the parent div for each entry;
+           a wordContainer is the span displaying the word */
+        let entryBox = document.createElement("div");
+        let wordContainer = document.createElement("span");
+        let editButton = document.createElement("button");
         let wordUrl = data.wordBank[i].url;
 
-        // add classes to 'box' and 'button'
-        button.classList.add("edit");
-        box.classList.add("entry");
+        // add classes to 'wordBox' and 'editButton'
+        editButton.classList.add("editButton");
+        entryBox.classList.add("entryBox");
 
         // init attribute 'contenteditable' to span element
-        word.setAttribute("contenteditable", false);
-        word.innerText = data.wordBank[i].text;
-        button.innerHTML = "Edit";
+        wordContainer.setAttribute("contenteditable", false);
+        wordContainer.innerText = data.wordBank[i].text;
+        editButton.innerHTML = "Edit";
 
-        // make 'button' and 'word' children of 'box'
-        box.appendChild(button);
-        box.appendChild(word);
-        wordsDiv.appendChild(box);
+        // make 'editButton' and 'wordContainer' children of 'entryBox'
+        entryBox.appendChild(editButton);
+        entryBox.appendChild(wordContainer);
+        wordsDiv.appendChild(entryBox);
 
         // click handler: tell background script to open hyperlink
-        word.addEventListener("click", () => {
+        wordContainer.addEventListener("click", () => {
             // if not in edit mode
-            if (word.isContentEditable === false) {
+            if (wordContainer.isContentEditable === false) {
                 chrome.runtime.sendMessage({
                     msg: "new tab",
                     url: wordUrl
@@ -56,15 +58,16 @@ chrome.storage.sync.get("wordBank", (data) => {
         });
 
         // save changes and exit edit mode with 'Enter'
-        word.addEventListener("keydown", (event) => {
+        wordContainer.addEventListener("keydown", (event) => {
             if (event.code === "Enter") {
-                toggleButton(word, button, data, i);
+                toggleButton(wordContainer, editButton, data, i);
             }
         });
 
         // toggle edit/save button on click
-        button.addEventListener("click", () => {
-            toggleButton(word, button, data, i);
+        editButton.addEventListener("click", () => {
+            editButton.classList.add("beingEdited")
+            toggleButton(wordContainer, editButton, data, i);
         });
     }
 
