@@ -39,10 +39,10 @@ chrome.runtime.onMessage.addListener((request, sender) => {
     // word url click handler: open hyperlink to original word URL
     if (request.msg === "new tab") {
         // retrieve user preference
-        chrome.storage.sync.get("activeTabChecked", (settings) => {
+        chrome.storage.sync.get("activeTabChecked", (options) => {
             chrome.tabs.create({
                 url: request.url,
-                active: (settings.activeTabChecked) ? true : false
+                active: (options.activeTabChecked) ? true : false
             });
         });
     }

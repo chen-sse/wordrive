@@ -25,9 +25,9 @@ function restoreOptions() {
         // default values
         "activeTabChecked": false,
         "lowercaseChecked": true
-    }, (settings) => {
-        activeTabCheckbox.checked = settings.activeTabChecked;
-        lowercaseCheckbox.checked = settings.lowercaseChecked;
+    }, (options) => {
+        activeTabCheckbox.checked = options.activeTabChecked;
+        lowercaseCheckbox.checked = options.lowercaseChecked;
     });
 }
 
