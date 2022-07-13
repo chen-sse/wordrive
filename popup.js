@@ -1,5 +1,4 @@
 let wordsDiv = document.getElementById("wordsDiv");
-let refresh = document.getElementById("refresh");
 let wordAdder = document.getElementById("wordAdder");
 let options = document.getElementById("options");
 
@@ -127,7 +126,6 @@ chrome.storage.sync.get("wordBank", (data) => {
     });
 });
 
-refresh.addEventListener("click", refreshData);
 options.addEventListener("click", () => {
     window.location.href = "options-popup.html";
 });
