@@ -4,7 +4,7 @@ html {
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
 }
 
 .header {
@@ -100,4 +100,8 @@ nav {
 
 #refresh {
     float: right;
+}
+
+#optionsDiv {
+    height: 199px;
 }
