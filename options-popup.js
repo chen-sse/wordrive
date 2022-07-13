@@ -1,4 +1,3 @@
-const SAVE_DISPLAY_TIME = 2000;
 let activeTabCheckbox = document.getElementById("activeTabCheckbox");
 let lowercaseCheckbox = document.getElementById("lowercaseCheckbox");
 let home = document.getElementById("home");
@@ -34,23 +33,6 @@ function exportData(event) {
     })
 }
 
-// save options to Chrome sync
-function saveOptions() {
-    let activeTabChecked = activeTabCheckbox.checked;
-    let lowercaseChecked = lowercaseCheckbox.checked;
-
-    chrome.storage.sync.set({
-        "activeTabChecked": activeTabChecked,
-        "lowercaseChecked": lowercaseChecked
-    }, () => {
-        let status = document.getElementById("status");
-        status.innerHTML = "Options saved.";
-        setTimeout(() => {
-            status.innerHTML = "";
-        }, SAVE_DISPLAY_TIME);
-    });
-}
-
 // restore saved user preferences
 function restoreOptions() {
     chrome.storage.sync.get({
@@ -64,10 +46,19 @@ function restoreOptions() {
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
-document.getElementById("save").addEventListener("click", saveOptions);
 
 clearAll.addEventListener("click", clearAllData);
 exportButton.addEventListener("click", exportData);
 home.addEventListener("click", () => {
     window.location.href = "popup.html";
+});
+
+// auto-save: update preferences on any checkbox click
+activeTabCheckbox.addEventListener("click", () => {
+    let activeTabChecked = activeTabCheckbox.checked;
+    chrome.storage.sync.set({"activeTabChecked": activeTabChecked});
+});
+lowercaseCheckbox.addEventListener("click", () => {
+    let lowercaseChecked = lowercaseCheckbox.checked;
+    chrome.storage.sync.set({"lowercaseChecked": lowercaseChecked})
 });
