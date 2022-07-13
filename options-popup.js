@@ -13,11 +13,11 @@ function clearAllData(event) {
 function exportData(event) {
     chrome.storage.sync.get("wordBank", ({wordBank}) => {
         let builder = "Your Wordrive: \n\n"
-        for (let i = 0; i<wordBank.length; i++) {
+        for (let i = 0; i < wordBank.length; i++) {
             // concatenate builder string
             let word = wordBank[i].text;
             let theUrl = wordBank[i].url;
-            builder = builder + `WORD ${i+1}: ${word} | URL: ${theUrl}` + "\n\n";
+            builder = builder + `WORD ${i + 1}: ${word} | URL: ${theUrl}` + "\n\n";
             console.log(builder);
         }
         // instantiate blob w/ word bank and create url for it
