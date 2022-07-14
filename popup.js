@@ -113,11 +113,13 @@ chrome.storage.sync.get("wordBank", (data) => {
 
             save.addEventListener("click", (event) => {
                 // save new word and url
-                data.wordBank.push({
-                    text: wordInput.value.trim(),
-                    url: urlInput.value.trim()
-                });
-                chrome.storage.sync.set({"wordBank": data.wordBank});
+                if (wordInput.value.trim() !== "" && urlInput.value.trim() !== "") {
+                    data.wordBank.push({
+                        text: wordInput.value.trim(),
+                        url: urlInput.value.trim()
+                    });
+                    chrome.storage.sync.set({"wordBank": data.wordBank});
+                }
 
                 // refresh popup
                 refreshData();
