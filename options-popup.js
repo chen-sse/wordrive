@@ -47,7 +47,12 @@ function restoreOptions() {
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
-clearAll.addEventListener("click", clearAllData);
+clearAll.addEventListener("click", () => {
+    let response = confirm("Are you sure you want to clear your Wordrive?");
+    if (response) {
+        clearAllData();
+    }
+});
 exportButton.addEventListener("click", exportData);
 home.addEventListener("click", () => {
     window.location.href = "popup.html";
