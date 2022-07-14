@@ -27,7 +27,7 @@ function toggleButton(wordContainer, editButton, data, i) {
 
         editButton.innerHTML = "Edit";
     }
-    
+
     wordContainer.setAttribute("contenteditable", !wordContainer.isContentEditable);
 }
 
@@ -113,7 +113,7 @@ chrome.storage.sync.get("wordBank", (data) => {
 
             save.addEventListener("click", (event) => {
                 // save new word and url
-                if (wordInput.value.trim() !== "" && urlInput.value.trim() !== "") {
+                if (wordInput.value.trim() !== "") {
                     data.wordBank.push({
                         text: wordInput.value.trim(),
                         url: urlInput.value.trim()
