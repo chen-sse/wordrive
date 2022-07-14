@@ -16,6 +16,10 @@ body {
     margin-top: 10px;
 }
 
+#plus {
+    font-size: 17px;
+}
+
 button {
     font-family: 'Raleway', sans-serif;
     font-weight: 500;
@@ -60,10 +64,12 @@ button:hover {
     height: 20px;
     font-size: 15px;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
+    background-color: #CDB0EE;
+    margin-bottom: 3px
 }
 
 .entryBox:hover, #wordAdder:hover {
-    background-color: #ACCCE6
+    background-color: #E9CBFF
 }
 
 .entryBox:hover > button {
@@ -95,7 +101,7 @@ nav {
 }
 
 .navDiv:hover {
-    background-color: #ACCCE6;
+    background-color: #E9CBFF;
 }
 
 #refresh {
@@ -104,4 +110,5 @@ nav {
 
 #optionsDiv {
     height: 199px;
+    margin-bottom: 20px;
 }
