@@ -2,7 +2,7 @@ let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
 let options = document.getElementById("options");
 
-let editMode = false;
+let addMode = false;
 
 function refreshData(event) {
     document.location.reload();
@@ -85,7 +85,7 @@ chrome.storage.sync.get("wordBank", (data) => {
 
     wordAdder.addEventListener("click", () => {
         // if not in edit mode, enter it
-        if (!editMode) {
+        if (!addMode) {
             // create inputs, labels, and button
             let word = document.createElement("input");
             let url = document.createElement("input");
@@ -129,14 +129,14 @@ chrome.storage.sync.get("wordBank", (data) => {
                 wordAdder.innerHTML = "+ ... add new word to Wordrive ...";
 
                 // turn off edit mode
-                editMode = false;
+                addMode = false;
 
                 // prevent event bubbling up to parent element
                 event.stopPropagation();
             });
 
             // turn on edit mode
-            editMode = true;
+            addMode = true;
         }
     });
 });
