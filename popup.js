@@ -22,12 +22,12 @@ function toggleButton(wordContainer, editButton, data, i) {
         else {
             wordContainer.innerText = wordContainer.innerText.trim();
             data.wordBank[i].text = wordContainer.innerText.trim();
+            chrome.storage.sync.set({"wordBank": data.wordBank});
         }
 
         editButton.innerHTML = "Edit";
-        chrome.storage.sync.set({"wordBank": data.wordBank});
     }
-
+    
     wordContainer.setAttribute("contenteditable", !wordContainer.isContentEditable);
 }
 
