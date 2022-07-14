@@ -17,16 +17,15 @@ function toggleButton(wordContainer, editButton, data, i) {
         // if entry is an empty string, restore entry box to original word
         if (wordContainer.innerText.trim() === "") {
             wordContainer.innerText = data.wordBank[i].text;
-            chrome.storage.sync.set({"wordBank": data.wordBank});
-            editButton.innerHTML = "Edit";
         }
         // if entry is a non-empty string, set the entry to that string
         else {
             wordContainer.innerText = wordContainer.innerText.trim();
             data.wordBank[i].text = wordContainer.innerText.trim();
-            chrome.storage.sync.set({"wordBank": data.wordBank});
-            editButton.innerHTML = "Edit";
         }
+
+        editButton.innerHTML = "Edit";
+        chrome.storage.sync.set({"wordBank": data.wordBank});
     }
 
     wordContainer.setAttribute("contenteditable", !wordContainer.isContentEditable);
