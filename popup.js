@@ -8,20 +8,18 @@ function refreshData(event) {
     document.location.reload();
 }
 
-function toggleButton(entryBox, wordContainer, editButton, data, i) {
+function toggleButton(wordContainer, editButton, data, i) {
     if (wordContainer.isContentEditable === false) {
         // enter edit mode, generate 'Save' button
         editButton.innerHTML = "Save";
     } else {
         // exit edit mode, save changes
-
         // if entry is an empty string, restore entry box to original word
-        if (wordContainer.innerText.trim() === ""){
+        if (wordContainer.innerText.trim() === "") {
             wordContainer.innerText = data.wordBank[i].text;
             chrome.storage.sync.set({"wordBank": data.wordBank});
             editButton.innerHTML = "Edit";
         }
-
         // if entry is a non-empty string, set the entry to that string
         else {
             wordContainer.innerText = wordContainer.innerText.trim();
@@ -72,14 +70,14 @@ chrome.storage.sync.get("wordBank", (data) => {
         // save changes and exit edit mode with 'Enter'
         wordContainer.addEventListener("keydown", (event) => {
             if (event.code === "Enter") {
-                toggleButton(entryBox, wordContainer, editButton, data, i);
+                toggleButton(wordContainer, editButton, data, i);
             }
         });
 
         // toggle edit/save button on click
         editButton.addEventListener("click", () => {
             editButton.classList.add("beingEdited")
-            toggleButton(entryBox, wordContainer, editButton, data, i);
+            toggleButton(wordContainer, editButton, data, i);
         });
     }
 
