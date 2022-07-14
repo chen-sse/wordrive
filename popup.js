@@ -84,8 +84,8 @@ chrome.storage.sync.get("wordBank", (data) => {
         // if not in edit mode, enter it
         if (!addMode) {
             // create inputs, labels, and button
-            let word = document.createElement("input");
-            let url = document.createElement("input");
+            let wordInput = document.createElement("input");
+            let urlInput = document.createElement("input");
             let wordLabel = document.createElement("label");
             let urlLabel = document.createElement("label");
             let save = document.createElement("button");
@@ -98,24 +98,24 @@ chrome.storage.sync.get("wordBank", (data) => {
 
             // update DOM tree
             wordAdder.appendChild(wordLabel);
-            wordAdder.appendChild(word);
+            wordAdder.appendChild(wordInput);
             wordAdder.appendChild(urlLabel);
-            wordAdder.appendChild(url);
+            wordAdder.appendChild(urlInput);
             wordAdder.appendChild(save);
 
             // set attributes
-            word.setAttribute("id", "word");
-            word.setAttribute("type", "text");
-            url.setAttribute("id", "url");
-            url.setAttribute("type", "url");
+            wordInput.setAttribute("id", "word");
+            wordInput.setAttribute("type", "text");
+            urlInput.setAttribute("id", "url");
+            urlInput.setAttribute("type", "url");
             wordLabel.setAttribute("for", "word");
             urlLabel.setAttribute("for", "url");
 
             save.addEventListener("click", (event) => {
                 // save new word and url
                 data.wordBank.push({
-                    text: word.value.trim(),
-                    url: url.value.trim()
+                    text: wordInput.value.trim(),
+                    url: urlInput.value.trim()
                 });
                 chrome.storage.sync.set({"wordBank": data.wordBank});
 
