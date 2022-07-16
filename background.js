@@ -55,17 +55,23 @@ chrome.runtime.onMessage.addListener(async (request) => {
     }
     // inject scripts into active tab to trigger SweetAlert popup
     else if (request.msg === "confirm") {
+        // get current tab
         let [activeTab] = await chrome.tabs.query({
             active: true,
             lastFocusedWindow: true
         });
-        chrome.scripting.executeScript({
-            target: {tabId: activeTab.id},
-            files: [
-                "vendor/sweetalert2/dist/sweetalert2.all.min.js",
-                "confirm.js"
-            ]
-        });
+        // if active tab is an internal chrome page, fire alert in popup instead of current tab
+        if (activeTab.url.indexOf("chrome://") === 0) {
+            chrome.runtime.sendMessage({msg: "redirect"});
+        } else {
+            chrome.scripting.executeScript({
+                target: {tabId: activeTab.id},
+                files: [
+                    "vendor/sweetalert2/dist/sweetalert2.all.min.js",
+                    "confirm.js"
+                ]
+            });
+        }
     }
     // clear word bank
     else if (request.msg === "clear") {

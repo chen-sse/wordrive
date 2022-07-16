@@ -89,3 +89,17 @@ lowercaseCheckbox.addEventListener("click", () => {
     let lowercaseChecked = lowercaseCheckbox.checked;
     chrome.storage.sync.set({"lowercaseChecked": lowercaseChecked})
 });
+
+chrome.runtime.onMessage.addListener((request) => {
+    // fire SweetAlert in popup instead of current tab for internal chrome pages
+    if (request.msg === "redirect") {
+        let libraryScript = document.createElement("script");
+        let swalScript = document.createElement("script");
+
+        libraryScript.setAttribute("src", "vendor/sweetalert2/dist/sweetalert2.all.min.js");
+        swalScript.setAttribute("src", "confirm.js");
+
+        document.body.appendChild(libraryScript);
+        document.body.appendChild(swalScript);
+    }
+});
