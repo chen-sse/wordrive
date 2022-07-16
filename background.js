@@ -55,7 +55,10 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
     }
     // inject scripts into active tab to trigger SweetAlert popup
     else if (request.msg === "confirm") {
-        let [activeTab] = await chrome.tabs.query({active: true});
+        let [activeTab] = await chrome.tabs.query({
+            active: true,
+            lastFocusedWindow: true
+        });
         chrome.scripting.executeScript({
             target: {tabId: activeTab.id},
             files: [
