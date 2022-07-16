@@ -35,7 +35,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 // message listener: listens to messages from content scripts
-chrome.runtime.onMessage.addListener(async (request, sender) => {
+chrome.runtime.onMessage.addListener(async (request) => {
     // word url click handler: open hyperlink to original word URL
     if (request.msg === "new tab") {
         // retrieve user preference

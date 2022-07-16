@@ -4,12 +4,12 @@ let home = document.getElementById("home");
 let clearAll = document.getElementById("clearAll");
 let exportButton = document.getElementById("exportButton")
 
-function clearAllData(event) {
+function clearAllData() {
     chrome.storage.sync.set({"wordBank": []});
     document.location.reload();
 }
 
-function exportData(event) {
+function exportData() {
     chrome.storage.sync.get("wordBank", ({wordBank}) => {
         let builder = "Your Wordrive: \n\n";
         for (let i = 0; i < wordBank.length; i++) {

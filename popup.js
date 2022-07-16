@@ -4,7 +4,7 @@ let options = document.getElementById("options");
 
 let addMode = false;
 
-function refreshData(event) {
+function refreshData() {
     document.location.reload();
 }
 
