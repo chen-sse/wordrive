@@ -4,9 +4,6 @@ let options = document.getElementById("options");
 
 let addMode = false;
 
-function refreshData() {
-    document.location.reload();
-}
 // hide hover images 'homeHover' and 'optionsHover'
 let homeHover = document.getElementById("homeHover");
 homeHover.style.visibility = "hidden";
@@ -26,7 +23,6 @@ homeDiv.addEventListener("mouseout", () => {
     homeDiv.classList.remove("footerButtonHover");
 });
 
-function toggleButton(wordContainer, editButton, data, i) {
 /* make hover image and grab cursor appear when cursor
 hovers over options button, remove it when cursor leaves
  */
@@ -158,7 +154,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                 }
 
                 // refresh popup
-                refreshData();
+                document.location.reload();
                 
                 // revert to original button
                 wordAdder.innerHTML = "+ ... add new word to Wordrive ...";

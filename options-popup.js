@@ -4,10 +4,6 @@ let home = document.getElementById("home");
 let clearAll = document.getElementById("clearAll");
 let exportButton = document.getElementById("exportButton")
 
-function clearAllData() {
-    chrome.storage.sync.set({"wordBank": []});
-    document.location.reload();
-}
 // hide hover images 'homeHover' and 'optionsHover'
 let homeHover = document.getElementById("homeHover");
 homeHover.style.visibility = "hidden";
