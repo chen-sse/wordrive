@@ -3,6 +3,24 @@ html {
     height: 250px;
 }
 
+img {
+    max-width: 75%;
+    max-height: 75%;
+    object-fit: contain;
+    vertical-align: middle
+}
+
+#homeHover, #optionsHover {
+   max-width: 40%;
+    max-height: 40%;
+    position: absolute;
+    bottom: -10px
+}
+
+.footerButtonHover {
+    cursor: grab
+}
+
 body {
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
 }
@@ -76,6 +94,32 @@ button:hover {
     visibility: visible;
 }
 
+.entryBoxEditMode {
+    font-size: medium;
+    border-radius: 5px;
+    padding: 5px;
+    height: 20px;
+    font-size: 15px;
+    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
+    background-color: #ff9a8e;
+    margin-bottom: 3px
+}
+
+.entryBoxEditMode:hover {
+    font-size: medium;
+    border-radius: 5px;
+    padding: 5px;
+    height: 20px;
+    font-size: 15px;
+    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
+    background-color: #ffcdc8;
+    margin-bottom: 3px
+}
+
+.entryBox:hover > button {
+    visibility: visible;
+}
+
 #wordAdder {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -89,6 +133,7 @@ button:hover {
 nav {
     display: flex;
     flex-direction: row;
+    height: 39px;
 }
 
 .navDiv {
@@ -98,10 +143,11 @@ nav {
     padding-bottom: 10px;
     font-size: 15px;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
-}
-
-.navDiv:hover {
-    background-color: #E9CBFF;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    position:relative;
+    overflow: hidden
 }
 
 #refresh {

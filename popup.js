@@ -7,11 +7,46 @@ let addMode = false;
 function refreshData() {
     document.location.reload();
 }
+// hide hover images 'homeHover' and 'optionsHover'
+let homeHover = document.getElementById("homeHover");
+homeHover.style.visibility = "hidden";
+let optionsHover = document.getElementById("optionsHover");
+optionsHover.style.visibility = "hidden";
+
+/* make hover image and grab cursor appear when cursor
+hovers over home button, remove it when cursor leaves
+ */
+let homeDiv = document.getElementById("home");
+homeDiv.addEventListener("mouseover", () => {
+    homeHover.style.visibility = "visible"
+    homeDiv.classList.add("footerButtonHover");
+});
+homeDiv.addEventListener("mouseout", () => {
+    homeHover.style.visibility = "hidden"
+    homeDiv.classList.remove("footerButtonHover");
+});
 
 function toggleButton(wordContainer, editButton, data, i) {
+/* make hover image and grab cursor appear when cursor
+hovers over options button, remove it when cursor leaves
+ */
+let optionsDiv = document.getElementById("options")
+optionsDiv.addEventListener("mouseover", () => {
+    optionsHover.style.visibility = "visible"
+    optionsDiv.classList.add("footerButtonHover");
+});
+optionsDiv.addEventListener("mouseout", () => {
+    optionsHover.style.visibility = "hidden"
+    optionsDiv.classList.remove("footerButtonHover");
+});
+
+function toggleButton(entryBox, wordContainer, editButton, data, i) {
     if (wordContainer.isContentEditable === false) {
         // enter edit mode, generate 'Save' button
+        entryBox.classList.add("entryBoxEditMode");
         editButton.innerHTML = "Save";
+        entryBox.classList.add("entryBoxEditMode");
+
     } else {
         // exit edit mode, save changes
         // if entry is an empty string, restore entry box to original word
@@ -26,6 +61,7 @@ function toggleButton(wordContainer, editButton, data, i) {
         }
 
         editButton.innerHTML = "Edit";
+        entryBox.classList.remove("entryBoxEditMode");
     }
 
     wordContainer.setAttribute("contenteditable", !wordContainer.isContentEditable);
@@ -69,14 +105,14 @@ chrome.storage.sync.get("wordBank", (data) => {
         // save changes and exit edit mode with 'Enter'
         wordContainer.addEventListener("keydown", (event) => {
             if (event.code === "Enter") {
-                toggleButton(wordContainer, editButton, data, i);
+                toggleButton(entryBox, wordContainer, editButton, data, i);
             }
         });
 
         // toggle edit/save button on click
         editButton.addEventListener("click", () => {
             editButton.classList.add("beingEdited")
-            toggleButton(wordContainer, editButton, data, i);
+            toggleButton(entryBox, wordContainer, editButton, data, i);
         });
     }
 

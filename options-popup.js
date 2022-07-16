@@ -8,6 +8,37 @@ function clearAllData() {
     chrome.storage.sync.set({"wordBank": []});
     document.location.reload();
 }
+// hide hover images 'homeHover' and 'optionsHover'
+let homeHover = document.getElementById("homeHover");
+homeHover.style.visibility = "hidden";
+let optionsHover = document.getElementById("optionsHover");
+optionsHover.style.visibility = "hidden";
+
+/* make hover image and grab cursor appear when cursor
+hovers over home button, remove it when cursor leaves
+ */
+let homeDiv = document.getElementById("home");
+homeDiv.addEventListener("mouseover", () => {
+    homeHover.style.visibility = "visible"
+    homeDiv.classList.add("footerButtonHover");
+});
+homeDiv.addEventListener("mouseout", () => {
+    homeHover.style.visibility = "hidden"
+    homeDiv.classList.remove("footerButtonHover");
+});
+
+/* make hover image and grab cursor appear when cursor
+hovers over options button, remove it when cursor leaves
+ */
+let optionsDiv = document.getElementById("options")
+optionsDiv.addEventListener("mouseover", () => {
+    optionsHover.style.visibility = "visible"
+    optionsDiv.classList.add("footerButtonHover");
+});
+optionsDiv.addEventListener("mouseout", () => {
+    optionsHover.style.visibility = "hidden"
+    optionsDiv.classList.remove("footerButtonHover");
+});
 
 function exportData() {
     chrome.storage.sync.get("wordBank", ({wordBank}) => {
