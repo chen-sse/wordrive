@@ -62,7 +62,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
         chrome.scripting.executeScript({
             target: {tabId: activeTab.id},
             files: [
-                "sweetalert2/dist/sweetalert2.all.min.js",
+                "vendor/sweetalert2/dist/sweetalert2.all.min.js",
                 "confirm.js"
             ]
         });
