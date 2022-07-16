@@ -34,8 +34,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     });
 });
 
-// message listener: listens to messages from content script
-chrome.runtime.onMessage.addListener((request, sender) => {
+// message listener: listens to messages from content scripts
+chrome.runtime.onMessage.addListener(async (request, sender) => {
     // word url click handler: open hyperlink to original word URL
     if (request.msg === "new tab") {
         // retrieve user preference
@@ -52,5 +52,20 @@ chrome.runtime.onMessage.addListener((request, sender) => {
             filename: "wordlist.txt",
             url: request.url
         });
+    }
+    // inject scripts into active tab to trigger SweetAlert popup
+    else if (request.msg === "confirm") {
+        let [activeTab] = await chrome.tabs.query({active: true});
+        chrome.scripting.executeScript({
+            target: {tabId: activeTab.id},
+            files: [
+                "sweetalert2/dist/sweetalert2.all.min.js",
+                "confirm.js"
+            ]
+        });
+    }
+    // clear word bank
+    else if (request.msg === "clear") {
+        chrome.storage.sync.set({"wordBank": []});
     }
 });

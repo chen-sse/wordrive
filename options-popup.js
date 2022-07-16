@@ -48,10 +48,8 @@ function restoreOptions() {
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 clearAll.addEventListener("click", () => {
-    let response = confirm("Are you sure you want to clear your Wordrive?");
-    if (response) {
-        clearAllData();
-    }
+    // tell background script to trigger SweetAlert popup 
+    chrome.runtime.sendMessage({msg: "confirm"});
 });
 exportButton.addEventListener("click", exportData);
 home.addEventListener("click", () => {

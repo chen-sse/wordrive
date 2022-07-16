@@ -7,14 +7,15 @@
         "service_worker": "background.js"
     },
     "permissions": [
+        "activeTab",
         "contextMenus",
+        "downloads",
+        "scripting",
         "storage",
-        "tabs",
-        "downloads"
+        "tabs"
     ],
     "action": {
         "default_popup": "popup.html"
     },
     "options_page": "options.html"
-
 }
