@@ -26,9 +26,6 @@ function exportData(event) {
         chrome.runtime.sendMessage({
             msg: "download",
             url: fileUrl
-        }, () => {
-            // revoke url from browser storage
-            URL.revokeObjectURL(fileUrl);
         });
     })
 }
