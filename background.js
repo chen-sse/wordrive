@@ -1,3 +1,13 @@
+const whitelist = ["www.espn.com"];
+
+function onWhitelist(url) {
+    return ((whitelist.includes(new URL(url).hostname)) ? true : false);
+}
+
+function isChromeInternalPage(url) {
+    return ((url.indexOf("chrome://") === 0) ? true : false);
+}
+
 chrome.runtime.onInstalled.addListener(() => {
     // create context menu
     chrome.contextMenus.create({
@@ -61,7 +71,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
             lastFocusedWindow: true
         });
         // if active tab is an internal chrome page, fire alert in popup instead of current tab
-        if (activeTab.url.indexOf("chrome://") === 0) {
+        if (onWhitelist(activeTab.url) || isChromeInternalPage(activeTab.url)) {
             chrome.runtime.sendMessage({msg: "redirect"});
         } else {
             chrome.scripting.executeScript({
