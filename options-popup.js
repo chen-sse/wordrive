@@ -102,4 +102,7 @@ chrome.runtime.onMessage.addListener((request) => {
         document.body.appendChild(libraryScript);
         document.body.appendChild(swalScript);
     }
+    else if (request.msg === "close") {
+        window.close();
+    }
 });

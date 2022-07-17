@@ -74,6 +74,9 @@ chrome.runtime.onMessage.addListener(async (request) => {
         if (onWhitelist(activeTab.url) || isChromeInternalPage(activeTab.url)) {
             chrome.runtime.sendMessage({msg: "redirect"});
         } else {
+            // tell options popup to close itself
+            chrome.runtime.sendMessage({msg: "close"});
+
             chrome.scripting.executeScript({
                 target: {tabId: activeTab.id},
                 files: [
