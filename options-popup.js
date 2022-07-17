@@ -1,3 +1,6 @@
+const SWEETALERT_WIDTH = "300px";
+const SWEETALERT_HEIGHT = "450px";
+
 let activeTabCheckbox = document.getElementById("activeTabCheckbox");
 let lowercaseCheckbox = document.getElementById("lowercaseCheckbox");
 let home = document.getElementById("home");
@@ -93,6 +96,9 @@ lowercaseCheckbox.addEventListener("click", () => {
 chrome.runtime.onMessage.addListener((request) => {
     // fire SweetAlert in popup instead of current tab for internal chrome pages
     if (request.msg === "redirect") {
+        document.documentElement.style.width = SWEETALERT_WIDTH;
+        document.documentElement.style.height = SWEETALERT_HEIGHT;
+
         let libraryScript = document.createElement("script");
         let swalScript = document.createElement("script");
 
