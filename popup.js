@@ -42,7 +42,6 @@ function toggleButton(entryBox, wordContainer, editButton, data, i) {
         entryBox.classList.add("entryBoxEditMode");
         editButton.innerHTML = "Save";
         entryBox.classList.add("entryBoxEditMode");
-
     } else {
         // exit edit mode, save changes
         // if entry is an empty string, restore entry box to original word
@@ -127,7 +126,6 @@ chrome.storage.sync.get("wordBank", (data) => {
                 // init attribute 'contenteditable' to span element
                 urlContainer.setAttribute("contenteditable", false);
                 urlContainer.innerText = data.wordBank[i].url;
-                editButton.innerHTML = "Edit";
 
                 // make 'editButton' and 'wordContainer' children of 'entryBox'
                 urlBox.appendChild(urlEditButton);
