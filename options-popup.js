@@ -60,6 +60,37 @@ function exportData() {
     })
 }
 
+// fire SweetAlert that confirms Wordrive erasure request
+async function fireAlert() {
+    let firstResponse = await Swal.fire({
+        title: "Are you sure you want to clear your Wordrive?",
+        text: "You won't be able to undo this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    });
+    if (firstResponse.isConfirmed) {
+        // clear word bank
+        chrome.storage.sync.set({"wordBank": []});
+
+        let secondResponse = await Swal.fire(
+            "Deleted!",
+            "Your Wordrive has been cleared.",
+            "success"
+        );
+        // reset popup after user response or dismissal
+        if (secondResponse.isConfirmed || secondResponse.isDismissed) {
+            document.location.reload();
+        }
+    }
+    // reset popup if user cancels
+    else if (firstResponse.isDismissed) {
+        document.location.reload();
+    }
+}
+
 // restore saved user preferences
 function restoreOptions() {
     chrome.storage.sync.get({
@@ -75,8 +106,9 @@ function restoreOptions() {
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 clearAll.addEventListener("click", () => {
-    // tell background script to trigger SweetAlert popup 
-    chrome.runtime.sendMessage({msg: "confirm"});
+    document.documentElement.style.width = SWEETALERT_WIDTH;
+    document.documentElement.style.height = SWEETALERT_HEIGHT;
+    fireAlert();
 });
 exportButton.addEventListener("click", exportData);
 home.addEventListener("click", () => {
@@ -91,24 +123,4 @@ activeTabCheckbox.addEventListener("click", () => {
 lowercaseCheckbox.addEventListener("click", () => {
     let lowercaseChecked = lowercaseCheckbox.checked;
     chrome.storage.sync.set({"lowercaseChecked": lowercaseChecked})
-});
-
-chrome.runtime.onMessage.addListener((request) => {
-    // fire SweetAlert in popup instead of current tab for internal chrome pages
-    if (request.msg === "redirect") {
-        document.documentElement.style.width = SWEETALERT_WIDTH;
-        document.documentElement.style.height = SWEETALERT_HEIGHT;
-
-        let libraryScript = document.createElement("script");
-        let swalScript = document.createElement("script");
-
-        libraryScript.setAttribute("src", "vendor/sweetalert2/dist/sweetalert2.all.min.js");
-        swalScript.setAttribute("src", "confirm.js");
-
-        document.body.appendChild(libraryScript);
-        document.body.appendChild(swalScript);
-    }
-    else if (request.msg === "close") {
-        window.close();
-    }
 });

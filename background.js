@@ -1,11 +1,3 @@
-const whitelist = ["www.espn.com"];
-
-function onWhitelist(url) {
-    // return true if URL is in 'whitelist' or is internal Chrome page
-    return ((whitelist.includes(new URL(url).hostname) ||
-            (url.indexOf("chrome://") === 0)) ? true : false);
-}
-
 chrome.runtime.onInstalled.addListener(() => {
     // create context menu
     chrome.contextMenus.create({
@@ -60,32 +52,5 @@ chrome.runtime.onMessage.addListener(async (request) => {
             filename: "wordlist.txt",
             url: request.url
         });
-    }
-    // inject scripts into active tab to trigger SweetAlert popup
-    else if (request.msg === "confirm") {
-        // get current tab
-        let [activeTab] = await chrome.tabs.query({
-            active: true,
-            lastFocusedWindow: true
-        });
-        // if active tab is whitelisted, fire alert in popup instead of current tab
-        if (onWhitelist(activeTab.url)) {
-            chrome.runtime.sendMessage({msg: "redirect"});
-        } else {
-            // tell options popup to close itself
-            chrome.runtime.sendMessage({msg: "close"});
-
-            chrome.scripting.executeScript({
-                target: {tabId: activeTab.id},
-                files: [
-                    "vendor/sweetalert2/dist/sweetalert2.all.min.js",
-                    "confirm.js"
-                ]
-            });
-        }
-    }
-    // clear word bank
-    else if (request.msg === "clear") {
-        chrome.storage.sync.set({"wordBank": []});
     }
 });

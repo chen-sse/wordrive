@@ -7,10 +7,8 @@
         "service_worker": "background.js"
     },
     "permissions": [
-        "activeTab",
         "contextMenus",
         "downloads",
-        "scripting",
         "storage",
         "tabs"
     ],
