@@ -21,9 +21,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     // retrieve word bank and user capitalization preference (initialize default values for both)
     chrome.storage.sync.get(["wordBank", "lowercaseChecked"], async (data) => {
         let [currentTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
-        // add new word object to array
-
-        // if selected text isn't whitespace
+        // add new word object to array if selected text isn't whitespace
         if (typeof(info.selectionText) !== "undefined") {
             let selectedWord = info.selectionText.trim();
             data.wordBank.push({
