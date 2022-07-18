@@ -190,9 +190,6 @@ chrome.storage.sync.get("wordBank", (data) => {
 
                 // refresh popup
                 document.location.reload();
-                
-                // revert to original button
-                wordAdder.innerHTML = "+ ... add new word to Wordrive ...";
 
                 // turn off edit mode
                 addMode = false;
