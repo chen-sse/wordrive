@@ -87,7 +87,7 @@ chrome.storage.sync.get("wordBank", (data) => {
         wordsDiv.appendChild(entryBox);
 
         // click handler: tell background script to open hyperlink
-        wordContainer.addEventListener("click", () => {
+        wordContainer.addEventListener("click", (event) => {
             // if not in edit mode
             if (wordContainer.isContentEditable === false) {
                 chrome.runtime.sendMessage({
@@ -95,6 +95,9 @@ chrome.storage.sync.get("wordBank", (data) => {
                     url: wordUrl
                 });
             }
+
+            // prevent 'entryBox' parent click event from firing
+            event.stopPropagation();
         });
 
         // save changes and exit edit mode with 'Enter'
@@ -141,9 +144,12 @@ chrome.storage.sync.get("wordBank", (data) => {
         });
 
         // toggle edit/save button on click
-        editButton.addEventListener("click", () => {
+        editButton.addEventListener("click", (event) => {
             editButton.classList.add("beingEdited")
             toggleButton(entryBox, wordContainer, editButton, data, i);
+
+            // prevent 'entryBox' parent click event from firing
+            event.stopPropagation();
         });
     }
 
