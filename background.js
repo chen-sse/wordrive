@@ -22,15 +22,19 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     chrome.storage.sync.get(["wordBank", "lowercaseChecked"], async (data) => {
         let [currentTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
         // add new word object to array
-        let selectedWord = info.selectionText.trim();
-        data.wordBank.push({
-            text: (data.lowercaseChecked === true)
-                ? selectedWord.toLowerCase()
-                : selectedWord,
-            url: currentTab.url
-        });
-        // set key to updated array
-        chrome.storage.sync.set({"wordBank": data.wordBank});
+
+        // if selected text isn't whitespace
+        if (typeof(info.selectionText) !== "undefined") {
+            let selectedWord = info.selectionText.trim();
+            data.wordBank.push({
+                text: (data.lowercaseChecked === true)
+                    ? selectedWord.toLowerCase()
+                    : selectedWord,
+                url: currentTab.url
+            });
+            // set key to updated array
+            chrome.storage.sync.set({"wordBank": data.wordBank});
+        }
     });
 });
 
