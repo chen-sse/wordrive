@@ -66,16 +66,16 @@ function toggleButton(entryBox, wordContainer, editButton, data, i) {
 chrome.storage.sync.get("wordBank", (data) => {
     for (let i = 0; i < data.wordBank.length; i++) {
         /* init a div-span-button set for given word
-           Note: an entryBox is the parent div for each entry;
-           a wordContainer is the span displaying the word */
+           Note: an 'entryBox' is the parent div for each entry;
+           a 'wordContainer' is the span displaying the word */
         let entryBox = document.createElement("div");
         let wordContainer = document.createElement("span");
         let editButton = document.createElement("button");
         let wordUrl = data.wordBank[i].url;
 
-        // add classes to 'wordBox' and 'editButton'
-        editButton.classList.add("editButton");
+        // add classes to 'entryBox' and 'editButton'
         entryBox.classList.add("entryBox");
+        editButton.classList.add("editButton");
 
         // init attribute 'contenteditable' to span element
         wordContainer.setAttribute("contenteditable", false);
@@ -102,6 +102,43 @@ chrome.storage.sync.get("wordBank", (data) => {
         wordContainer.addEventListener("keydown", (event) => {
             if (event.code === "Enter") {
                 toggleButton(entryBox, wordContainer, editButton, data, i);
+            }
+        });
+
+        // toggle URL drop-down menu on click
+        entryBox.addEventListener("click", () => {
+            if (entryBox.classList.toggle("url-mode-on")) {
+                // init 'dropdown' that contains every 'urlBox'
+                let dropdown = document.createElement("div");
+                dropdown.setAttribute("id", `dropdown${i}`);
+
+                /* init a div-span-button set for given URL
+                Note: a urlBox is the parent div for each entry;
+                a urlContainer is the span displaying the URL */
+                let urlBox = document.createElement("div");
+                let urlContainer = document.createElement("span");
+                let urlEditButton = document.createElement("button");
+
+                // add classes to 'urlBox' and 'urlEditButton'
+                urlBox.classList.add("entryBox");
+                urlContainer.classList.add("urlContainer");
+                urlEditButton.classList.add("editButton");
+
+                // init attribute 'contenteditable' to span element
+                urlContainer.setAttribute("contenteditable", false);
+                urlContainer.innerText = data.wordBank[i].url;
+                editButton.innerHTML = "Edit";
+
+                // make 'editButton' and 'wordContainer' children of 'entryBox'
+                urlBox.appendChild(urlEditButton);
+                urlBox.appendChild(urlContainer);
+                dropdown.appendChild(urlBox);
+
+                entryBox.insertAdjacentElement("afterend", dropdown);
+
+            } else {
+                // remove 'dropdown' associated with given 'entryBox'
+                document.getElementById(`dropdown${i}`).remove();
             }
         });
 
