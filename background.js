@@ -9,8 +9,8 @@ chrome.runtime.onInstalled.addListener(() => {
     // set default values
     chrome.storage.sync.get({
         "wordBank": [],
-        "lowercaseChecked": true, 
-        "activeTabChecked": false
+        "activeTabChecked": false,
+        "lowercaseChecked": true 
     }, (data) => {
         chrome.storage.sync.set(data);
     });
@@ -36,8 +36,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 // message listener: listens to messages from content scripts
 chrome.runtime.onMessage.addListener(async (request) => {
+    // export button click handler: download .txt file of word list
+    if (request.msg === "download") {
+        chrome.downloads.download({
+            filename: "wordlist.txt",
+            url: request.url
+        });
+    }
     // word url click handler: open hyperlink to original word URL
-    if (request.msg === "new tab") {
+    else if (request.msg === "new tab") {
         // retrieve user preference
         chrome.storage.sync.get("activeTabChecked", (options) => {
             chrome.tabs.create({
@@ -46,11 +53,5 @@ chrome.runtime.onMessage.addListener(async (request) => {
             });
         });
     }
-    // export button click handler: download .txt file of word list
-    else if (request.msg === "download") {
-        chrome.downloads.download({
-            filename: "wordlist.txt",
-            url: request.url
-        });
-    }
+    
 });

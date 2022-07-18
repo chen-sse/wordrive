@@ -1,6 +1,6 @@
+let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
-let options = document.getElementById("options");
 
 let addMode = false;
 
@@ -15,11 +15,11 @@ hovers over home button, remove it when cursor leaves
  */
 let homeDiv = document.getElementById("home");
 homeDiv.addEventListener("mouseover", () => {
-    homeHover.style.visibility = "visible"
+    homeHover.style.visibility = "visible";
     homeDiv.classList.add("footerButtonHover");
 });
 homeDiv.addEventListener("mouseout", () => {
-    homeHover.style.visibility = "hidden"
+    homeHover.style.visibility = "hidden";
     homeDiv.classList.remove("footerButtonHover");
 });
 
@@ -28,11 +28,11 @@ hovers over options button, remove it when cursor leaves
  */
 let optionsDiv = document.getElementById("options")
 optionsDiv.addEventListener("mouseover", () => {
-    optionsHover.style.visibility = "visible"
+    optionsHover.style.visibility = "visible";
     optionsDiv.classList.add("footerButtonHover");
 });
 optionsDiv.addEventListener("mouseout", () => {
-    optionsHover.style.visibility = "hidden"
+    optionsHover.style.visibility = "hidden";
     optionsDiv.classList.remove("footerButtonHover");
 });
 

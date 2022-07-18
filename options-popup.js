@@ -1,11 +1,11 @@
-const SWEETALERT_WIDTH = "300px";
 const SWEETALERT_HEIGHT = "450px";
+const SWEETALERT_WIDTH = "300px";
 
 let activeTabCheckbox = document.getElementById("activeTabCheckbox");
 let lowercaseCheckbox = document.getElementById("lowercaseCheckbox");
-let home = document.getElementById("home");
 let clearAll = document.getElementById("clearAll");
-let exportButton = document.getElementById("exportButton")
+let exportButton = document.getElementById("exportButton");
+let home = document.getElementById("home");
 
 // hide hover images 'homeHover' and 'optionsHover'
 let homeHover = document.getElementById("homeHover");
@@ -18,24 +18,24 @@ hovers over home button, remove it when cursor leaves
  */
 let homeDiv = document.getElementById("home");
 homeDiv.addEventListener("mouseover", () => {
-    homeHover.style.visibility = "visible"
+    homeHover.style.visibility = "visible";
     homeDiv.classList.add("footerButtonHover");
 });
 homeDiv.addEventListener("mouseout", () => {
-    homeHover.style.visibility = "hidden"
+    homeHover.style.visibility = "hidden";
     homeDiv.classList.remove("footerButtonHover");
 });
 
 /* make hover image and grab cursor appear when cursor
 hovers over options button, remove it when cursor leaves
  */
-let optionsDiv = document.getElementById("options")
+let optionsDiv = document.getElementById("options");
 optionsDiv.addEventListener("mouseover", () => {
-    optionsHover.style.visibility = "visible"
+    optionsHover.style.visibility = "visible";
     optionsDiv.classList.add("footerButtonHover");
 });
 optionsDiv.addEventListener("mouseout", () => {
-    optionsHover.style.visibility = "hidden"
+    optionsHover.style.visibility = "hidden";
     optionsDiv.classList.remove("footerButtonHover");
 });
 
@@ -122,5 +122,5 @@ activeTabCheckbox.addEventListener("click", () => {
 });
 lowercaseCheckbox.addEventListener("click", () => {
     let lowercaseChecked = lowercaseCheckbox.checked;
-    chrome.storage.sync.set({"lowercaseChecked": lowercaseChecked})
+    chrome.storage.sync.set({"lowercaseChecked": lowercaseChecked});
 });
