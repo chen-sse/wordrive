@@ -36,12 +36,11 @@ optionsDiv.addEventListener("mouseout", () => {
     optionsDiv.classList.remove("footerButtonHover");
 });
 
-function toggleButton(entryBox, wordContainer, editButton, data, i) {
+function toggleWordButton(entryBox, wordContainer, wordEditButton, data, i) {
     if (wordContainer.isContentEditable === false) {
         // enter edit mode, generate 'Save' button
         entryBox.classList.add("entryBoxEditMode");
-        editButton.innerHTML = "Save";
-        entryBox.classList.add("entryBoxEditMode");
+        wordEditButton.innerHTML = "Save";
     } else {
         // exit edit mode, save changes
         // if entry is an empty string, restore entry box to original word
@@ -55,11 +54,36 @@ function toggleButton(entryBox, wordContainer, editButton, data, i) {
             chrome.storage.sync.set({"wordBank": data.wordBank});
         }
 
-        editButton.innerHTML = "Edit";
+        wordEditButton.innerHTML = "Edit";
         entryBox.classList.remove("entryBoxEditMode");
     }
 
     wordContainer.setAttribute("contenteditable", !wordContainer.isContentEditable);
+}
+
+function toggleURLButton(urlBox, urlContainer, urlEditButton, data, i, j) {
+    if (urlContainer.isContentEditable === false) {
+        // enter edit mode, generate 'Save' button
+        urlBox.classList.add("entryBoxEditMode");
+        urlEditButton.innerHTML = "Save";
+    } else {
+        // exit edit mode, save changes
+        // if entry is an empty string, restore entry box to original word
+        if (urlContainer.innerText.trim() === "") {
+            urlContainer.innerText = data.wordBank[i].urls[j];
+        }
+        // if entry is a non-empty string, set the entry to that string
+        else {
+            urlContainer.innerText = urlContainer.innerText.trim();
+            data.wordBank[i].urls[j] = urlContainer.innerText.trim();
+            chrome.storage.sync.set({"wordBank": data.wordBank});
+        }
+
+        urlEditButton.innerHTML = "Edit";
+        urlBox.classList.remove("entryBoxEditMode");
+    }
+
+    urlContainer.setAttribute("contenteditable", !urlContainer.isContentEditable);
 }
 
 chrome.storage.sync.get("wordBank", (data) => {
@@ -69,33 +93,33 @@ chrome.storage.sync.get("wordBank", (data) => {
            a 'wordContainer' is the span displaying the word */
         let entryBox = document.createElement("div");
         let wordContainer = document.createElement("span");
-        let editButton = document.createElement("button");
+        let wordEditButton = document.createElement("button");
 
-        // add classes to 'entryBox' and 'editButton'
+        // add classes to 'entryBox' and 'wordEditButton'
         entryBox.classList.add("entryBox");
-        editButton.classList.add("editButton");
+        wordEditButton.classList.add("editButton");
 
         // init attribute 'contenteditable' to span element
         wordContainer.setAttribute("contenteditable", false);
         wordContainer.innerText = data.wordBank[i].text;
-        editButton.innerHTML = "Edit";
+        wordEditButton.innerHTML = "Edit";
 
-        // make 'editButton' and 'wordContainer' children of 'entryBox'
-        entryBox.appendChild(editButton);
+        // make 'wordEditButton' and 'wordContainer' children of 'entryBox'
+        entryBox.appendChild(wordEditButton);
         entryBox.appendChild(wordContainer);
         wordsDiv.appendChild(entryBox);
 
         // save changes and exit edit mode with 'Enter'
         wordContainer.addEventListener("keydown", (event) => {
             if (event.code === "Enter") {
-                toggleButton(entryBox, wordContainer, editButton, data, i);
+                toggleWordButton(entryBox, wordContainer, wordEditButton, data, i);
             }
         });
 
         // toggle edit/save button on click
-        editButton.addEventListener("click", (event) => {
-            editButton.classList.add("beingEdited")
-            toggleButton(entryBox, wordContainer, editButton, data, i);
+        wordEditButton.addEventListener("click", (event) => {
+            wordEditButton.classList.add("beingEdited");
+            toggleWordButton(entryBox, wordContainer, wordEditButton, data, i);
 
             // prevent 'entryBox' parent click event from firing
             event.stopPropagation();
@@ -109,6 +133,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     // init 'dropdown' that contains every 'urlBox'
                     let dropdown = document.createElement("div");
                     dropdown.setAttribute("id", `dropdown${i}`);
+                    entryBox.insertAdjacentElement("afterend", dropdown);
     
                     for (let j = 0; j < data.wordBank[i].urls.length; j++) {
                         let wordUrl = data.wordBank[i].urls[j];
@@ -128,6 +153,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                         // init attribute 'contenteditable' to span element
                         urlContainer.setAttribute("contenteditable", false);
                         urlContainer.innerText = wordUrl;
+                        urlEditButton.innerHTML = "Edit";
     
                         // make 'editButton' and 'wordContainer' children of 'entryBox'
                         urlBox.appendChild(urlEditButton);
@@ -136,15 +162,31 @@ chrome.storage.sync.get("wordBank", (data) => {
     
                         // click handler: tell background script to open hyperlink
                         urlBox.addEventListener("click", () => {
-                            chrome.runtime.sendMessage({
-                                msg: "new tab",
-                                url: wordUrl
-                            });
+                            // only open URL if not in URL edit mode
+                            if (urlContainer.isContentEditable === false) {
+                                chrome.runtime.sendMessage({
+                                    msg: "new tab",
+                                    url: wordUrl
+                                });
+                            }
+                        });
+
+                        // save changes and exit edit mode with 'Enter'
+                        urlContainer.addEventListener("keydown", (event) => {
+                            if (event.code === "Enter") {
+                                toggleURLButton(urlBox, urlContainer, urlEditButton, data, i, j);
+                            }
+                        });
+
+                        // toggle edit/save button on click
+                        urlEditButton.addEventListener("click", (event) => {
+                            urlEditButton.classList.add("beingEdited");
+                            toggleURLButton(urlBox, urlContainer, urlEditButton, data, i, j);
+    
+                            // prevent 'urlBox' parent click event from firing
+                            event.stopPropagation();
                         });
                     }
-    
-                    entryBox.insertAdjacentElement("afterend", dropdown);
-    
                 } else {
                     // remove 'dropdown' associated with given 'entryBox'
                     document.getElementById(`dropdown${i}`).remove();
