@@ -92,54 +92,6 @@ chrome.storage.sync.get("wordBank", (data) => {
             }
         });
 
-        // toggle URL drop-down menu on click
-        entryBox.addEventListener("click", () => {
-            if (entryBox.classList.toggle("url-mode-on")) {
-                // init 'dropdown' that contains every 'urlBox'
-                let dropdown = document.createElement("div");
-                dropdown.setAttribute("id", `dropdown${i}`);
-
-                for (let j = 0; j < data.wordBank[i].urls.length; j++) {
-                    let wordUrl = data.wordBank[i].urls[j];
-
-                    /* init a div-span-button set for given URL
-                    Note: a urlBox is the parent div for each entry;
-                    a urlContainer is the span displaying the URL */
-                    let urlBox = document.createElement("div");
-                    let urlContainer = document.createElement("span");
-                    let urlEditButton = document.createElement("button");
-
-                    // add classes to 'urlBox' and 'urlEditButton'
-                    urlBox.classList.add("entryBox");
-                    urlContainer.classList.add("urlContainer");
-                    urlEditButton.classList.add("editButton");
-
-                    // init attribute 'contenteditable' to span element
-                    urlContainer.setAttribute("contenteditable", false);
-                    urlContainer.innerText = wordUrl;
-
-                    // make 'editButton' and 'wordContainer' children of 'entryBox'
-                    urlBox.appendChild(urlEditButton);
-                    urlBox.appendChild(urlContainer);
-                    dropdown.appendChild(urlBox);
-
-                    // click handler: tell background script to open hyperlink
-                    urlBox.addEventListener("click", () => {
-                        chrome.runtime.sendMessage({
-                            msg: "new tab",
-                            url: wordUrl
-                        });
-                    });
-                }
-
-                entryBox.insertAdjacentElement("afterend", dropdown);
-
-            } else {
-                // remove 'dropdown' associated with given 'entryBox'
-                document.getElementById(`dropdown${i}`).remove();
-            }
-        });
-
         // toggle edit/save button on click
         editButton.addEventListener("click", (event) => {
             editButton.classList.add("beingEdited")
@@ -147,6 +99,57 @@ chrome.storage.sync.get("wordBank", (data) => {
 
             // prevent 'entryBox' parent click event from firing
             event.stopPropagation();
+        });
+
+        // toggle URL drop-down menu on click
+        entryBox.addEventListener("click", () => {
+            // only toggle dropdown if not in word edit mode 
+            if (wordContainer.isContentEditable === false) {
+                if (entryBox.classList.toggle("url-mode-on")) {
+                    // init 'dropdown' that contains every 'urlBox'
+                    let dropdown = document.createElement("div");
+                    dropdown.setAttribute("id", `dropdown${i}`);
+    
+                    for (let j = 0; j < data.wordBank[i].urls.length; j++) {
+                        let wordUrl = data.wordBank[i].urls[j];
+    
+                        /* init a div-span-button set for given URL
+                        Note: a urlBox is the parent div for each entry;
+                        a urlContainer is the span displaying the URL */
+                        let urlBox = document.createElement("div");
+                        let urlContainer = document.createElement("span");
+                        let urlEditButton = document.createElement("button");
+    
+                        // add classes to 'urlBox' and 'urlEditButton'
+                        urlBox.classList.add("entryBox");
+                        urlContainer.classList.add("urlContainer");
+                        urlEditButton.classList.add("editButton");
+    
+                        // init attribute 'contenteditable' to span element
+                        urlContainer.setAttribute("contenteditable", false);
+                        urlContainer.innerText = wordUrl;
+    
+                        // make 'editButton' and 'wordContainer' children of 'entryBox'
+                        urlBox.appendChild(urlEditButton);
+                        urlBox.appendChild(urlContainer);
+                        dropdown.appendChild(urlBox);
+    
+                        // click handler: tell background script to open hyperlink
+                        urlBox.addEventListener("click", () => {
+                            chrome.runtime.sendMessage({
+                                msg: "new tab",
+                                url: wordUrl
+                            });
+                        });
+                    }
+    
+                    entryBox.insertAdjacentElement("afterend", dropdown);
+    
+                } else {
+                    // remove 'dropdown' associated with given 'entryBox'
+                    document.getElementById(`dropdown${i}`).remove();
+                }
+            }
         });
     }
 
