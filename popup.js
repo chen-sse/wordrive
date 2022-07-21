@@ -70,7 +70,6 @@ chrome.storage.sync.get("wordBank", (data) => {
         let entryBox = document.createElement("div");
         let wordContainer = document.createElement("span");
         let editButton = document.createElement("button");
-        let wordUrl = data.wordBank[i].url;
 
         // add classes to 'entryBox' and 'editButton'
         entryBox.classList.add("entryBox");
@@ -86,20 +85,6 @@ chrome.storage.sync.get("wordBank", (data) => {
         entryBox.appendChild(wordContainer);
         wordsDiv.appendChild(entryBox);
 
-        // click handler: tell background script to open hyperlink
-        wordContainer.addEventListener("click", (event) => {
-            // if not in edit mode
-            if (wordContainer.isContentEditable === false) {
-                chrome.runtime.sendMessage({
-                    msg: "new tab",
-                    url: wordUrl
-                });
-            }
-
-            // prevent 'entryBox' parent click event from firing
-            event.stopPropagation();
-        });
-
         // save changes and exit edit mode with 'Enter'
         wordContainer.addEventListener("keydown", (event) => {
             if (event.code === "Enter") {
@@ -114,26 +99,38 @@ chrome.storage.sync.get("wordBank", (data) => {
                 let dropdown = document.createElement("div");
                 dropdown.setAttribute("id", `dropdown${i}`);
 
-                /* init a div-span-button set for given URL
-                Note: a urlBox is the parent div for each entry;
-                a urlContainer is the span displaying the URL */
-                let urlBox = document.createElement("div");
-                let urlContainer = document.createElement("span");
-                let urlEditButton = document.createElement("button");
+                for (let j = 0; j < data.wordBank[i].urls.length; j++) {
+                    let wordUrl = data.wordBank[i].urls[j];
 
-                // add classes to 'urlBox' and 'urlEditButton'
-                urlBox.classList.add("entryBox");
-                urlContainer.classList.add("urlContainer");
-                urlEditButton.classList.add("editButton");
+                    /* init a div-span-button set for given URL
+                    Note: a urlBox is the parent div for each entry;
+                    a urlContainer is the span displaying the URL */
+                    let urlBox = document.createElement("div");
+                    let urlContainer = document.createElement("span");
+                    let urlEditButton = document.createElement("button");
 
-                // init attribute 'contenteditable' to span element
-                urlContainer.setAttribute("contenteditable", false);
-                urlContainer.innerText = data.wordBank[i].url;
+                    // add classes to 'urlBox' and 'urlEditButton'
+                    urlBox.classList.add("entryBox");
+                    urlContainer.classList.add("urlContainer");
+                    urlEditButton.classList.add("editButton");
 
-                // make 'editButton' and 'wordContainer' children of 'entryBox'
-                urlBox.appendChild(urlEditButton);
-                urlBox.appendChild(urlContainer);
-                dropdown.appendChild(urlBox);
+                    // init attribute 'contenteditable' to span element
+                    urlContainer.setAttribute("contenteditable", false);
+                    urlContainer.innerText = wordUrl;
+
+                    // make 'editButton' and 'wordContainer' children of 'entryBox'
+                    urlBox.appendChild(urlEditButton);
+                    urlBox.appendChild(urlContainer);
+                    dropdown.appendChild(urlBox);
+
+                    // click handler: tell background script to open hyperlink
+                    urlBox.addEventListener("click", () => {
+                        chrome.runtime.sendMessage({
+                            msg: "new tab",
+                            url: wordUrl
+                        });
+                    });
+                }
 
                 entryBox.insertAdjacentElement("afterend", dropdown);
 
@@ -189,7 +186,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                 if (wordInput.value.trim() !== "") {
                     data.wordBank.push({
                         text: wordInput.value.trim(),
-                        url: urlInput.value.trim()
+                        urls: [urlInput.value.trim()]
                     });
                     chrome.storage.sync.set({"wordBank": data.wordBank});
                 }

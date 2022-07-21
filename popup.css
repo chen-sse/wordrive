@@ -87,6 +87,7 @@ button:hover {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    flex: none;
 }
 
 .entryBox:hover, #wordAdder:hover {
