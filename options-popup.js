@@ -46,8 +46,14 @@ function exportData() {
         for (let i = 0; i < wordBank.length; i++) {
             // concatenate builder string
             let word = wordBank[i].text;
-            let wordUrl = wordBank[i].url;
-            builder = builder + `WORD ${i + 1}: ${word} | URL: ${wordUrl}` + "\n\n";
+            let theUrls = wordBank[i].urls;
+            console.log(`${theUrls.length}`);
+
+            builder += `WORD ${i + 1}: ${word}\nURLs:\n`;
+            for (let j = 0; j < theUrls.length; j++) {
+                builder += `${j + 1}) ${theUrls[j]}\n`;
+            }
+            builder += "\n";
         }
         // instantiate blob w/ word bank and create url for it
         let listBlob = new Blob([builder], {type: "text/plain"});
