@@ -61,23 +61,35 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 // message listener: listens to messages from content scripts
-chrome.runtime.onMessage.addListener(async (request) => {
+chrome.runtime.onMessage.addListener( (message, sendResponse) => {
     // export button click handler: download .txt file of word list
-    if (request.msg === "download") {
+    if (message.msg === "export to txt") {
         chrome.downloads.download({
             filename: "wordlist.txt",
-            url: request.url
+            url: message.fileUrl
         });
     }
     // word url click handler: open hyperlink to original word URL
-    else if (request.msg === "new tab") {
+    else if (message.msg === "new tab") {
         // retrieve user preference
         chrome.storage.sync.get("activeTabChecked", (options) => {
             chrome.tabs.create({
-                url: request.url,
+                url: message.url,
                 active: (options.activeTabChecked) ? true : false
             });
         });
     }
-    
+
+    else if (message.msg === "pdf ready") {
+        chrome.downloads.download({
+            filename: "wordlist.pdf",
+            url: message.fileUrl
+        }).then((id) => {
+            // notify options script that pdf download is done
+            chrome.runtime.sendMessage({
+                msg: "pdf download done",
+                downloadId: id
+            });
+        });
+    }
 });

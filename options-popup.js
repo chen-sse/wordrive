@@ -6,6 +6,7 @@ let lowercaseCheckbox = document.getElementById("lowercaseCheckbox");
 let clearAll = document.getElementById("clearAll");
 let exportButton = document.getElementById("exportButton");
 let home = document.getElementById("home");
+let exportToPDF = document.getElementById("exportToPDF");
 
 // hide hover images 'homeHover' and 'optionsHover'
 let homeHover = document.getElementById("homeHover");
@@ -45,23 +46,17 @@ function exportData() {
         for (let i = 0; i < wordBank.length; i++) {
             // concatenate builder string
             let word = wordBank[i].text;
-            let theUrls = wordBank[i].urls;
-            console.log(`${theUrls.length}`);
-
-            builder += `WORD ${i + 1}: ${word}\nURLs:\n`;
-            for (let j = 0; j < theUrls.length; j++) {
-                builder += `${j + 1}) ${theUrls[j]}\n`;
-            }
-            builder += "\n";
+            let wordUrl = wordBank[i].url;
+            builder = builder + `WORD ${i + 1}: ${word} | URL: ${wordUrl}` + "\n\n";
         }
         // instantiate blob w/ word bank and create url for it
         let listBlob = new Blob([builder], {type: "text/plain"});
-        let fileUrl = URL.createObjectURL(listBlob);
+        let txtUrl = URL.createObjectURL(listBlob);
 
         // send message to service worker to download file
         chrome.runtime.sendMessage({
-            msg: "download",
-            url: fileUrl
+            msg: "export to txt",
+            fileUrl: txtUrl,
         });
     })
 }
@@ -96,6 +91,29 @@ async function fireAlert() {
         document.location.reload();
     }
 }
+
+exportToPDF.addEventListener("click", () => {
+    let pdfExportHandler = document.createElement("script");
+    pdfExportHandler.classList.add("pdf-script");
+    pdfExportHandler.setAttribute("src", "vendor/pdf-export-handler.js");
+    document.getElementsByTagName("body")[0].appendChild(pdfExportHandler);
+    chrome.runtime.sendMessage({
+        msg: "export to pdf"
+    });
+});
+
+// message listener: listens to messages from background script
+chrome.runtime.onMessage.addListener((message) => {
+    /* pdf download handler: delete all pdf-export-handler scripts from
+    options-popup.html
+     */
+    if (message.msg === "pdf download done") {
+        let scriptArr = document.getElementsByClassName("pdf-script");
+        for (let element of scriptArr) {
+            element.remove();
+        }
+    }
+});
 
 // restore saved user preferences
 function restoreOptions() {
