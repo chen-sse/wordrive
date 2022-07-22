@@ -101,7 +101,7 @@ async function fireAlert() {
 exportToPDF.addEventListener("click", () => {
     let pdfExportHandler = document.createElement("script");
     pdfExportHandler.classList.add("pdf-script");
-    pdfExportHandler.setAttribute("src", "vendor/pdf-export-handler.js");
+    pdfExportHandler.setAttribute("src", "vendor/pdf-kit/pdf-export-handler.js");
     document.getElementsByTagName("body")[0].appendChild(pdfExportHandler);
     chrome.runtime.sendMessage({
         msg: "export to pdf"
