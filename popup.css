@@ -68,6 +68,11 @@ button:hover {
     overflow-y: auto;
 }
 
+.container {
+    display: block;
+    overflow: hidden;
+}
+
 .editButton {
     float: right;
     visibility: hidden;

@@ -36,54 +36,35 @@ optionsDiv.addEventListener("mouseout", () => {
     optionsDiv.classList.remove("footerButtonHover");
 });
 
-function toggleWordButton(entryBox, wordContainer, wordEditButton, data, i) {
-    if (wordContainer.isContentEditable === false) {
+function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
+    if (container.isContentEditable === false) {
         // enter edit mode, generate 'Save' button
-        entryBox.classList.add("entryBoxEditMode");
-        wordEditButton.innerHTML = "Save";
+        box.classList.add("entryBoxEditMode");
+        button.innerHTML = "Save";
     } else {
         // exit edit mode, save changes
-        // if entry is an empty string, restore entry box to original word
-        if (wordContainer.innerText.trim() === "") {
-            wordContainer.innerText = data.wordBank[i].text;
+        // if entry is an empty string, restore entry box to original word/URL
+        if (container.innerText.trim() === "") {
+            container.innerText = (type === "word")
+                                ? data.wordBank[wordIndex].text
+                                : data.wordBank[wordIndex].urls[urlIndex];
         }
         // if entry is a non-empty string, set the entry to that string
         else {
-            wordContainer.innerText = wordContainer.innerText.trim();
-            data.wordBank[i].text = wordContainer.innerText.trim();
+            container.innerText = container.innerText.trim();
+            if (type === "word") {
+                data.wordBank[wordIndex].text = container.innerText.trim();
+            } else {
+                data.wordBank[wordIndex].urls[urlIndex] = container.innerText.trim();
+            }
             chrome.storage.sync.set({"wordBank": data.wordBank});
         }
 
-        wordEditButton.innerHTML = "Edit";
-        entryBox.classList.remove("entryBoxEditMode");
+        button.innerHTML = "Edit";
+        box.classList.remove("entryBoxEditMode");
     }
 
-    wordContainer.setAttribute("contenteditable", !wordContainer.isContentEditable);
-}
-
-function toggleURLButton(urlBox, urlContainer, urlEditButton, data, i, j) {
-    if (urlContainer.isContentEditable === false) {
-        // enter edit mode, generate 'Save' button
-        urlBox.classList.add("entryBoxEditMode");
-        urlEditButton.innerHTML = "Save";
-    } else {
-        // exit edit mode, save changes
-        // if entry is an empty string, restore entry box to original word
-        if (urlContainer.innerText.trim() === "") {
-            urlContainer.innerText = data.wordBank[i].urls[j];
-        }
-        // if entry is a non-empty string, set the entry to that string
-        else {
-            urlContainer.innerText = urlContainer.innerText.trim();
-            data.wordBank[i].urls[j] = urlContainer.innerText.trim();
-            chrome.storage.sync.set({"wordBank": data.wordBank});
-        }
-
-        urlEditButton.innerHTML = "Edit";
-        urlBox.classList.remove("entryBoxEditMode");
-    }
-
-    urlContainer.setAttribute("contenteditable", !urlContainer.isContentEditable);
+    container.setAttribute("contenteditable", !container.isContentEditable);
 }
 
 chrome.storage.sync.get("wordBank", (data) => {
@@ -95,8 +76,9 @@ chrome.storage.sync.get("wordBank", (data) => {
         let wordContainer = document.createElement("span");
         let wordEditButton = document.createElement("button");
 
-        // add classes to 'entryBox' and 'wordEditButton'
+        // add classes to 'entryBox,' 'wordContainer,' and 'wordEditButton'
         entryBox.classList.add("entryBox");
+        wordContainer.classList.add("container");
         wordEditButton.classList.add("editButton");
 
         // init attribute 'contenteditable' to span element
@@ -112,14 +94,14 @@ chrome.storage.sync.get("wordBank", (data) => {
         // save changes and exit edit mode with 'Enter'
         wordContainer.addEventListener("keydown", (event) => {
             if (event.code === "Enter") {
-                toggleWordButton(entryBox, wordContainer, wordEditButton, data, i);
+                toggleButton(entryBox, wordContainer, wordEditButton, data, i, null, "word");
             }
         });
 
         // toggle edit/save button on click
         wordEditButton.addEventListener("click", (event) => {
             wordEditButton.classList.add("beingEdited");
-            toggleWordButton(entryBox, wordContainer, wordEditButton, data, i);
+            toggleButton(entryBox, wordContainer, wordEditButton, data, i, null, "word");
 
             // prevent 'entryBox' parent click event from firing
             event.stopPropagation();
@@ -145,9 +127,9 @@ chrome.storage.sync.get("wordBank", (data) => {
                         let urlContainer = document.createElement("span");
                         let urlEditButton = document.createElement("button");
     
-                        // add classes to 'urlBox' and 'urlEditButton'
+                        // add classes to 'urlBox,' 'urlContainer,' and 'urlEditButton'
                         urlBox.classList.add("entryBox");
-                        urlContainer.classList.add("urlContainer");
+                        urlContainer.classList.add("container");
                         urlEditButton.classList.add("editButton");
     
                         // init attribute 'contenteditable' to span element
@@ -174,14 +156,14 @@ chrome.storage.sync.get("wordBank", (data) => {
                         // save changes and exit edit mode with 'Enter'
                         urlContainer.addEventListener("keydown", (event) => {
                             if (event.code === "Enter") {
-                                toggleURLButton(urlBox, urlContainer, urlEditButton, data, i, j);
+                                toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "url");
                             }
                         });
 
                         // toggle edit/save button on click
                         urlEditButton.addEventListener("click", (event) => {
                             urlEditButton.classList.add("beingEdited");
-                            toggleURLButton(urlBox, urlContainer, urlEditButton, data, i, j);
+                            toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "url");
     
                             // prevent 'urlBox' parent click event from firing
                             event.stopPropagation();
