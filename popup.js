@@ -64,7 +64,11 @@ function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
         box.classList.remove("entryBoxEditMode");
     }
 
+    // toggle 'contenteditable' permission
     container.setAttribute("contenteditable", !container.isContentEditable);
+
+    // return the contents of input box
+    return container.innerText;
 }
 
 chrome.storage.sync.get("wordBank", (data) => {
@@ -156,14 +160,14 @@ chrome.storage.sync.get("wordBank", (data) => {
                         // save changes and exit edit mode with 'Enter'
                         urlContainer.addEventListener("keydown", (event) => {
                             if (event.code === "Enter") {
-                                toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "url");
+                                wordUrl = toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "url");
                             }
                         });
 
                         // toggle edit/save button on click
                         urlEditButton.addEventListener("click", (event) => {
                             urlEditButton.classList.add("beingEdited");
-                            toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "url");
+                            wordUrl = toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "url");
     
                             // prevent 'urlBox' parent click event from firing
                             event.stopPropagation();
