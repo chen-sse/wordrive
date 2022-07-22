@@ -53,9 +53,9 @@ function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
         else {
             container.innerText = container.innerText.trim();
             if (type === "word") {
-                data.wordBank[wordIndex].text = container.innerText.trim();
+                data.wordBank[wordIndex].text = container.innerText;
             } else {
-                data.wordBank[wordIndex].urls[urlIndex] = container.innerText.trim();
+                data.wordBank[wordIndex].urls[urlIndex] = container.innerText;
             }
             chrome.storage.sync.set({"wordBank": data.wordBank});
         }
