@@ -43326,37 +43326,97 @@ module.exports = function whichTypedArray(value) {
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"available-typed-arrays":83,"call-bind/callBound":98,"es-abstract/helpers/getOwnPropertyDescriptor":140,"for-each":145,"has-tostringtag/shams":154,"is-typed-array":188}],238:[function(require,module,exports){
-// require dependencies
-const PDFDocument = require('pdfkit');
-const blobStream = require('blob-stream');
-let pdfURL;
-// create a document the same way as above
-const doc = new PDFDocument();
+    // get word bank entries
+    chrome.storage.sync.get("wordBank", async ({wordBank}) => {
+        // require dependencies
+        const PDFDocument = require('pdfkit');
+        const blobStream = require('blob-stream')
+        let pdfURL;
 
-// pipe the document to a blob
-const stream = doc.pipe(blobStream());
+        // create a document
+        const doc = new PDFDocument();
 
-// add your content to the document here, as usual
-doc.fontSize(8);
-doc.text("what");
+        // pipe the document to a blob
+        const stream = doc.pipe(blobStream());
 
-//FIND ME HERE
+        //register pre-loaded fonts
+        const rubik = await fetch('/fonts/Rubik-Medium.ttf');
+        const arrayBuffer1 = await rubik.arrayBuffer();
 
-// get a blob when you're done
-doc.end();
+        const ssp400 = await fetch('/fonts/SourceSansPro-Regular.ttf');
+        const arrayBuffer2 = await ssp400.arrayBuffer();
 
-stream.on('finish', function () {
-    // get a blob you can do whatever you like with
-    const blob = stream.toBlob('application/pdf');
+        const ssp600 = await fetch('/fonts/SourceSansPro-SemiBold.ttf');
+        const arrayBuffer3 = await ssp600.arrayBuffer();
 
-    // or get a blob URL for display in the browser
-    pdfURL = URL.createObjectURL(blob);
+        doc.registerFont('Rubik', arrayBuffer1);
+        doc.registerFont('Source Sans Pro 400', arrayBuffer2);
+        doc.registerFont('Source Sans Pro 600', arrayBuffer3);
 
-    chrome.runtime.sendMessage({
-        msg: "pdf ready",
-        fileUrl: pdfURL
+
+        // write title
+        doc.fontSize(30)
+            .font('Rubik')
+            .text("Your Wordrive:");
+        doc.fontSize(15)
+            .moveDown();
+
+        // write entries
+        // edge case: word bank is empty
+        if (wordBank.length<1) {
+            doc.text();
+        }
+        
+        if (wordBank.length > 0) {
+            wordBank.forEach((element, index) => {
+                // write word
+                doc.fontSize(15)
+                    .fillColor('#800080')
+                    .font('Source Sans Pro 600')
+                    .text(`${element.text}`);
+
+                // write URLs for each word as a list
+                /*doc.fontSize(10)
+                    .fillColor('#555555');
+
+                doc.list(element.urls, {
+                    align: 'left',
+                    listType: 'bullet',
+                    bulletRadius: 2,
+                });*/
+
+                // write URLs for each word (without list)
+                for (let i = 0; i<element.urls.length; i++){
+                    doc.fontSize(8)
+                        .font('Source Sans Pro 400')
+                        .fillColor('#555555')
+                        .text(`${element.urls[i]}`,{
+                        });
+                }
+
+                // move down one line for next word
+                doc.fontSize(15)
+                    .moveDown();
+            });
+        }
+
+        // get a blob when you're done
+        doc.end();
+
+        stream.on('finish', function () {
+            // get a blob you can do whatever you like with
+            const blob = stream.toBlob('application/pdf');
+
+            // or get a blob URL for display in the browser
+            pdfURL = URL.createObjectURL(blob);
+
+            chrome.runtime.sendMessage({
+                msg: "pdf ready",
+                fileUrl: pdfURL
+            });
+        });
     });
-});
+
 },{"blob-stream":85,"pdfkit":205}],239:[function(require,module,exports){
 
 },{}],240:[function(require,module,exports){
