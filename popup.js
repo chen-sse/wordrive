@@ -42,15 +42,19 @@ function addEntries(wordInput, urlInput, event) {
     let newUrl = true;
     let duplicateIndex = null;
 
+    // trim word and URL inputs
+    wordInput = wordInput.trim();
+    urlInput = urlInput.trim();
+
     // check for duplicate words/URLs
     chrome.storage.sync.get("wordBank", (data) => {
         for (let i = 0; i < data.wordBank.length; i++) {
-            if (wordInput.trim() === data.wordBank[i].text) {
+            if (wordInput === data.wordBank[i].text) {
                 newWord = false;
                 duplicateIndex = i;
 
                 for (let j = 0; j < data.wordBank[i].urls.length; j++) {
-                    if (urlInput.trim() === data.wordBank[i].urls[j]) {
+                    if (urlInput === data.wordBank[i].urls[j]) {
                         newUrl = false;
                     }
                 }
@@ -61,12 +65,12 @@ function addEntries(wordInput, urlInput, event) {
         if (wordInput.trim() !== "") {
             if (newWord) {
                 data.wordBank.push({
-                    text: wordInput.trim(),
-                    urls: [urlInput.trim()]
+                    text: wordInput,
+                    urls: [urlInput]
                 });
             } else {
                 if (newUrl) {
-                    data.wordBank[duplicateIndex].urls.push(urlInput.trim());
+                    data.wordBank[duplicateIndex].urls.push(urlInput);
                 }
             }
 
