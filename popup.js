@@ -259,6 +259,98 @@ chrome.storage.sync.get("wordBank", (data) => {
                 });
             });
 
+            // save changes and exit add mode with 'Enter'
+            wordInput.addEventListener("keydown", (event) => {
+                if (event.code === "Enter") {
+                    let newWord = true;
+                    let newUrl = true;
+                    let duplicateIndex = null;
+
+                    // check for duplicate words/URLs
+                    chrome.storage.sync.get("wordBank", (data) => {
+                        for (let i = 0; i < data.wordBank.length; i++) {
+                            if (wordInput.value.trim() === data.wordBank[i].text) {
+                                newWord = false;
+                                duplicateIndex = i;
+
+                                for (let j = 0; j < data.wordBank[i].urls.length; j++) {
+                                    if (urlInput.value.trim() === data.wordBank[i].urls[j]) {
+                                        newUrl = false;
+                                    }
+                                }
+                            }
+                        }
+
+                        // save word and/or URL, if not duplicate
+                        if (wordInput.value.trim() !== "") {
+                            if (newWord) {
+                                data.wordBank.push({
+                                    text: wordInput.value.trim(),
+                                    urls: [urlInput.value.trim()]
+                                });
+                            } else {
+                                if (newUrl) {
+                                    data.wordBank[duplicateIndex].urls.push(urlInput.value.trim());
+                                }
+                            }
+
+                            chrome.storage.sync.set({"wordBank": data.wordBank});
+                        }
+                        
+                        // refresh popup
+                        document.location.reload();
+
+                        // turn off edit mode
+                        addMode = false;
+                    });
+                }
+            });
+            urlInput.addEventListener("keydown", (event) => {
+                if (event.code === "Enter") {
+                    let newWord = true;
+                    let newUrl = true;
+                    let duplicateIndex = null;
+
+                    // check for duplicate words/URLs
+                    chrome.storage.sync.get("wordBank", (data) => {
+                        for (let i = 0; i < data.wordBank.length; i++) {
+                            if (wordInput.value.trim() === data.wordBank[i].text) {
+                                newWord = false;
+                                duplicateIndex = i;
+
+                                for (let j = 0; j < data.wordBank[i].urls.length; j++) {
+                                    if (urlInput.value.trim() === data.wordBank[i].urls[j]) {
+                                        newUrl = false;
+                                    }
+                                }
+                            }
+                        }
+
+                        // save word and/or URL, if not duplicate
+                        if (wordInput.value.trim() !== "") {
+                            if (newWord) {
+                                data.wordBank.push({
+                                    text: wordInput.value.trim(),
+                                    urls: [urlInput.value.trim()]
+                                });
+                            } else {
+                                if (newUrl) {
+                                    data.wordBank[duplicateIndex].urls.push(urlInput.value.trim());
+                                }
+                            }
+
+                            chrome.storage.sync.set({"wordBank": data.wordBank});
+                        }
+                        
+                        // refresh popup
+                        document.location.reload();
+
+                        // turn off edit mode
+                        addMode = false;
+                    });
+                }
+            });
+
             // turn on edit mode
             addMode = true;
         }
