@@ -213,23 +213,50 @@ chrome.storage.sync.get("wordBank", (data) => {
             urlLabel.setAttribute("for", "url");
 
             save.addEventListener("click", (event) => {
-                // save new word and url
-                if (wordInput.value.trim() !== "") {
-                    data.wordBank.push({
-                        text: wordInput.value.trim(),
-                        urls: [urlInput.value.trim()]
-                    });
-                    chrome.storage.sync.set({"wordBank": data.wordBank});
-                }
+                let newWord = true;
+                let newUrl = true;
+                let duplicateIndex = null;
 
-                // refresh popup
-                document.location.reload();
+                // check for duplicate words/URLs
+                chrome.storage.sync.get("wordBank", (data) => {
+                    for (let i = 0; i < data.wordBank.length; i++) {
+                        if (wordInput.value.trim() === data.wordBank[i].text) {
+                            newWord = false;
+                            duplicateIndex = i;
 
-                // turn off edit mode
-                addMode = false;
+                            for (let j = 0; j < data.wordBank[i].urls.length; j++) {
+                                if (urlInput.value.trim() === data.wordBank[i].urls[j]) {
+                                    newUrl = false;
+                                }
+                            }
+                        }
+                    }
 
-                // prevent event bubbling up to parent element
-                event.stopPropagation();
+                    // save word and/or URL, if not duplicate
+                    if (wordInput.value.trim() !== "") {
+                        if (newWord) {
+                            data.wordBank.push({
+                                text: wordInput.value.trim(),
+                                urls: [urlInput.value.trim()]
+                            });
+                        } else {
+                            if (newUrl) {
+                                data.wordBank[duplicateIndex].urls.push(urlInput.value.trim());
+                            }
+                        }
+
+                        chrome.storage.sync.set({"wordBank": data.wordBank});
+                    }
+                    
+                    // refresh popup
+                    document.location.reload();
+
+                    // turn off edit mode
+                    addMode = false;
+
+                    // prevent event bubbling up to parent element
+                    event.stopPropagation();
+                });
             });
 
             // turn on edit mode
