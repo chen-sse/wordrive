@@ -92,6 +92,9 @@ function addEntries(wordInput, urlInput, event) {
 
 // toggle edit/save button and save edits to Wordrive
 function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
+    // trim container text
+    container.innerText = container.innerText.trim();
+
     if (container.isContentEditable === false) {
         // enter edit mode, generate 'Save' button
         box.classList.add("entryBoxEditMode");
@@ -99,14 +102,13 @@ function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
     } else {
         // exit edit mode, save changes
         // if entry is an empty string, restore entry box to original word/URL
-        if (container.innerText.trim() === "") {
+        if (container.innerText === "") {
             container.innerText = (type === "word")
                                 ? data.wordBank[wordIndex].text
                                 : data.wordBank[wordIndex].urls[urlIndex];
         }
         // if entry is a non-empty string, set the entry to that string
         else {
-            container.innerText = container.innerText.trim();
             if (type === "word") {
                 data.wordBank[wordIndex].text = container.innerText;
             } else {
