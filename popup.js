@@ -53,20 +53,27 @@ function addEntries(wordInput, urlInput, event) {
                 newWord = false;
                 duplicateIndex = i;
 
-                for (let j = 0; j < data.wordBank[i].urls.length; j++) {
-                    if (urlInput === data.wordBank[i].urls[j]) {
-                        newUrl = false;
+                // if empty URL, don't add (set 'newUrl = false')
+                if (urlInput !== "") {
+                    for (let j = 0; j < data.wordBank[i].urls.length; j++) {
+                        if (urlInput === data.wordBank[i].urls[j]) {
+                            newUrl = false;
+                        }
                     }
+                } else {
+                    newUrl = false;
                 }
             }
         }
 
-        // save word and/or URL, if not duplicate
+        // save word and/or URL, if not duplicate and not empty
         if (wordInput !== "") {
             if (newWord) {
                 data.wordBank.push({
                     text: wordInput,
-                    urls: [urlInput]
+                    urls: (urlInput === "")
+                        ? []
+                        : [urlInput]
                 });
             } else {
                 if (newUrl) {
