@@ -167,3 +167,7 @@ nav {
     height: 199px;
     margin-bottom: 20px;
 }
+
+#word, #url {
+    display: block;
+}
