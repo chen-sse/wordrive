@@ -36,6 +36,57 @@ optionsDiv.addEventListener("mouseout", () => {
     optionsDiv.classList.remove("footerButtonHover");
 });
 
+// add word and/or URL to Wordrive (through manual word adder)
+function addEntries(wordInput, urlInput, event) {
+    let newWord = true;
+    let newUrl = true;
+    let duplicateIndex = null;
+
+    // check for duplicate words/URLs
+    chrome.storage.sync.get("wordBank", (data) => {
+        for (let i = 0; i < data.wordBank.length; i++) {
+            if (wordInput.trim() === data.wordBank[i].text) {
+                newWord = false;
+                duplicateIndex = i;
+
+                for (let j = 0; j < data.wordBank[i].urls.length; j++) {
+                    if (urlInput.trim() === data.wordBank[i].urls[j]) {
+                        newUrl = false;
+                    }
+                }
+            }
+        }
+
+        // save word and/or URL, if not duplicate
+        if (wordInput.trim() !== "") {
+            if (newWord) {
+                data.wordBank.push({
+                    text: wordInput.trim(),
+                    urls: [urlInput.trim()]
+                });
+            } else {
+                if (newUrl) {
+                    data.wordBank[duplicateIndex].urls.push(urlInput.trim());
+                }
+            }
+
+            chrome.storage.sync.set({"wordBank": data.wordBank});
+        }
+                    
+        // refresh popup
+        document.location.reload();
+
+        // turn off edit mode
+        addMode = false;
+
+        // prevent event bubbling up to parent element, if applicable
+        if (event !== null) {
+            event.stopPropagation();
+        }
+    });
+}
+
+// toggle edit/save button and save edits to Wordrive
 function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
     if (container.isContentEditable === false) {
         // enter edit mode, generate 'Save' button
@@ -213,141 +264,18 @@ chrome.storage.sync.get("wordBank", (data) => {
             urlLabel.setAttribute("for", "url");
 
             save.addEventListener("click", (event) => {
-                let newWord = true;
-                let newUrl = true;
-                let duplicateIndex = null;
-
-                // check for duplicate words/URLs
-                chrome.storage.sync.get("wordBank", (data) => {
-                    for (let i = 0; i < data.wordBank.length; i++) {
-                        if (wordInput.value.trim() === data.wordBank[i].text) {
-                            newWord = false;
-                            duplicateIndex = i;
-
-                            for (let j = 0; j < data.wordBank[i].urls.length; j++) {
-                                if (urlInput.value.trim() === data.wordBank[i].urls[j]) {
-                                    newUrl = false;
-                                }
-                            }
-                        }
-                    }
-
-                    // save word and/or URL, if not duplicate
-                    if (wordInput.value.trim() !== "") {
-                        if (newWord) {
-                            data.wordBank.push({
-                                text: wordInput.value.trim(),
-                                urls: [urlInput.value.trim()]
-                            });
-                        } else {
-                            if (newUrl) {
-                                data.wordBank[duplicateIndex].urls.push(urlInput.value.trim());
-                            }
-                        }
-
-                        chrome.storage.sync.set({"wordBank": data.wordBank});
-                    }
-                    
-                    // refresh popup
-                    document.location.reload();
-
-                    // turn off edit mode
-                    addMode = false;
-
-                    // prevent event bubbling up to parent element
-                    event.stopPropagation();
-                });
+                addEntries(wordInput.value, urlInput.value, event);
             });
 
             // save changes and exit add mode with 'Enter'
             wordInput.addEventListener("keydown", (event) => {
                 if (event.code === "Enter") {
-                    let newWord = true;
-                    let newUrl = true;
-                    let duplicateIndex = null;
-
-                    // check for duplicate words/URLs
-                    chrome.storage.sync.get("wordBank", (data) => {
-                        for (let i = 0; i < data.wordBank.length; i++) {
-                            if (wordInput.value.trim() === data.wordBank[i].text) {
-                                newWord = false;
-                                duplicateIndex = i;
-
-                                for (let j = 0; j < data.wordBank[i].urls.length; j++) {
-                                    if (urlInput.value.trim() === data.wordBank[i].urls[j]) {
-                                        newUrl = false;
-                                    }
-                                }
-                            }
-                        }
-
-                        // save word and/or URL, if not duplicate
-                        if (wordInput.value.trim() !== "") {
-                            if (newWord) {
-                                data.wordBank.push({
-                                    text: wordInput.value.trim(),
-                                    urls: [urlInput.value.trim()]
-                                });
-                            } else {
-                                if (newUrl) {
-                                    data.wordBank[duplicateIndex].urls.push(urlInput.value.trim());
-                                }
-                            }
-
-                            chrome.storage.sync.set({"wordBank": data.wordBank});
-                        }
-                        
-                        // refresh popup
-                        document.location.reload();
-
-                        // turn off edit mode
-                        addMode = false;
-                    });
+                    addEntries(wordInput.value, urlInput.value, null);
                 }
             });
             urlInput.addEventListener("keydown", (event) => {
                 if (event.code === "Enter") {
-                    let newWord = true;
-                    let newUrl = true;
-                    let duplicateIndex = null;
-
-                    // check for duplicate words/URLs
-                    chrome.storage.sync.get("wordBank", (data) => {
-                        for (let i = 0; i < data.wordBank.length; i++) {
-                            if (wordInput.value.trim() === data.wordBank[i].text) {
-                                newWord = false;
-                                duplicateIndex = i;
-
-                                for (let j = 0; j < data.wordBank[i].urls.length; j++) {
-                                    if (urlInput.value.trim() === data.wordBank[i].urls[j]) {
-                                        newUrl = false;
-                                    }
-                                }
-                            }
-                        }
-
-                        // save word and/or URL, if not duplicate
-                        if (wordInput.value.trim() !== "") {
-                            if (newWord) {
-                                data.wordBank.push({
-                                    text: wordInput.value.trim(),
-                                    urls: [urlInput.value.trim()]
-                                });
-                            } else {
-                                if (newUrl) {
-                                    data.wordBank[duplicateIndex].urls.push(urlInput.value.trim());
-                                }
-                            }
-
-                            chrome.storage.sync.set({"wordBank": data.wordBank});
-                        }
-                        
-                        // refresh popup
-                        document.location.reload();
-
-                        // turn off edit mode
-                        addMode = false;
-                    });
+                    addEntries(wordInput.value, urlInput.value, null);
                 }
             });
 
