@@ -62,7 +62,7 @@ function addEntries(wordInput, urlInput, event) {
         }
 
         // save word and/or URL, if not duplicate
-        if (wordInput.trim() !== "") {
+        if (wordInput !== "") {
             if (newWord) {
                 data.wordBank.push({
                     text: wordInput,
