@@ -95,6 +95,13 @@ button:hover {
     flex: none;
 }
 
+.dropdown .entryBox {
+    background-color: initial;
+    border: 3px solid #CDB0EE;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
 .entryBox:hover, #wordAdder:hover {
     background-color: #E9CBFF
 }
@@ -127,6 +134,12 @@ button:hover {
 
 .entryBox:hover > button {
     visibility: visible;
+}
+
+.dropdown .entryBoxEditMode {
+    border: 3px solid #ff9a8e;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 #wordAdder {

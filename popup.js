@@ -183,6 +183,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     // init 'dropdown' that contains every 'urlBox'
                     let dropdown = document.createElement("div");
                     dropdown.setAttribute("id", `dropdown${i}`);
+                    dropdown.classList.add("dropdown");
                     entryBox.insertAdjacentElement("afterend", dropdown);
     
                     for (let j = 0; j < data.wordBank[i].urls.length; j++) {
