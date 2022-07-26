@@ -90,7 +90,7 @@ function addEntries(wordInput, urlInput, event) {
         // turn off edit mode
         addMode = false;
 
-        // prevent event bubbling up to parent element, if applicable
+        // prevent word adder from reloading ('wordAdder' parent click event), if applicable
         if (event !== null) {
             event.stopPropagation();
         }
@@ -166,12 +166,36 @@ chrome.storage.sync.get("wordBank", (data) => {
             }
         });
 
+        wordContainer.addEventListener("click", (event) => {
+            // only open URL if not in word edit mode
+            if (wordContainer.isContentEditable === false) {
+                // tokenize word entry
+                let searchTokens = data.wordBank[i].text.match(/\S+/g);
+
+                // construct dictionary URL
+                let dictionaryUrl = "https://www.merriam-webster.com/dictionary/";
+                for (let j = 0; j < searchTokens.length; j++) {
+                    dictionaryUrl += searchTokens[j];
+                    dictionaryUrl += "%20";
+                }
+
+                // tell background script to open dictionary URL
+                chrome.runtime.sendMessage({
+                    msg: "new tab",
+                    url: dictionaryUrl
+                });
+            }
+
+            // prevent URL drop-down menu from firing ('entryBox' parent click event)
+            event.stopPropagation();
+        });
+
         // toggle edit/save button on click
         wordEditButton.addEventListener("click", (event) => {
             wordEditButton.classList.add("beingEdited");
             toggleButton(entryBox, wordContainer, wordEditButton, data, i, null, "word");
 
-            // prevent 'entryBox' parent click event from firing
+            // prevent URL drop-down menu from firing ('entryBox' parent click event)
             event.stopPropagation();
         });
 
@@ -234,7 +258,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                             urlEditButton.classList.add("beingEdited");
                             wordUrl = toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "url");
     
-                            // prevent 'urlBox' parent click event from firing
+                            // prevent URL from opening ('urlBox' parent click event)
                             event.stopPropagation();
                         });
                     }
