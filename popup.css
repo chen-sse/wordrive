@@ -1,6 +1,6 @@
 html {
-    width: 230px;
-    height: 250px;
+    width: 300px;
+    height: 480px;
 }
 
 img {
@@ -22,16 +22,20 @@ img {
 }
 
 body {
-    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 500;
+    position: relative;
 }
 
-.header {
+#headerContainer {
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+#header {
     font-family: 'Rubik', sans-serif;
     font-weight: 500;
-    font-size: 23px;
-    padding-left: 3.5px;
-    margin-bottom: 20px;
-    margin-top: 10px;
+    font-size: 25px;
 }
 
 #plus {
@@ -63,7 +67,7 @@ button:hover {
 .flex-container {
     display: flex;
     flex-direction: column;
-    height: 160px;
+    height: 270px;
     overflow-wrap: break-word;
     overflow-y: auto;
 }
@@ -81,11 +85,10 @@ button:hover {
 }
 
 .entryBox {
-    font-size: medium;
+    font-size: 17px;
     border-radius: 5px;
     padding: 5px;
-    height: 20px;
-    font-size: 15px;
+    height: 25px;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 400;
     background-color: #CDB0EE;
     margin-bottom: 3px;
@@ -111,25 +114,13 @@ button:hover {
 }
 
 .entryBoxEditMode {
-    font-size: medium;
-    border-radius: 5px;
-    padding: 5px;
-    height: 20px;
-    font-size: 15px;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
     background-color: #ff9a8e;
-    margin-bottom: 3px;
 }
 
 .entryBoxEditMode:hover {
-    font-size: medium;
-    border-radius: 5px;
-    padding: 5px;
-    height: 20px;
-    font-size: 15px;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
     background-color: #ffcdc8;
-    margin-bottom: 3px;
 }
 
 .entryBox:hover > button {
@@ -150,12 +141,19 @@ button:hover {
     border-radius: 5px;
     font-size: 15px;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
+    position: absolute;
+    top: 320px;
+    width: 100%;
 }
 
 nav {
     display: flex;
     flex-direction: row;
     height: 39px;
+    position: absolute;
+    width: 100%;
+    top: 440px;
+    overflow: hidden;
 }
 
 .navDiv {
@@ -168,7 +166,6 @@ nav {
     justify-content: center;
     display: flex;
     align-items: center;
-    position: relative;
     overflow: hidden;
 }
 
@@ -176,11 +173,21 @@ nav {
     float: right;
 }
 
-#optionsDiv {
+#optionsContainer {
     height: 199px;
     margin-bottom: 20px;
 }
 
 #word, #url {
     display: block;
+}
+
+.optionBox {
+    font-size: 15px;
+    border-radius: 5px;
+    padding: 5px;
+    height: 25px;
+    font-family: 'Source Sans Pro', sans-serif; font-weight: 400;
+    margin-bottom: 5px;
+    flex: none;
 }
