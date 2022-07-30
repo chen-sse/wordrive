@@ -87,7 +87,7 @@ function addEntries(wordInput, urlInput, event) {
         // refresh popup
         document.location.reload();
 
-        // turn off edit mode
+        // turn off add mode
         addMode = false;
 
         // prevent word adder from reloading ('wordAdder' parent click event), if applicable
