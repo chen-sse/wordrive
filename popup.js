@@ -116,11 +116,73 @@ function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
         }
         // if entry is a non-empty string, set the entry to that string
         else {
+            // if edited entry is a word
             if (type === "word") {
+                // update array to reflect entered word
                 data.wordBank[wordIndex].text = container.innerText;
+
+                // compute indices of words that match entered word
+                let firstIndex = data.wordBank.findIndex((element) => {
+                    if (element.text === container.innerText) {
+                        return true;
+                    }
+                    return false;
+                });
+                let lastIndex = data.wordBank.length - 1 - data.wordBank.slice().reverse().findIndex((element) => {
+                    if (element.text === container.innerText) {
+                        return true;
+                    }
+                    return false;
+                });
+
+                // if entered word is duplicate
+                if (firstIndex !== lastIndex) {
+                    // merge URLs from duplicate entry to current entry, then remove duplicate entry
+                    if (firstIndex === wordIndex) {
+                        for (const url of data.wordBank[wordIndex].urls) {
+                            if (!data.wordBank[lastIndex].urls.includes(url)) {
+                                data.wordBank[lastIndex].urls.push(url);
+                            }
+                        }
+                        data.wordBank.splice(wordIndex, 1);
+                    } else {
+                        for (const url of data.wordBank[wordIndex].urls) {
+                            if (!data.wordBank[firstIndex].urls.includes(url)) {
+                                data.wordBank[firstIndex].urls.push(url);
+                            }
+                        }
+                        data.wordBank.splice(wordIndex, 1);
+                    }
+
+                    // refresh popup
+                    document.location.reload();
+                }
+            // if edited entry is a URL
             } else {
+                // update array to reflect entered URL
                 data.wordBank[wordIndex].urls[urlIndex] = container.innerText;
+
+                // compute indices of URLs that match entered URL
+                let firstIndex = data.wordBank[wordIndex].urls.findIndex((element) => {
+                    if (element === container.innerText) {
+                        return true;
+                    }
+                    return false;
+                });
+                let lastIndex = data.wordBank[wordIndex].urls.length - 1 - data.wordBank[wordIndex].urls.slice().reverse().findIndex((element) => {
+                    if (element === container.innerText) {
+                        return true;
+                    }
+                    return false;
+                });
+
+                // remove duplicate URL, if it exists, then reload popup
+                if (firstIndex !== lastIndex) {
+                    data.wordBank[wordIndex].urls.splice(firstIndex, 1);
+                    document.location.reload();
+                }
             }
+
             chrome.storage.sync.set({"wordBank": data.wordBank});
         }
 
