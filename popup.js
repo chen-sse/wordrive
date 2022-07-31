@@ -265,10 +265,16 @@ chrome.storage.sync.get("wordBank", (data) => {
         entryBox.addEventListener("click", () => {
             // only toggle dropdown if not in word edit mode 
             if (wordContainer.isContentEditable === false) {
-                if (entryBox.classList.toggle("url-mode-on")) {
+                // if off, turn URL mode on and create dropdown
+                if (!entryBox.classList.contains("url-mode-on")) {
+                    // remove any existing dropdown
+                    if (document.getElementsByClassName("dropdown").length !== 0) {
+                        document.getElementsByClassName("url-mode-on")[0].classList.remove("url-mode-on");
+                        document.getElementsByClassName("dropdown")[0].remove();
+                    }
+
                     // init 'dropdown' that contains every 'urlBox'
                     let dropdown = document.createElement("div");
-                    dropdown.setAttribute("id", `dropdown${i}`);
                     dropdown.classList.add("dropdown");
                     entryBox.insertAdjacentElement("afterend", dropdown);
     
@@ -323,10 +329,13 @@ chrome.storage.sync.get("wordBank", (data) => {
                             // prevent URL from opening ('urlBox' parent click event)
                             event.stopPropagation();
                         });
+
+                        entryBox.classList.add("url-mode-on");
                     }
+                // if on, turn URL mode off and remove dropdown
                 } else {
-                    // remove 'dropdown' associated with given 'entryBox'
-                    document.getElementById(`dropdown${i}`).remove();
+                    document.getElementsByClassName("dropdown")[0].remove();
+                    entryBox.classList.remove("url-mode-on");
                 }
             }
         });
