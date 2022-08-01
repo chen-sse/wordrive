@@ -335,6 +335,7 @@ chrome.storage.sync.get("wordBank", (data) => {
             let wordLabel = document.createElement("label");
             let urlLabel = document.createElement("label");
             let save = document.createElement("button");
+            let isValidURL = true;
 
             // edit innerHTML
             wordAdder.innerHTML = "";
@@ -357,19 +358,39 @@ chrome.storage.sync.get("wordBank", (data) => {
             wordLabel.setAttribute("for", "word");
             urlLabel.setAttribute("for", "url");
 
+            // set classes
+            urlInput.classList.add("url-input");
+
+            // check for valid URL input--disable save button if invalid
+            urlInput.addEventListener("keyup", () => {
+                urlInput.value = urlInput.value.trim();
+                isValidURL = urlInput.checkValidity();
+
+                if (isValidURL) {
+                    save.disabled = false;
+                } else {
+                    save.disabled = true;
+                }
+            });
+
+            // save changes and exit add mode by clicking 'Save' button
             save.addEventListener("click", (event) => {
                 addEntries(wordInput.value, urlInput.value, event);
             });
 
-            // save changes and exit add mode with 'Enter'
+            // save changes and exit add mode with 'Enter' if URL is valid
             wordInput.addEventListener("keydown", (event) => {
                 if (event.code === "Enter") {
-                    addEntries(wordInput.value, urlInput.value, null);
+                    if (isValidURL) {
+                        addEntries(wordInput.value, urlInput.value, null);
+                    }
                 }
             });
             urlInput.addEventListener("keydown", (event) => {
                 if (event.code === "Enter") {
-                    addEntries(wordInput.value, urlInput.value, null);
+                    if (isValidURL) {
+                        addEntries(wordInput.value, urlInput.value, null);
+                    }
                 }
             });
 
