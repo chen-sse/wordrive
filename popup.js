@@ -314,9 +314,9 @@ chrome.storage.sync.get("wordBank", (data) => {
                             // prevent URL from opening ('urlBox' parent click event)
                             event.stopPropagation();
                         });
-
-                        entryBox.classList.add("url-mode-on");
                     }
+
+                    entryBox.classList.add("url-mode-on");
                 // if on, turn URL mode off and remove dropdown
                 } else {
                     document.getElementsByClassName("dropdown")[0].remove();
