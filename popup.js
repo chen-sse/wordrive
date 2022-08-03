@@ -1,8 +1,10 @@
 let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
+let search = document.getElementById("search");
 
 let addMode = false;
+let entryBoxes = [];
 
 // hide hover images 'homeHover' and 'optionsHover'
 let homeHover = document.getElementById("homeHover");
@@ -182,6 +184,21 @@ function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
     return container.innerText;
 }
 
+// actively return matching Wordrive entries on user input
+search.addEventListener("keyup", () => {
+    let filter = search.value.toLowerCase().trim();
+
+    chrome.storage.sync.get("wordBank", (data) => {
+        for (let i = 0; i < data.wordBank.length; i++) {
+            if (data.wordBank[i].text.indexOf(filter) > -1) {
+                entryBoxes[i].style.display = "";
+            } else {
+                entryBoxes[i].style.display = "none";
+            }
+        }
+    })
+});
+
 chrome.storage.sync.get("wordBank", (data) => {
     for (let i = 0; i < data.wordBank.length; i++) {
         /* init a div-span-button set for given word
@@ -190,6 +207,7 @@ chrome.storage.sync.get("wordBank", (data) => {
         let entryBox = document.createElement("div");
         let wordContainer = document.createElement("span");
         let wordEditButton = document.createElement("button");
+        entryBoxes.push(entryBox);
 
         // add classes to 'entryBox,' 'wordContainer,' and 'wordEditButton'
         entryBox.classList.add("entryBox");
