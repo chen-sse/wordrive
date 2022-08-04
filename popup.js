@@ -196,7 +196,7 @@ search.addEventListener("keyup", () => {
                 entryBoxes[i].style.display = "none";
             }
         }
-    })
+    });
 });
 
 chrome.storage.sync.get("wordBank", (data) => {
