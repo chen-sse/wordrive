@@ -1,3 +1,5 @@
+import { getDate, getTime, getDictionaryURL } from "./utils.js";
+
 let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
@@ -75,7 +77,11 @@ function addEntries(wordInput, urlInput, event) {
                     text: wordInput,
                     sourceUrls: (urlInput === "")
                         ? []
-                        : [urlInput]
+                        : [urlInput],
+                    refUrls: [getDictionaryURL(wordInput)],
+                    date: getDate(),
+                    time: getTime(),
+                    notes: ""
                 });
             } else {
                 if (newUrl) {
