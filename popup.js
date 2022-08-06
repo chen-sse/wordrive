@@ -53,14 +53,15 @@ function addEntries(wordInput, urlInput, event) {
     // check for duplicate words/URLs
     chrome.storage.sync.get("wordBank", (data) => {
         for (let i = 0; i < data.wordBank.length; i++) {
-            if (wordInput === data.wordBank[i].text) {
+            let entry = data.wordBank[i];
+            if (wordInput === entry.text) {
                 newWord = false;
                 duplicateIndex = i;
 
                 // if empty URL, don't add (set 'newUrl = false')
                 if (urlInput !== "") {
-                    for (let j = 0; j < data.wordBank[i].sourceUrls.length; j++) {
-                        if (urlInput === data.wordBank[i].sourceUrls[j]) {
+                    for (let j = 0; j < entry.sourceUrls.length; j++) {
+                        if (urlInput === entry.sourceUrls[j]) {
                             newUrl = false;
                         }
                     }
@@ -216,7 +217,8 @@ search.addEventListener("keyup", () => {
 
     chrome.storage.sync.get("wordBank", (data) => {
         for (let i = 0; i < data.wordBank.length; i++) {
-            if (data.wordBank[i].text.indexOf(filter) > -1) {
+            let entry = data.wordBank[i];
+            if (entry.text.indexOf(filter) > -1) {
                 entryBoxes[i].style.display = "";
             } else {
                 entryBoxes[i].style.display = "none";
@@ -227,6 +229,8 @@ search.addEventListener("keyup", () => {
 
 chrome.storage.sync.get("wordBank", (data) => {
     for (let i = 0; i < data.wordBank.length; i++) {
+        let entry = data.wordBank[i];
+
         /* init a div-span-button set for given word
            Note: an 'entryBox' is the parent div for each entry;
            a 'wordContainer' is the span displaying the word */
@@ -242,7 +246,7 @@ chrome.storage.sync.get("wordBank", (data) => {
 
         // init attribute 'contenteditable' to span element
         wordContainer.setAttribute("contenteditable", false);
-        wordContainer.innerText = data.wordBank[i].text;
+        wordContainer.innerText = entry.text;
         wordEditButton.innerHTML = "Edit";
 
         // make 'wordEditButton' and 'wordContainer' children of 'entryBox'
@@ -285,15 +289,15 @@ chrome.storage.sync.get("wordBank", (data) => {
     
                     // insert timestamp
                     let timestamp = document.createElement("div");
-                    timestamp.innerHTML = `Added at ${data.wordBank[i].time} on ${data.wordBank[i].date}`;
+                    timestamp.innerHTML = `Added at ${entry.time} on ${entry.date}`;
                     dropdown.appendChild(timestamp);
 
                     // insert source URLs
                     let sourceUrls = document.createElement("div");
                     sourceUrls.innerHTML = "Found at:";
                     dropdown.appendChild(sourceUrls);
-                    for (let j = 0; j < data.wordBank[i].sourceUrls.length; j++) {
-                        let wordUrl = data.wordBank[i].sourceUrls[j];
+                    for (let j = 0; j < entry.sourceUrls.length; j++) {
+                        let wordUrl = entry.sourceUrls[j];
     
                         /* init a div-span-button set for given URL
                         Note: a urlBox is the parent div for each entry;
@@ -350,8 +354,8 @@ chrome.storage.sync.get("wordBank", (data) => {
                     let refUrls = document.createElement("div");
                     refUrls.innerHTML = "Reference:";
                     dropdown.appendChild(refUrls);
-                    for (let j = 0; j < data.wordBank[i].refUrls.length; j++) {
-                        let refUrl = data.wordBank[i].refUrls[j];
+                    for (let j = 0; j < entry.refUrls.length; j++) {
+                        let refUrl = entry.refUrls[j];
     
                         /* init a div-span-button set for given URL
                         Note: a refBox is the parent div for each entry;
@@ -409,11 +413,11 @@ chrome.storage.sync.get("wordBank", (data) => {
                     let notesBox = document.createElement("div");
 
                     notes.innerHTML = "Notes:";
-                    data.wordBank[i].notes = data.wordBank[i].notes.trim();
-                    if (data.wordBank[i].notes === "") {
+                    entry.notes = entry.notes.trim();
+                    if (entry.notes === "") {
                         notesBox.innerHTML = "Write notes...";
                     } else {
-                        notesBox.innerHTML = data.wordBank[i].notes;
+                        notesBox.innerHTML = entry.notes;
                     }
                     
                     notesBox.setAttribute("contenteditable", true);
@@ -423,7 +427,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     notes.appendChild(notesBox);
 
                     notesBox.addEventListener("keyup", () => {
-                        data.wordBank[i].notes = notesBox.innerText;
+                        entry.notes = notesBox.innerText;
                         chrome.storage.sync.set({"wordBank": data.wordBank});
                     });
 

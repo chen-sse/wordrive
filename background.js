@@ -30,11 +30,13 @@ chrome.contextMenus.onClicked.addListener((info) => {
             let newUrl = true;
 
             for (let i = 0; i < data.wordBank.length; i++) {
+                let entry = data.wordBank[i];
+
                 // check if word is already in word bank
-                if (data.wordBank[i].text.toLowerCase() === selectedWord.toLowerCase()) {
-                    for (let j = 0; j < data.wordBank[i].sourceUrls.length; j++) {
+                if (entry.text.toLowerCase() === selectedWord.toLowerCase()) {
+                    for (let j = 0; j < entry.sourceUrls.length; j++) {
                         // check if URL is already in URL list
-                        if (currentTab.url === data.wordBank[i].sourceUrls[j]) {
+                        if (currentTab.url === entry.sourceUrls[j]) {
                             newUrl = false;
                             break;
                         }
@@ -42,7 +44,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
                     newWord = false;
                     // if URL is not duplicate, add to URL list
                     if (newUrl) {
-                        data.wordBank[i].sourceUrls.push(currentTab.url);
+                        entry.sourceUrls.push(currentTab.url);
                         break;
                     }
                 }
