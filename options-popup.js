@@ -46,8 +46,7 @@ function exportData() {
         for (let i = 0; i < wordBank.length; i++) {
             // concatenate builder string
             let word = wordBank[i].text;
-            let theUrls = wordBank[i].urls;
-            console.log(`${theUrls.length}`);
+            let theUrls = wordBank[i].sourceUrls;
 
             builder += `WORD ${i + 1}: ${word}\nURLs:\n`;
             for (let j = 0; j < theUrls.length; j++) {
@@ -64,7 +63,7 @@ function exportData() {
             msg: "export to txt",
             fileUrl: txtUrl,
         });
-    })
+    });
 }
 
 // fire SweetAlert that confirms Wordrive erasure request

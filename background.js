@@ -17,7 +17,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // click handler: add text to Wordrive
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener((info) => {
     // retrieve word bank and user capitalization preference (initialize default values for both)
     chrome.storage.sync.get(["wordBank", "lowercaseChecked"], async (data) => {
         let [currentTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
@@ -30,9 +30,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             for (let i = 0; i < data.wordBank.length; i++) {
                 // check if word is already in word bank
                 if (data.wordBank[i].text.toLowerCase() === selectedWord.toLowerCase()) {
-                    for (let j = 0; j < data.wordBank[i].urls.length; j++) {
+                    for (let j = 0; j < data.wordBank[i].sourceUrls.length; j++) {
                         // check if URL is already in URL list
-                        if (currentTab.url === data.wordBank[i].urls[j]) {
+                        if (currentTab.url === data.wordBank[i].sourceUrls[j]) {
                             newUrl = false;
                             break;
                         }
@@ -40,18 +40,48 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                     newWord = false;
                     // if URL is not duplicate, add to URL list
                     if (newUrl) {
-                        data.wordBank[i].urls.push(currentTab.url);
+                        data.wordBank[i].sourceUrls.push(currentTab.url);
                         break;
                     }
                 }
             }
             // if word is not duplicate, add to word bank
             if (newWord) {
+                // format timestamp
+                const dateOptions = {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                };
+                const timeOptions = {
+                    hour: "numeric",
+                    minute: "numeric",
+                    timeZoneName: "short"
+                };
+                let date = new Date().toLocaleDateString("en-US", dateOptions);
+                let time = new Date().toLocaleTimeString("en-US", timeOptions);
+                time = time.replace("AM", "am").replace("PM", "pm");
+                const timeTokens = time.split(" ");
+                time = `${timeTokens[0]}${timeTokens[1]} ${timeTokens[2]}`;
+
+                // construct default Merriam-Webster reference URL
+                const searchTokens = selectedWord.match(/\S+/g);
+                let dictionaryUrl = "https://www.merriam-webster.com/dictionary/";
+                for (let j = 0; j < searchTokens.length; j++) {
+                    dictionaryUrl += searchTokens[j];
+                    dictionaryUrl += "%20";
+                }
+
+                // push new word object to word bank
                 data.wordBank.push({
                     text: (data.lowercaseChecked === true)
                         ? selectedWord.toLowerCase()
                         : selectedWord,
-                    urls: [currentTab.url]
+                    sourceUrls: [currentTab.url],
+                    refUrls: [dictionaryUrl],
+                    date: date,
+                    time: time,
+                    notes: ""
                 });
             }
             // set key to updated array
