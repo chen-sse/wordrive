@@ -1,3 +1,38 @@
+// fetch date from local machine
+function getDate() {
+    const dateOptions = {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    };
+    return new Date().toLocaleDateString("en-US", dateOptions);
+}
+
+// fetch time from local machine
+function getTime() {
+    const timeOptions = {
+        hour: "numeric",
+        minute: "numeric",
+        timeZoneName: "short"
+    };
+    let time = new Date().toLocaleTimeString("en-US", timeOptions).replace("AM", "am").replace("PM", "pm");
+    const timeTokens = time.split(" ");
+    return `${timeTokens[0]}${timeTokens[1]} ${timeTokens[2]}`;
+}
+
+// generate the Merriam-Webster dictionary URL of a given term
+function getDictionaryURL(term) {
+    // tokenize term (applies to multi-word queries)
+    const searchTokens = term.match(/\S+/g);
+    // construct dictionary URL
+    let dictionaryUrl = "https://www.merriam-webster.com/dictionary/";
+    for (let j = 0; j < searchTokens.length; j++) {
+        dictionaryUrl += searchTokens[j];
+        dictionaryUrl += "%20";
+    }
+    return dictionaryUrl;
+}
+
 chrome.runtime.onInstalled.addListener(() => {
     // create context menu
     chrome.contextMenus.create({
@@ -47,40 +82,15 @@ chrome.contextMenus.onClicked.addListener((info) => {
             }
             // if word is not duplicate, add to word bank
             if (newWord) {
-                // format timestamp
-                const dateOptions = {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                };
-                const timeOptions = {
-                    hour: "numeric",
-                    minute: "numeric",
-                    timeZoneName: "short"
-                };
-                let date = new Date().toLocaleDateString("en-US", dateOptions);
-                let time = new Date().toLocaleTimeString("en-US", timeOptions);
-                time = time.replace("AM", "am").replace("PM", "pm");
-                const timeTokens = time.split(" ");
-                time = `${timeTokens[0]}${timeTokens[1]} ${timeTokens[2]}`;
-
-                // construct default Merriam-Webster reference URL
-                const searchTokens = selectedWord.match(/\S+/g);
-                let dictionaryUrl = "https://www.merriam-webster.com/dictionary/";
-                for (let j = 0; j < searchTokens.length; j++) {
-                    dictionaryUrl += searchTokens[j];
-                    dictionaryUrl += "%20";
-                }
-
                 // push new word object to word bank
                 data.wordBank.push({
                     text: (data.lowercaseChecked === true)
                         ? selectedWord.toLowerCase()
                         : selectedWord,
                     sourceUrls: [currentTab.url],
-                    refUrls: [dictionaryUrl],
-                    date: date,
-                    time: time,
+                    refUrls: [getDictionaryURL(selectedWord)],
+                    date: getDate(),
+                    time: getTime(),
                     notes: ""
                 });
             }
