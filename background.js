@@ -101,7 +101,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
 });
 
 // message listener: listens to messages from content scripts
-chrome.runtime.onMessage.addListener( (message, sendResponse) => {
+chrome.runtime.onMessage.addListener((message) => {
     // export button click handler: download .txt file of word list
     if (message.msg === "export to txt") {
         chrome.downloads.download({
