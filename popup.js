@@ -158,42 +158,21 @@ function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
                 }
             // if edited entry is a URL
             } else {
-                // if edited entry is a source URL
-                if (type === "sourceUrl") {
-                    // update array to reflect entered URL
-                    data.wordBank[wordIndex].sourceUrls[urlIndex] = container.innerText;
+                // update array to reflect entered URL
+                data.wordBank[wordIndex][type][urlIndex] = container.innerText;
 
-                    // compute indices of URLs that match entered URL
-                    let firstIndex = data.wordBank[wordIndex].sourceUrls.findIndex((element) => {
-                        return (element === container.innerText) ? true : false;
-                    });
-                    let lastIndex = data.wordBank[wordIndex].sourceUrls.length - 1 - data.wordBank[wordIndex].sourceUrls.slice().reverse().findIndex((element) => {
-                        return (element === container.innerText) ? true : false;
-                    });
+                // compute indices of URLs that match entered URL
+                let firstIndex = data.wordBank[wordIndex][type].findIndex((element) => {
+                    return (element === container.innerText) ? true : false;
+                });
+                let lastIndex = data.wordBank[wordIndex][type].length - 1 - data.wordBank[wordIndex][type].slice().reverse().findIndex((element) => {
+                    return (element === container.innerText) ? true : false;
+                });
 
-                    // remove duplicate URL, if it exists, then reload popup
-                    if (firstIndex !== lastIndex) {
-                        data.wordBank[wordIndex].sourceUrls.splice(firstIndex, 1);
-                        document.location.reload();
-                    }
-                // if edited entry is a reference URL
-                } else {
-                    // update array to reflect entered URL
-                    data.wordBank[wordIndex].refUrls[urlIndex] = container.innerText;
-
-                    // compute indices of URLs that match entered URL
-                    let firstIndex = data.wordBank[wordIndex].refUrls.findIndex((element) => {
-                        return (element === container.innerText) ? true : false;
-                    });
-                    let lastIndex = data.wordBank[wordIndex].refUrls.length - 1 - data.wordBank[wordIndex].refUrls.slice().reverse().findIndex((element) => {
-                        return (element === container.innerText) ? true : false;
-                    });
-
-                    // remove duplicate URL, if it exists, then reload popup
-                    if (firstIndex !== lastIndex) {
-                        data.wordBank[wordIndex].refUrls.splice(firstIndex, 1);
-                        document.location.reload();
-                    }
+                // remove duplicate URL, if it exists, then reload popup
+                if (firstIndex !== lastIndex) {
+                    data.wordBank[wordIndex][type].splice(firstIndex, 1);
+                    document.location.reload();
                 }
             }
 
@@ -336,14 +315,14 @@ chrome.storage.sync.get("wordBank", (data) => {
                         // save changes and exit edit mode with 'Enter'
                         urlContainer.addEventListener("keydown", (event) => {
                             if (event.code === "Enter") {
-                                wordUrl = toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "sourceUrl");
+                                wordUrl = toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "sourceUrls");
                             }
                         });
 
                         // toggle edit/save button on click
                         urlEditButton.addEventListener("click", (event) => {
                             urlEditButton.classList.add("beingEdited");
-                            wordUrl = toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "sourceUrl");
+                            wordUrl = toggleButton(urlBox, urlContainer, urlEditButton, data, i, j, "sourceUrls");
     
                             // prevent URL from opening ('urlBox' parent click event)
                             event.stopPropagation();
@@ -394,14 +373,14 @@ chrome.storage.sync.get("wordBank", (data) => {
                         // save changes and exit edit mode with 'Enter'
                         refContainer.addEventListener("keydown", (event) => {
                             if (event.code === "Enter") {
-                                refUrl = toggleButton(refBox, refContainer, refEditButton, data, i, j, "refUrl");
+                                refUrl = toggleButton(refBox, refContainer, refEditButton, data, i, j, "refUrls");
                             }
                         });
 
                         // toggle edit/save button on click
                         refEditButton.addEventListener("click", (event) => {
                             refEditButton.classList.add("beingEdited");
-                            refUrl = toggleButton(refBox, refContainer, refEditButton, data, i, j, "refUrl");
+                            refUrl = toggleButton(refBox, refContainer, refEditButton, data, i, j, "refUrls");
     
                             // prevent URL from opening ('urlBox' parent click event)
                             event.stopPropagation();
