@@ -110,14 +110,15 @@ exportToPDF.addEventListener("click", () => {
 // message listener: listens to messages from background script
 chrome.runtime.onMessage.addListener((message) => {
     /* pdf download handler: delete all pdf-export-handler scripts from
-    options-popup.html
-     */
+    options-popup.html */
     if (message.msg === "pdf download done") {
         let scriptArr = document.getElementsByClassName("pdf-script");
         for (let element of scriptArr) {
             element.remove();
         }
     }
+    
+    return true;
 });
 
 // restore saved user preferences

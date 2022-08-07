@@ -88,7 +88,7 @@ chrome.runtime.onMessage.addListener((message) => {
             });
         });
     }
-
+    // export to PDF click handler: download .pdf file of word list
     else if (message.msg === "pdf ready") {
         chrome.downloads.download({
             filename: "wordlist.pdf",
@@ -101,4 +101,6 @@ chrome.runtime.onMessage.addListener((message) => {
             });
         });
     }
+
+    return true;
 });
