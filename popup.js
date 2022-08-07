@@ -6,6 +6,7 @@ let wordAdder = document.getElementById("wordAdder");
 let search = document.getElementById("search");
 
 let addMode = false;
+let urlAddMode = false;
 let entryBoxes = [];
 
 // hide hover images 'homeHover' and 'optionsHover'
@@ -329,6 +330,92 @@ chrome.storage.sync.get("wordBank", (data) => {
                         });
                     }
 
+                    // insert source URL adder
+                    let urlAdder = document.createElement("div");
+
+                    // add classes to 'addUrlBox' and 'urlAdder'
+                    urlAdder.classList.add("container");
+                    urlAdder.classList.add("adder");
+
+                    // init attribute 'contenteditable' to span element
+                    urlAdder.innerHTML = "+ Add source URL...";
+
+                    // make 'urlContainer' child of 'urlBox' and append 'urlBox' to 'sourceUrls'
+                    sourceUrls.appendChild(urlAdder);
+
+                    urlAdder.addEventListener("click", () => {
+                        // if not in edit mode, enter it
+                        if (!urlAddMode) {
+                            // create inputs, labels, and button
+                            let titleInput = document.createElement("input");
+                            let urlInput = document.createElement("input");
+                            let titleLabel = document.createElement("label");
+                            let urlLabel = document.createElement("label");
+                            let save = document.createElement("button");
+                            let isValidURL = true;
+                
+                            // edit innerHTML
+                            urlAdder.innerHTML = "";
+                            titleLabel.innerHTML = "Title: ";
+                            urlLabel.innerHTML = "URL: ";
+                            save.innerHTML = "Save";
+                
+                            // update DOM tree
+                            urlAdder.appendChild(titleLabel);
+                            urlAdder.appendChild(titleInput);
+                            urlAdder.appendChild(urlLabel);
+                            urlAdder.appendChild(urlInput);
+                            urlAdder.appendChild(save);
+                
+                            // set attributes
+                            titleInput.setAttribute("id", "word");
+                            titleInput.setAttribute("type", "text");
+                            urlInput.setAttribute("id", "url");
+                            urlInput.setAttribute("type", "url");
+                            titleLabel.setAttribute("for", "word");
+                            urlLabel.setAttribute("for", "url");
+                
+                            // set classes
+                            urlInput.classList.add("url-input");
+                
+                            // check for valid URL input--disable save button if invalid
+                            urlInput.addEventListener("keyup", () => {
+                                urlInput.value = urlInput.value.trim();
+                                isValidURL = urlInput.checkValidity();
+                
+                                if (isValidURL) {
+                                    save.disabled = false;
+                                } else {
+                                    save.disabled = true;
+                                }
+                            });
+                
+                            // save changes and exit URL add mode by clicking 'Save' button
+                            save.addEventListener("click", () => {
+                                addEntries(entry.text, urlInput.value, null);
+                            });
+                
+                            // save changes and exit URL add mode with 'Enter' if URL is valid
+                            titleInput.addEventListener("keydown", (event) => {
+                                if (event.code === "Enter") {
+                                    if (isValidURL) {
+                                        addEntries(entry.text, urlInput.value, null);
+                                    }
+                                }
+                            });
+                            urlInput.addEventListener("keydown", (event) => {
+                                if (event.code === "Enter") {
+                                    if (isValidURL) {
+                                        addEntries(entry.text, urlInput.value, null);
+                                    }
+                                }
+                            });
+                
+                            // turn on URL add mode
+                            urlAddMode = true;
+                        }
+                    });
+
                     // insert reference URLs
                     let refUrls = document.createElement("div");
                     refUrls.innerHTML = "Reference:";
@@ -422,7 +509,7 @@ chrome.storage.sync.get("wordBank", (data) => {
     }
 
     wordAdder.addEventListener("click", () => {
-        // if not in edit mode, enter it
+        // if not in add mode, enter it
         if (!addMode) {
             // create inputs, labels, and button
             let wordInput = document.createElement("input");
@@ -489,7 +576,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                 }
             });
 
-            // turn on edit mode
+            // turn on add mode
             addMode = true;
         }
     });

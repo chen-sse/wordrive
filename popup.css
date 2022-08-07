@@ -105,7 +105,7 @@ button:hover {
     padding-bottom: 2px;
 }
 
-.entryBox:hover, #wordAdder:hover {
+.entryBox:hover, .adder:hover {
     background-color: #E9CBFF
 }
 
