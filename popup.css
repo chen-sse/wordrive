@@ -178,7 +178,7 @@ nav {
     margin-bottom: 20px;
 }
 
-#word, #url {
+.input {
     display: block;
 }
 
