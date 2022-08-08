@@ -335,86 +335,130 @@ chrome.storage.sync.get("wordBank", (data) => {
 
                     // insert source URL adder
                     let sourceUrlAdder = document.createElement("div");
+                    let sourceUrlAdderLabel = document.createElement("span");
 
-                    // add classes to 'addUrlBox' and 'sourceUrlAdder'
+                    // add classes to 'sourceUrlAdder'
                     sourceUrlAdder.classList.add("container");
                     sourceUrlAdder.classList.add("adder");
 
-                    // set default URL adder innerHTML
-                    sourceUrlAdder.innerHTML = "+ Add source URL...";
+                    // set source URL adder label
+                    sourceUrlAdderLabel.innerHTML = "+ Add source URL...";
 
-                    // make 'sourceUrlAdder' child of 'sourceUrls'
+                    // make 'sourceUrlAdder' child of 'sourceUrls' and 'sourceUrlAdderLabel' child of 'sourceUrlAdder'
                     sourceUrls.appendChild(sourceUrlAdder);
+                    sourceUrlAdder.appendChild(sourceUrlAdderLabel);
+
+                    // create source URL adder elements
+                    // create inputs, labels, and buttons
+                    let sourceTitleInput = document.createElement("input");
+                    let sourceUrlInput = document.createElement("input");
+                    let sourceTitleLabel = document.createElement("label");
+                    let sourceUrlLabel = document.createElement("label");
+                    let sourceCancel = document.createElement("button");
+                    let sourceSave = document.createElement("button");
+                    let sourceIsValidURL = true;
+
+                    // hide source URL adder elems--only display when source URL add mode is toggled on
+                    sourceTitleInput.style.display = "none";
+                    sourceUrlInput.style.display = "none";
+                    sourceTitleLabel.style.display = "none";
+                    sourceUrlLabel.style.display = "none";
+                    sourceCancel.style.display = "none";
+                    sourceSave.style.display = "none";
+        
+                    // edit innerHTML
+                    sourceTitleLabel.innerHTML = "Title: ";
+                    sourceUrlLabel.innerHTML = "URL: ";
+                    sourceCancel.innerHTML = "Cancel";
+                    sourceSave.innerHTML = "Save";
+        
+                    // update DOM tree
+                    sourceUrlAdder.appendChild(sourceTitleLabel);
+                    sourceUrlAdder.appendChild(sourceTitleInput);
+                    sourceUrlAdder.appendChild(sourceUrlLabel);
+                    sourceUrlAdder.appendChild(sourceUrlInput);
+                    sourceUrlAdder.appendChild(sourceCancel);
+                    sourceUrlAdder.appendChild(sourceSave);
+        
+                    // set attributes
+                    sourceTitleInput.setAttribute("id", "sourceUrlAdder-title");
+                    sourceTitleInput.setAttribute("type", "text");
+                    sourceUrlInput.setAttribute("id", "sourceUrlAdder-url");
+                    sourceUrlInput.setAttribute("type", "url");
+                    sourceTitleLabel.setAttribute("for", "sourceUrlAdder-title");
+                    sourceUrlLabel.setAttribute("for", "sourceUrlAdder-url");
+        
+                    // set classes
+                    sourceTitleInput.classList.add("input");
+                    sourceUrlInput.classList.add("input");
+                    sourceUrlInput.classList.add("url-input");
+        
+                    // check for valid URL input--disable save button if invalid
+                    sourceUrlInput.addEventListener("keyup", () => {
+                        sourceUrlInput.value = sourceUrlInput.value.trim();
+                        sourceIsValidURL = sourceUrlInput.checkValidity();
+        
+                        if (sourceIsValidURL) {
+                            sourceSave.disabled = false;
+                        } else {
+                            sourceSave.disabled = true;
+                        }
+                    });                    
+        
+                    // cancel pending changes and exit URL add mode by clicking 'Cancel' button
+                    sourceCancel.addEventListener("click", (event) => {
+                        // hide source URL adder elems
+                        sourceTitleInput.style.display = "none";
+                        sourceUrlInput.style.display = "none";
+                        sourceTitleLabel.style.display = "none";
+                        sourceUrlLabel.style.display = "none";
+                        sourceCancel.style.display = "none";
+                        sourceSave.style.display = "none";
+            
+                        // reset source URL adder label
+                        sourceUrlAdderLabel.style.display = "";
+
+                        // turn off source URL add mode
+                        sourceUrlAddMode = false;
+
+                        // prevent click event from firing on parent div 'sourceUrlAdder'
+                        event.stopPropagation();
+                    });
+
+                    // save changes and exit URL add mode by clicking 'Save' button
+                    sourceSave.addEventListener("click", () => {
+                        addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
+                    });
+        
+                    // save changes and exit URL add mode with 'Enter' if URL is valid
+                    sourceTitleInput.addEventListener("keydown", (event) => {
+                        if (event.code === "Enter") {
+                            if (sourceIsValidURL) {
+                                addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
+                            }
+                        }
+                    });
+                    sourceUrlInput.addEventListener("keydown", (event) => {
+                        if (event.code === "Enter") {
+                            if (sourceIsValidURL) {
+                                addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
+                            }
+                        }
+                    });
 
                     sourceUrlAdder.addEventListener("click", () => {
                         // if not in source URL add mode, enter it
                         if (!sourceUrlAddMode) {
-                            // create inputs, labels, and button
-                            let titleInput = document.createElement("input");
-                            let urlInput = document.createElement("input");
-                            let titleLabel = document.createElement("label");
-                            let urlLabel = document.createElement("label");
-                            let save = document.createElement("button");
-                            let isValidURL = true;
-                
-                            // edit innerHTML
-                            sourceUrlAdder.innerHTML = "";
-                            titleLabel.innerHTML = "Title: ";
-                            urlLabel.innerHTML = "URL: ";
-                            save.innerHTML = "Save";
-                
-                            // update DOM tree
-                            sourceUrlAdder.appendChild(titleLabel);
-                            sourceUrlAdder.appendChild(titleInput);
-                            sourceUrlAdder.appendChild(urlLabel);
-                            sourceUrlAdder.appendChild(urlInput);
-                            sourceUrlAdder.appendChild(save);
-                
-                            // set attributes
-                            titleInput.setAttribute("id", "sourceUrlAdder-title");
-                            titleInput.setAttribute("type", "text");
-                            urlInput.setAttribute("id", "sourceUrlAdder-url");
-                            urlInput.setAttribute("type", "url");
-                            titleLabel.setAttribute("for", "sourceUrlAdder-title");
-                            urlLabel.setAttribute("for", "sourceUrlAdder-url");
-                
-                            // set classes
-                            titleInput.classList.add("input");
-                            urlInput.classList.add("input");
-                            urlInput.classList.add("url-input");
-                
-                            // check for valid URL input--disable save button if invalid
-                            urlInput.addEventListener("keyup", () => {
-                                urlInput.value = urlInput.value.trim();
-                                isValidURL = urlInput.checkValidity();
-                
-                                if (isValidURL) {
-                                    save.disabled = false;
-                                } else {
-                                    save.disabled = true;
-                                }
-                            });
-                
-                            // save changes and exit URL add mode by clicking 'Save' button
-                            save.addEventListener("click", () => {
-                                addEntries(entry.text, urlInput.value, "sourceUrls", null);
-                            });
-                
-                            // save changes and exit URL add mode with 'Enter' if URL is valid
-                            titleInput.addEventListener("keydown", (event) => {
-                                if (event.code === "Enter") {
-                                    if (isValidURL) {
-                                        addEntries(entry.text, urlInput.value, "sourceUrls", null);
-                                    }
-                                }
-                            });
-                            urlInput.addEventListener("keydown", (event) => {
-                                if (event.code === "Enter") {
-                                    if (isValidURL) {
-                                        addEntries(entry.text, urlInput.value, "sourceUrls", null);
-                                    }
-                                }
-                            });
+                            // hide source URL adder label
+                            sourceUrlAdderLabel.style.display = "none";
+
+                            // reveal source URL adder elems
+                            sourceTitleInput.style.display = "";
+                            sourceUrlInput.style.display = "";
+                            sourceTitleLabel.style.display = "";
+                            sourceUrlLabel.style.display = "";
+                            sourceCancel.style.display = "";
+                            sourceSave.style.display = "";
                 
                             // turn on source URL add mode
                             sourceUrlAddMode = true;
@@ -481,86 +525,130 @@ chrome.storage.sync.get("wordBank", (data) => {
 
                     // insert reference URL adder
                     let refUrlAdder = document.createElement("div");
+                    let refUrlAdderLabel = document.createElement("span");
 
-                    // add classes to 'addUrlBox' and 'refUrlAdder'
+                    // add classes to 'refUrlAdder'
                     refUrlAdder.classList.add("container");
                     refUrlAdder.classList.add("adder");
 
-                    // set default reference URL adder innerHTML
-                    refUrlAdder.innerHTML = "+ Add source URL...";
+                    // set reference URL adder label
+                    refUrlAdderLabel.innerHTML = "+ Add reference URL...";
 
-                    // make 'refUrlAdder' child of 'refUrls'
+                    // make 'refUrlAdder' child of 'refUrls' and 'refUrlAdderLabel' child of 'refUrlAdder'
                     refUrls.appendChild(refUrlAdder);
+                    refUrlAdder.appendChild(refUrlAdderLabel);
+
+                    // create reference URL adder elements
+                    // create inputs, labels, and buttons
+                    let refTitleInput = document.createElement("input");
+                    let refUrlInput = document.createElement("input");
+                    let refTitleLabel = document.createElement("label");
+                    let refUrlLabel = document.createElement("label");
+                    let refCancel = document.createElement("button");
+                    let refSave = document.createElement("button");
+                    let refIsValidURL = true;
+
+                    // hide reference URL adder elems--only display when reference URL add mode is toggled on
+                    refTitleInput.style.display = "none";
+                    refUrlInput.style.display = "none";
+                    refTitleLabel.style.display = "none";
+                    refUrlLabel.style.display = "none";
+                    refCancel.style.display = "none";
+                    refSave.style.display = "none";
+        
+                    // edit innerHTML
+                    refTitleLabel.innerHTML = "Title: ";
+                    refUrlLabel.innerHTML = "URL: ";
+                    refCancel.innerHTML = "Cancel";
+                    refSave.innerHTML = "Save";
+        
+                    // update DOM tree
+                    refUrlAdder.appendChild(refTitleLabel);
+                    refUrlAdder.appendChild(refTitleInput);
+                    refUrlAdder.appendChild(refUrlLabel);
+                    refUrlAdder.appendChild(refUrlInput);
+                    refUrlAdder.appendChild(refCancel);
+                    refUrlAdder.appendChild(refSave);
+        
+                    // set attributes
+                    refTitleInput.setAttribute("id", "refUrlAdder-title");
+                    refTitleInput.setAttribute("type", "text");
+                    refUrlInput.setAttribute("id", "refUrlAdder-url");
+                    refUrlInput.setAttribute("type", "url");
+                    refTitleLabel.setAttribute("for", "refUrlAdder-title");
+                    refUrlLabel.setAttribute("for", "refUrlAdder-url");
+        
+                    // set classes
+                    refTitleInput.classList.add("input");
+                    refUrlInput.classList.add("input");
+                    refUrlInput.classList.add("url-input");
+        
+                    // check for valid URL input--disable save button if invalid
+                    refUrlInput.addEventListener("keyup", () => {
+                        refUrlInput.value = refUrlInput.value.trim();
+                        refIsValidURL = refUrlInput.checkValidity();
+        
+                        if (refIsValidURL) {
+                            refSave.disabled = false;
+                        } else {
+                            refSave.disabled = true;
+                        }
+                    });                    
+        
+                    // cancel pending changes and exit URL add mode by clicking 'Cancel' button
+                    refCancel.addEventListener("click", (event) => {
+                        // hide reference URL adder elems
+                        refTitleInput.style.display = "none";
+                        refUrlInput.style.display = "none";
+                        refTitleLabel.style.display = "none";
+                        refUrlLabel.style.display = "none";
+                        refCancel.style.display = "none";
+                        refSave.style.display = "none";
+            
+                        // reset reference URL adder label
+                        refUrlAdderLabel.style.display = "";
+
+                        // turn off reference URL add mode
+                        refUrlAddMode = false;
+
+                        // prevent click event from firing on parent div 'refUrlAdder'
+                        event.stopPropagation();
+                    });
+
+                    // save changes and exit URL add mode by clicking 'Save' button
+                    refSave.addEventListener("click", () => {
+                        addEntries(entry.text, refUrlInput.value, "refUrls", null);
+                    });
+        
+                    // save changes and exit URL add mode with 'Enter' if URL is valid
+                    refTitleInput.addEventListener("keydown", (event) => {
+                        if (event.code === "Enter") {
+                            if (refIsValidURL) {
+                                addEntries(entry.text, refUrlInput.value, "refUrls", null);
+                            }
+                        }
+                    });
+                    refUrlInput.addEventListener("keydown", (event) => {
+                        if (event.code === "Enter") {
+                            if (refIsValidURL) {
+                                addEntries(entry.text, refUrlInput.value, "refUrls", null);
+                            }
+                        }
+                    });
 
                     refUrlAdder.addEventListener("click", () => {
                         // if not in reference URL add mode, enter it
                         if (!refUrlAddMode) {
-                            // create inputs, labels, and button
-                            let titleInput = document.createElement("input");
-                            let urlInput = document.createElement("input");
-                            let titleLabel = document.createElement("label");
-                            let urlLabel = document.createElement("label");
-                            let save = document.createElement("button");
-                            let isValidURL = true;
-                
-                            // edit innerHTML
-                            refUrlAdder.innerHTML = "";
-                            titleLabel.innerHTML = "Title: ";
-                            urlLabel.innerHTML = "URL: ";
-                            save.innerHTML = "Save";
-                
-                            // update DOM tree
-                            refUrlAdder.appendChild(titleLabel);
-                            refUrlAdder.appendChild(titleInput);
-                            refUrlAdder.appendChild(urlLabel);
-                            refUrlAdder.appendChild(urlInput);
-                            refUrlAdder.appendChild(save);
-                
-                            // set attributes
-                            titleInput.setAttribute("id", "refUrlAdder-title");
-                            titleInput.setAttribute("type", "text");
-                            urlInput.setAttribute("id", "refUrlAdder-url");
-                            urlInput.setAttribute("type", "url");
-                            titleLabel.setAttribute("for", "refUrlAdder-title");
-                            urlLabel.setAttribute("for", "refUrlAdder-url");
-                
-                            // set classes
-                            titleInput.classList.add("input");
-                            urlInput.classList.add("input");
-                            urlInput.classList.add("url-input");
-                
-                            // check for valid URL input--disable save button if invalid
-                            urlInput.addEventListener("keyup", () => {
-                                urlInput.value = urlInput.value.trim();
-                                isValidURL = urlInput.checkValidity();
-                
-                                if (isValidURL) {
-                                    save.disabled = false;
-                                } else {
-                                    save.disabled = true;
-                                }
-                            });
-                
-                            // save changes and exit URL add mode by clicking 'Save' button
-                            save.addEventListener("click", () => {
-                                addEntries(entry.text, urlInput.value, "refUrls", null);
-                            });
-                
-                            // save changes and exit URL add mode with 'Enter' if URL is valid
-                            titleInput.addEventListener("keydown", (event) => {
-                                if (event.code === "Enter") {
-                                    if (isValidURL) {
-                                        addEntries(entry.text, urlInput.value, "refUrls", null);
-                                    }
-                                }
-                            });
-                            urlInput.addEventListener("keydown", (event) => {
-                                if (event.code === "Enter") {
-                                    if (isValidURL) {
-                                        addEntries(entry.text, urlInput.value, "refUrls", null);
-                                    }
-                                }
-                            });
+                            // hide reference URL adder label
+                            refUrlAdderLabel.style.display = "none";
+
+                            // reveal reference URL adder elems
+                            refTitleInput.style.display = "";
+                            refUrlInput.style.display = "";
+                            refTitleLabel.style.display = "";
+                            refUrlLabel.style.display = "";
+                            refCancel.style.display = "";
+                            refSave.style.display = "";
                 
                             // turn on reference URL add mode
                             refUrlAddMode = true;
