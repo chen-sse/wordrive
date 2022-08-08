@@ -5,7 +5,6 @@ let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
 let search = document.getElementById("search");
 
-let addMode = false;
 let entryBoxes = [];
 
 // hide hover images 'homeHover' and 'optionsHover'
@@ -95,9 +94,6 @@ function addEntries(wordInput, urlInput, type, event) {
                     
         // refresh popup
         document.location.reload();
-
-        // turn off add mode
-        addMode = false;
 
         // prevent word adder from reloading ('wordAdder' parent click event), if applicable
         if (event !== null) {
@@ -207,6 +203,8 @@ search.addEventListener("keyup", () => {
 });
 
 chrome.storage.sync.get("wordBank", (data) => {
+    let addMode = false;
+
     for (let i = 0; i < data.wordBank.length; i++) {
         let entry = data.wordBank[i];
 
@@ -689,77 +687,118 @@ chrome.storage.sync.get("wordBank", (data) => {
         });
     }
 
+    // create add mode elements
+    // create inputs, labels, and button
+    let wordInput = document.createElement("input");
+    let urlInput = document.createElement("input");
+    let wordLabel = document.createElement("label");
+    let urlLabel = document.createElement("label");
+    let cancel = document.createElement("button");
+    let save = document.createElement("button");
+    let isValidURL = true;
+
+    // hide word adder elems--only display when word add mode is toggled on
+    wordInput.style.display = "none";
+    urlInput.style.display = "none";
+    wordLabel.style.display = "none";
+    urlLabel.style.display = "none";
+    cancel.style.display = "none";
+    save.style.display = "none";
+
+    // edit innerHTML
+    wordLabel.innerHTML = "Word: ";
+    urlLabel.innerHTML = "URL: ";
+    cancel.innerHTML = "Cancel";
+    save.innerHTML = "Save";
+
+    // update DOM tree
+    wordAdder.appendChild(wordLabel);
+    wordAdder.appendChild(wordInput);
+    wordAdder.appendChild(urlLabel);
+    wordAdder.appendChild(urlInput);
+    wordAdder.appendChild(cancel);
+    wordAdder.appendChild(save);
+
+    // set attributes
+    wordInput.setAttribute("id", "wordAdder-word");
+    wordInput.setAttribute("type", "text");
+    urlInput.setAttribute("id", "wordAdder-url");
+    urlInput.setAttribute("type", "url");
+    wordLabel.setAttribute("for", "wordAdder-word");
+    urlLabel.setAttribute("for", "wordAdder-url");
+
+    // set classes
+    wordInput.classList.add("input");
+    urlInput.classList.add("input");
+    urlInput.classList.add("url-input");
+
+    // check for valid URL input--disable save button if invalid
+    urlInput.addEventListener("keyup", () => {
+        urlInput.value = urlInput.value.trim();
+        isValidURL = urlInput.checkValidity();
+
+        if (isValidURL) {
+            save.disabled = false;
+        } else {
+            save.disabled = true;
+        }
+    });
+
+    cancel.addEventListener("click", (event) => {
+        // hide word adder elems
+        wordInput.style.display = "none";
+        urlInput.style.display = "none";
+        wordLabel.style.display = "none";
+        urlLabel.style.display = "none";
+        cancel.style.display = "none";
+        save.style.display = "none";
+
+        // reset word adder label
+        wordAdderLabel.style.display = "";
+
+        // turn off add mode
+        addMode = false;
+
+        // prevent click event from firing on parent div 'wordAdder'
+        event.stopPropagation();
+    });
+
+    // save changes and exit add mode by clicking 'Save' button
+    save.addEventListener("click", (event) => {
+        addEntries(wordInput.value, urlInput.value, "sourceUrls", event);
+    });
+
+    // save changes and exit add mode with 'Enter' if URL is valid
+    wordInput.addEventListener("keydown", (event) => {
+        if (event.code === "Enter") {
+            if (isValidURL) {
+                addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
+            }
+        }
+    });
+    urlInput.addEventListener("keydown", (event) => {
+        if (event.code === "Enter") {
+            if (isValidURL) {
+                addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
+            }
+        }
+    });
+
     wordAdder.addEventListener("click", () => {
         // if not in add mode, enter it
         if (!addMode) {
-            // create inputs, labels, and button
-            let wordInput = document.createElement("input");
-            let urlInput = document.createElement("input");
-            let wordLabel = document.createElement("label");
-            let urlLabel = document.createElement("label");
-            let save = document.createElement("button");
-            let isValidURL = true;
+            // hide word adder label
+            wordAdderLabel.style.display = "none";
 
-            // edit innerHTML
-            wordAdder.innerHTML = "";
-            wordLabel.innerHTML = "Word: ";
-            urlLabel.innerHTML = "URL: ";
-            save.innerHTML = "Save";
+            // reveal word adder elems
+            wordInput.style.display = "";
+            urlInput.style.display = "";
+            wordLabel.style.display = "";
+            urlLabel.style.display = "";
+            cancel.style.display = "";
+            save.style.display = "";
 
-            // update DOM tree
-            wordAdder.appendChild(wordLabel);
-            wordAdder.appendChild(wordInput);
-            wordAdder.appendChild(urlLabel);
-            wordAdder.appendChild(urlInput);
-            wordAdder.appendChild(save);
-
-            // set attributes
-            wordInput.setAttribute("id", "wordAdder-word");
-            wordInput.setAttribute("type", "text");
-            urlInput.setAttribute("id", "wordAdder-url");
-            urlInput.setAttribute("type", "url");
-            wordLabel.setAttribute("for", "wordAdder-word");
-            urlLabel.setAttribute("for", "wordAdder-url");
-
-            // set classes
-            wordInput.classList.add("input");
-            urlInput.classList.add("input");
-            urlInput.classList.add("url-input");
-
-            // check for valid URL input--disable save button if invalid
-            urlInput.addEventListener("keyup", () => {
-                urlInput.value = urlInput.value.trim();
-                isValidURL = urlInput.checkValidity();
-
-                if (isValidURL) {
-                    save.disabled = false;
-                } else {
-                    save.disabled = true;
-                }
-            });
-
-            // save changes and exit add mode by clicking 'Save' button
-            save.addEventListener("click", (event) => {
-                addEntries(wordInput.value, urlInput.value, "sourceUrls", event);
-            });
-
-            // save changes and exit add mode with 'Enter' if URL is valid
-            wordInput.addEventListener("keydown", (event) => {
-                if (event.code === "Enter") {
-                    if (isValidURL) {
-                        addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
-                    }
-                }
-            });
-            urlInput.addEventListener("keydown", (event) => {
-                if (event.code === "Enter") {
-                    if (isValidURL) {
-                        addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
-                    }
-                }
-            });
-
-            // turn on add mode
+            // turn on word add mode
             addMode = true;
         }
     });
