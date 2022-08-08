@@ -6,8 +6,6 @@ let wordAdder = document.getElementById("wordAdder");
 let search = document.getElementById("search");
 
 let addMode = false;
-let sourceUrlAddMode = false;
-let refUrlAddMode = false;
 let entryBoxes = [];
 
 // hide hover images 'homeHover' and 'optionsHover'
@@ -262,6 +260,10 @@ chrome.storage.sync.get("wordBank", (data) => {
                         document.getElementsByClassName("url-mode-on")[0].classList.remove("url-mode-on");
                         document.getElementsByClassName("dropdown")[0].remove();
                     }
+
+                    // init add mode booleans
+                    let sourceUrlAddMode = false;
+                    let refUrlAddMode = false;
 
                     // init dropdown
                     let dropdown = document.createElement("div");
