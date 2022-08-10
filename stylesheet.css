@@ -42,7 +42,7 @@ button:hover {
     background-color: #FEFEFE;
 }
 
-/* ||Main Page|| */
+/* ||Page Header|| */
 #page-header-container {
     margin: 18px 18px;
 }
@@ -62,8 +62,8 @@ button:hover {
     #language-dropdown-button {
         display: flex;
         gap: 4px;
-        padding-left: 2px;
-        padding-right: 2px;
+        padding-left: 8px;
+        padding-right: 8px;
         font-size: 0.8em;
     }
     #language-dropdown-button .dropdown-arrow{
@@ -72,7 +72,8 @@ button:hover {
         bottom: 2px;
     }
 
-#tab-container {
+/* ||Tabs (home page only)|| */
+#tabs-container {
 
 }
 
