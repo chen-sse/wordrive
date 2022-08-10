@@ -83,10 +83,8 @@ function addEntries(wordInput, urlInput, type, event) {
                     time: getTime(),
                     notes: ""
                 });
-            } else {
-                if (newUrl) {
-                    data.wordBank[duplicateIndex][type].push(urlInput);
-                }
+            } else if (newUrl) {
+                data.wordBank[duplicateIndex][type].push(urlInput);
             }
 
             chrome.storage.sync.set({"wordBank": data.wordBank});
@@ -423,17 +421,13 @@ chrome.storage.sync.get("wordBank", (data) => {
         
                     // save changes and exit URL add mode with 'Enter' if URL is valid
                     sourceTitleInput.addEventListener("keydown", (event) => {
-                        if (event.code === "Enter") {
-                            if (sourceIsValidURL) {
-                                addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
-                            }
+                        if (event.code === "Enter" && sourceIsValidURL) {
+                            addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
                         }
                     });
                     sourceUrlInput.addEventListener("keydown", (event) => {
-                        if (event.code === "Enter") {
-                            if (sourceIsValidURL) {
-                                addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
-                            }
+                        if (event.code === "Enter" && sourceIsValidURL) {
+                            addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
                         }
                     });
 
@@ -608,17 +602,13 @@ chrome.storage.sync.get("wordBank", (data) => {
         
                     // save changes and exit URL add mode with 'Enter' if URL is valid
                     refTitleInput.addEventListener("keydown", (event) => {
-                        if (event.code === "Enter") {
-                            if (refIsValidURL) {
-                                addEntries(entry.text, refUrlInput.value, "refUrls", null);
-                            }
+                        if (event.code === "Enter" && refIsValidURL) {
+                            addEntries(entry.text, refUrlInput.value, "refUrls", null);
                         }
                     });
                     refUrlInput.addEventListener("keydown", (event) => {
-                        if (event.code === "Enter") {
-                            if (refIsValidURL) {
-                                addEntries(entry.text, refUrlInput.value, "refUrls", null);
-                            }
+                        if (event.code === "Enter" && refIsValidURL) {
+                            addEntries(entry.text, refUrlInput.value, "refUrls", null);
                         }
                     });
 
