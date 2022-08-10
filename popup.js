@@ -193,11 +193,9 @@ search.addEventListener("keyup", () => {
     chrome.storage.sync.get("wordBank", (data) => {
         for (let i = 0; i < data.wordBank.length; i++) {
             let entry = data.wordBank[i];
-            if (entry.text.indexOf(filter) > -1) {
-                entryBoxes[i].style.display = "";
-            } else {
-                entryBoxes[i].style.display = "none";
-            }
+            entryBoxes[i].style.display = (entry.text.indexOf(filter) > -1) 
+                                        ? "" 
+                                        : "none";
         }
     });
 });
@@ -395,12 +393,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     sourceUrlInput.addEventListener("keyup", () => {
                         sourceUrlInput.value = sourceUrlInput.value.trim();
                         sourceIsValidURL = sourceUrlInput.checkValidity();
-        
-                        if (sourceIsValidURL) {
-                            sourceSave.disabled = false;
-                        } else {
-                            sourceSave.disabled = true;
-                        }
+                        sourceSave.disabled = (sourceIsValidURL) ? false : true;
                     });                    
         
                     // cancel pending changes and exit URL add mode by clicking 'Cancel' button
@@ -585,12 +578,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     refUrlInput.addEventListener("keyup", () => {
                         refUrlInput.value = refUrlInput.value.trim();
                         refIsValidURL = refUrlInput.checkValidity();
-        
-                        if (refIsValidURL) {
-                            refSave.disabled = false;
-                        } else {
-                            refSave.disabled = true;
-                        }
+                        refSave.disabled = (refIsValidURL) ? false : true;
                     });                    
         
                     // cancel pending changes and exit URL add mode by clicking 'Cancel' button
@@ -659,11 +647,7 @@ chrome.storage.sync.get("wordBank", (data) => {
 
                     notes.innerHTML = "Notes:";
                     entry.notes = entry.notes.trim();
-                    if (entry.notes === "") {
-                        notesBox.innerHTML = "Write notes...";
-                    } else {
-                        notesBox.innerHTML = entry.notes;
-                    }
+                    notesBox.innerHTML = (entry.notes === "") ? "Write notes..." : entry.notes;
                     
                     notesBox.setAttribute("contenteditable", true);
                     notesBox.setAttribute("id", "notesBox");
@@ -736,12 +720,7 @@ chrome.storage.sync.get("wordBank", (data) => {
     urlInput.addEventListener("keyup", () => {
         urlInput.value = urlInput.value.trim();
         isValidURL = urlInput.checkValidity();
-
-        if (isValidURL) {
-            save.disabled = false;
-        } else {
-            save.disabled = true;
-        }
+        save.disabled = (isValidURL) ? false : true;
     });
 
     cancel.addEventListener("click", (event) => {
@@ -770,17 +749,13 @@ chrome.storage.sync.get("wordBank", (data) => {
 
     // save changes and exit add mode with 'Enter' if URL is valid
     wordInput.addEventListener("keydown", (event) => {
-        if (event.code === "Enter") {
-            if (isValidURL) {
-                addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
-            }
+        if (event.code === "Enter" && isValidURL) {
+            addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
         }
     });
     urlInput.addEventListener("keydown", (event) => {
-        if (event.code === "Enter") {
-            if (isValidURL) {
-                addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
-            }
+        if (event.code === "Enter" && isValidURL) {
+            addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
         }
     });
 
