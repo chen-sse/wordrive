@@ -1,7 +1,86 @@
-html {
+/* ||General Styles|| */
+body {
+    position: relative;
     width: 300px;
-    height: 480px;
+    margin: 0px;
+    background-color: #FFFEFA;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 500;
 }
+
+.top-container {
+    /*for top-level containers of page*/
+    box-sizing: border-box;
+}
+
+.dropdown-arrow {
+    /*animation & styling for dropdown arrows
+    (language dropdown and entry box dropdown)*/
+    border: solid #858585;
+    border-width: 0 1px 1px 0;
+    display: inline-block;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+button {
+    /*default style on buttons*/
+    display: inline-block;
+    border: 0px solid #babfc3;
+    padding: 3px 3px;
+    border-radius: 6px;
+    color: #202223;
+    background: #ffffff;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    text-align: center;
+    cursor: pointer;
+}
+
+/* ||Main Page|| */
+#page-header-container {
+    margin: 18px 18px;
+}
+    #page-header {
+        position: relative;
+        left: 15px;
+        font-family: 'Rubik', sans-serif;
+        font-weight: 500;
+        font-size: 25px;
+    }
+    #language-dropdown {
+        float: right;
+        position: relative;
+        top: 8px;
+        right: 5px;
+    }
+    #language-dropdown-button {
+        display: flex;
+        gap: 4px;
+        padding-left: 2px;
+        padding-right: 2px;
+        font-size: 0.8em;
+        background-color: #F4F4F4;
+        color: #858585;
+    }
+    #language-dropdown-button .dropdown-arrow{
+        padding: 2px;
+        position: relative;
+        bottom: 2px;
+    }
+
+#tab-container {
+
+}
+
+#tab-header-container {
+
+}
+
+/* ||Dropdown|| */
+
+/* ||Nav Bar|| */
 
 img {
     max-width: 75%;
@@ -21,43 +100,10 @@ img {
     cursor: grab;
 }
 
-body {
-    font-family: 'Source Sans Pro', sans-serif;
-    font-weight: 500;
-    position: relative;
-}
-
-#headerContainer {
-    margin-top: 10px;
-    margin-left: 5px;
-}
-
-#header {
-    font-family: 'Rubik', sans-serif;
-    font-weight: 500;
-    font-size: 25px;
-}
-
 #plus {
     font-size: 17px;
 }
 
-button {
-    font-family: 'Raleway', sans-serif;
-    font-weight: 500;
-    font-size: 13px;
-
-    display: inline-block;
-    outline: 0;
-    cursor: pointer;
-    text-align: center;
-    border: 1px solid #babfc3;
-    padding: 3px 3px;
-    color: #202223;
-    background: #ffffff;
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px 0px;
-}
 
 button:hover {
     background: #f6f6f7;
@@ -86,7 +132,7 @@ button:hover {
 
 .entryBox {
     font-size: 17px;
-    border-radius: 5px;
+    border-radius: 8px;
     padding: 5px;
     height: 25px;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 400;
