@@ -43386,11 +43386,11 @@ module.exports = function whichTypedArray(value) {
                 });*/
 
                 // write URLs for each word (without list)
-                for (let i = 0; i<element.urls.length; i++){
+                for (let i = 0; i<element.sourceUrls.length; i++){
                     doc.fontSize(8)
                         .font('Source Sans Pro 400')
                         .fillColor('#555555')
-                        .text(`${element.urls[i]}`,{
+                        .text(`${element.sourceUrls[i]}`,{
                         });
                 }
 
