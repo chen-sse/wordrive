@@ -29,13 +29,17 @@ button {
     border: 0px solid #babfc3;
     padding: 3px 3px;
     border-radius: 6px;
-    color: #202223;
-    background: #ffffff;
+    background-color: #F4F4F4;
+    color: #858585;
     font-family: 'Raleway', sans-serif;
     font-weight: 500;
-    font-size: 13px;
+    font-size: 0.8em;
     text-align: center;
     cursor: pointer;
+}
+
+button:hover {
+    background-color: #FEFEFE;
 }
 
 /* ||Main Page|| */
@@ -61,8 +65,6 @@ button {
         padding-left: 2px;
         padding-right: 2px;
         font-size: 0.8em;
-        background-color: #F4F4F4;
-        color: #858585;
     }
     #language-dropdown-button .dropdown-arrow{
         padding: 2px;
@@ -102,12 +104,6 @@ img {
 
 #plus {
     font-size: 17px;
-}
-
-
-button:hover {
-    background: #f6f6f7;
-    outline: 1px solid transparent;
 }
 
 .flex-container {
