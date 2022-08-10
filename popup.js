@@ -100,6 +100,14 @@ function addEntries(wordInput, urlInput, type, event) {
     });
 }
 
+// remove any existing dropdown
+function removeDropdown() {
+    if (document.getElementsByClassName("dropdown").length !== 0) {
+        document.getElementsByClassName("url-mode-on")[0].classList.remove("url-mode-on");
+        document.getElementsByClassName("dropdown")[0].remove();
+    }
+}
+
 // toggle edit/save button and save edits to Wordrive
 function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
     // trim container text
@@ -186,8 +194,10 @@ function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
 
 // actively return matching Wordrive entries on user input
 search.addEventListener("keyup", () => {
-    let filter = search.value.toLowerCase().trim();
+    // remove any existing dropdown
+    removeDropdown();
 
+    let filter = search.value.toLowerCase().trim();
     chrome.storage.sync.get("wordBank", (data) => {
         for (let i = 0; i < data.wordBank.length; i++) {
             let entry = data.wordBank[i];
@@ -250,10 +260,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                 // if off, turn URL mode on and create dropdown
                 if (!entryBox.classList.contains("url-mode-on")) {
                     // remove any existing dropdown
-                    if (document.getElementsByClassName("dropdown").length !== 0) {
-                        document.getElementsByClassName("url-mode-on")[0].classList.remove("url-mode-on");
-                        document.getElementsByClassName("dropdown")[0].remove();
-                    }
+                    removeDropdown();
 
                     // init add mode booleans
                     let sourceUrlAddMode = false;
