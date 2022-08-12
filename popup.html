@@ -9,46 +9,74 @@
         <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;1,200;1,300;1,400;1,600&display=swap" rel="stylesheet">
     </head>
     <body>
-        <!--Page Header section: header & language dropdown-->
-        <div id="page-header-container" class="top-container">
-            <span id="page-header">Wordrive</span>
-            <span id="language-dropdown">
-                <button id="language-dropdown-button">
-                    <div>
-                        <i class="dropdown-arrow"></i>
-                    </div>
-                    <div>ENG</div>
-                </button>
-            </span>
+    <!--||Page Header section: header & language dropdown-->
+    <div id="page-header-container" class="top-container">
+        <span id="page-header">Wordrive</span>
+        <button id="language-dropdown-button">
+            <span class="dropdown-arrow"></span>
+            <span id="language-dropdown-text">ENG</span>
+        </button>
+    </div>
+
+    <!--||Tabs section: tabs & tab header-->
+    <div id="tabs-container" class="top-container">
+        <svg id="recents-tab" class="recents-active" width="95" height="40" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <a id="recents-tab-wrapper" class="svg-click-wrapper">
+                <path class="recents-active" fill-rule="evenodd" clip-rule="evenodd" d="M0.601868 32H12.0173H108.5H119.573C112.684 32 106.279 28.4541 102.623 22.6157L94.3364 9.38428C90.6797 3.5459 84.2754 0 77.3862 0H42.3326C35.2579 0 28.7097 3.73779 25.1119 9.8291L17.8226 22.1709C14.2248 28.2622 7.67651 32 0.601868 32Z" fill="#C1E6AE"/>
+                <path class="recents-active" d="M48.3291 17C48.3291 19.71 49.3294 22.3245 51.1383 24.3424C52.9472 26.3603 55.4373 27.6394 58.1311 27.9346C60.8249 28.2297 63.5329 27.5201 65.7358 25.9417C67.9387 24.3634 69.4814 22.0274 70.0682 19.3818C70.6549 16.7361 70.2444 13.9669 68.9154 11.6053C67.5864 9.24361 65.4323 7.45565 62.8663 6.58423C60.3003 5.71281 57.5029 5.81927 55.0105 6.88319C52.5181 7.94712 50.5062 9.89362 49.3605 12.3495" stroke="black" stroke-width="2" stroke-linecap="round"/>
+                <path class="recents-active" d="M48 10.1631L49.3831 12.9543L52.1744 11.5712" stroke="black" stroke-width="2" stroke-linecap="round"/>
+                <path class="recents-active" d="M59.3291 11V17H65.3291" stroke="black" stroke-width="2" stroke-linecap="round"/>
+            </a>
+        </svg>
+        <svg id="view-all-tab" width="95" height="40" viewBox="0 0 119 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <a id="view-all-tab-wrapper" class="svg-click-wrapper">
+                <path class="view-all-inactive" fill-rule="evenodd" clip-rule="evenodd" d="M0 32H11.4155H107.898H118.971C112.082 32 105.678 28.4543 102.021 22.6156L93.7345 9.38445C90.0778 3.54572 83.6735 0 76.7843 0H41.7307C34.656 0 28.1078 3.73758 24.51 9.82912L17.2207 22.1709C13.6229 28.2624 7.07466 32 0 32Z" fill="#D4CBF7"/>
+                <path class="icon-graphic" fill-rule="evenodd" clip-rule="evenodd" d="M51 7H64C64.5523 7 65 7.44772 65 8V20.8425C65.3386 20.9165 65.673 21.0159 66 21.1408V8C66 6.89543 65.1046 6 64 6H51C49.8954 6 49 6.89543 49 8V25C49 26.1046 49.8954 27 51 27H59.4039C59.3904 26.9903 59.377 26.9805 59.3636 26.9706L58.0402 26H51C50.4477 26 50 25.5523 50 25V8C50 7.44772 50.4477 7 51 7Z" fill="black"/>
+                <path class="view-all-inactive" d="M58 24.7773L59.6376 23.5762C62.1017 21.7689 65.4535 21.7689 67.9176 23.5762L69.5552 24.7773L67.9176 25.9784C65.4535 27.7858 62.1017 27.7858 59.6376 25.9784L58 24.7773Z" stroke="black"/>
+                <line class="icon-graphic" x1="55.625" y1="11.375" x2="62.375" y2="11.375" stroke="black" stroke-width="1.25" stroke-linecap="round"/>
+                <line class="icon-graphic" x1="55.625" y1="14.375" x2="62.375" y2="14.375" stroke="black" stroke-width="1.25" stroke-linecap="round"/>
+                <line class="icon-graphic" x1="55.625" y1="17.375" x2="62.375" y2="17.375" stroke="black" stroke-width="1.25" stroke-linecap="round"/>
+                <path class="icon-graphic" d="M54.5 10.75C54.5 11.1642 54.1642 11.5 53.75 11.5C53.3358 11.5 53 11.1642 53 10.75C53 10.3358 53.3358 10 53.75 10C54.1642 10 54.5 10.3358 54.5 10.75Z" fill="black"/>
+                <path class="icon-graphic" d="M54.5 13.75C54.5 14.1642 54.1642 14.5 53.75 14.5C53.3358 14.5 53 14.1642 53 13.75C53 13.3358 53.3358 13 53.75 13C54.1642 13 54.5 13.3358 54.5 13.75Z" fill="black"/>
+                <path class="icon-graphic" d="M54.5 16.75C54.5 17.1642 54.1642 17.5 53.75 17.5C53.3358 17.5 53 17.1642 53 16.75C53 16.3358 53.3358 16 53.75 16C54.1642 16 54.5 16.3358 54.5 16.75Z" fill="black"/>
+                <circle class="icon-graphic" cx="63.75" cy="24.75" r="1.25" stroke="black"/>
+            </a>
+        </svg>
+        <svg id="starred-tab" width="95" height="40" viewBox="0 0 119 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <a id="starred-tab-wrapper" class="svg-click-wrapper">
+                <path class="starred-inactive" fill-rule="evenodd" clip-rule="evenodd" d="M0 32H11.4155H107.898H118.971C112.082 32 105.678 28.4543 102.021 22.6156L93.7345 9.38445C90.0778 3.54572 83.6735 0 76.7843 0H41.7307C34.656 0 28.1078 3.73758 24.51 9.82912L17.2207 22.1709C13.6229 28.2624 7.07466 32 0 32Z" fill="#FBE9AC"/>
+                <path class="icon-graphic" d="M58.0489 7.92705C58.3483 7.00574 59.6517 7.00574 59.9511 7.92705L61.4697 12.6008C61.6035 13.0128 61.9875 13.2918 62.4207 13.2918H67.335C68.3037 13.2918 68.7065 14.5314 67.9228 15.1008L63.947 17.9894C63.5966 18.244 63.4499 18.6954 63.5838 19.1074L65.1024 23.7812C65.4017 24.7025 64.3472 25.4686 63.5635 24.8992L59.5878 22.0106C59.2373 21.756 58.7627 21.756 58.4122 22.0106L54.4365 24.8992C53.6528 25.4686 52.5983 24.7025 52.8976 23.7812L54.4162 19.1074C54.5501 18.6954 54.4034 18.244 54.053 17.9894L50.0772 15.1008C49.2935 14.5314 49.6963 13.2918 50.665 13.2918H55.5793C56.0125 13.2918 56.3965 13.0128 56.5303 12.6008L58.0489 7.92705Z" stroke="black" stroke-width="2"/>
+            </a>
+        </svg>
+        <svg id="tab-bar" width="378" height="76" viewBox="0 0 378 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <mask id="mask0_110_713" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="378" height="76">
+                <path id="tab-bar-constituent1" d="M0 0H378V75.5H0V0Z" fill="#D9D9D9"/>
+            </mask>
+            <g mask="url(#mask0_110_713)">
+                <path id="tab-bar-constituent2" fill-rule="evenodd" clip-rule="evenodd" d="M-3 26C-3 12.1929 8.19287 1 22 1H356C369.807 1 381 12.1929 381 26V43C381 26.4315 367.569 13 351 13H27C10.4315 13 -3 26.4315 -3 43V26ZM-3 425.5V461.5H381V425.5C381 442.069 367.569 455.5 351 455.5H27C10.4315 455.5 -3 442.069 -3 425.5Z" fill="#C1E6AE"/>
+            </g>
+        </svg>
+        <span id="tab-header">RECENTS</span>
+    </div>
+    <!--||Main section: search input field, sort-by dropdown, entries,
+    add-new-word input field, select-all button, export button, delete button-->
+    <input id="search" type="text" placeholder="Search...">
+    <div class="flex-container" id="wordsDiv"></div>
+    <div id="wordAdder" class="adder">
+        <div id="wordAdderLabel" class="adder"> &nbsp;&nbsp;&nbsp;<span id="plus">+</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;add new word to Wordrive
         </div>
-
-        <!--Tabs section: tabs & tab header-->
-        <div id="tabs-container" class="top-container">
-
+    </div>
+    <nav>
+        <div class="navDiv" id="home">
+            <img src="images/home.png">
+            <img id="homeHover" src="images/footerButtonHover.png">
         </div>
-            <div id="tab-header">
-
-            </div>
-
-        <!--Main section: search input field, sort-by dropdown, entries,
-        add-new-word input field, select-all button, export button, delete button-->
-        <input id="search" type="text" placeholder="Search...">
-        <div class="flex-container" id="wordsDiv"></div>
-        <div id="wordAdder" class="adder">
-            <div id="wordAdderLabel" class="adder"> &nbsp;&nbsp;&nbsp;<span id="plus">+</span>
-                &nbsp;&nbsp;&nbsp;&nbsp;add new word to Wordrive
-            </div>
+        <div class="navDiv" id="options">
+            <img src="images/options.png">
+            <img id="optionsHover" src="images/footerButtonHover.png">
         </div>
-        <nav>
-            <div class="navDiv" id="home">
-                <img src="images/home.png">
-                <img id="homeHover" src="images/footerButtonHover.png">
-            </div>
-            <div class="navDiv" id="options">
-                <img src="images/options.png">
-                <img id="optionsHover" src="images/footerButtonHover.png">
-            </div>
-        </nav>
+    </nav>
         <script type="module" src="popup.js"></script>
     </body>
 </html>

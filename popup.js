@@ -4,8 +4,105 @@ let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
 let search = document.getElementById("search");
-
 let entryBoxes = [];
+let recentsTab = {
+    tabElement: document.getElementById("recents-tab"),
+    tabWrapper: document.getElementById("recents-tab-wrapper"),
+    activeColor: "#C1E6AE",
+    activeClass: "recents-active",
+    inactiveClass: "recents-inactive"
+}
+let viewAllTab = {
+    tabElement: document.getElementById("view-all-tab"),
+    tabWrapper: document.getElementById("view-all-tab-wrapper"),
+    activeColor: "#B1B1F9",
+    activeClass: "view-all-active",
+    inactiveClass: "view-all-inactive"
+}
+let starredTab = {
+    tabElement: document.getElementById("starred-tab"),
+    tabWrapper: document.getElementById("starred-tab-wrapper"),
+    activeColor: "#F8D651",
+    activeClass: "starred-active",
+    inactiveClass: "starred-inactive"
+}
+
+// change active class applied to tab-bar (tab bar cannot be inactive)
+function changeTabBarStatus (tab) {
+    let constituentOne = document.getElementById("tab-bar-constituent1");
+    constituentOne.setAttribute("class", "")
+    constituentOne.style.zIndex = "10";
+    constituentOne.style.fill = tab.activeColor;
+    let constituentTwo = document.getElementById("tab-bar-constituent2");
+    constituentTwo.setAttribute("class", "")
+    constituentTwo.style.zIndex = "10";
+    constituentTwo.style.fill = tab.activeColor;
+}
+
+// boolean 'activate' -- true if tab is to be activated, false if it is to be deactivated
+function changeTabStatus (tab, activate) {
+    let svgElements = tab.tabWrapper.children;
+    for (let i=0; i<svgElements.length; i++) {
+        let elementClass = svgElements[i].getAttribute("class");
+        // apply activity class to element if it is not part of icon graphic
+        if (elementClass.indexOf("icon-graphic") === -1) {
+            if (activate) {
+                // if inactive class applied to element, remove it
+                svgElements[i].classList.remove(tab.inactiveClass);
+                svgElements[i].classList.add(tab.activeClass);
+                // apply class to tab SVG element (necessary for proper tab overlap)
+                tab.tabElement.classList.remove(tab.inactiveClass);
+                tab.tabElement.classList.add(tab.activeClass);
+            }
+            else {
+                svgElements[i].classList.remove(tab.activeClass);
+                svgElements[i].classList.add(tab.inactiveClass);
+                // remove class from tab SVG element (necessary for proper tab overlap)
+                tab.tabElement.classList.remove(tab.activeClass);
+                tab.tabElement.classList.add(tab.inactiveClass);
+            }
+        }
+        else { break; }
+    }
+}
+
+// activate one tab and deactivate others
+function changeAllTabStatuses (activeTab, inactiveTabOne, inactiveTabTwo) {
+    // activate clicked tab
+    changeTabStatus(activeTab, true);
+    // deactivate other tabs
+    changeTabStatus(inactiveTabOne, false);
+    changeTabStatus(inactiveTabTwo, false);
+}
+// activate recents tab and display relevant entries
+document.getElementById("recents-tab-wrapper").addEventListener('click', (event) => {
+    recentsTab.tabElement.style.zIndex = "10";
+    changeAllTabStatuses(recentsTab, viewAllTab, starredTab);
+    viewAllTab.tabElement.style.zIndex = "5";
+    starredTab.tabElement.style.zIndex = "1";
+    // apply recents active class to tab bar
+    changeTabBarStatus(recentsTab);
+});
+
+// activate view-all tab and display relevant entries
+document.getElementById("view-all-tab-wrapper").addEventListener('click', (event) => {
+    viewAllTab.tabElement.style.zIndex = "10"
+    changeAllTabStatuses(viewAllTab, recentsTab, starredTab);
+    recentsTab.tabElement.style.zIndex = "1";
+    starredTab.tabElement.style.zIndex = "1";
+    // apply view-all active class to tab bar
+    changeTabBarStatus(viewAllTab);
+});
+// activate starred tab and display relevant entries
+document.getElementById("starred-tab-wrapper").addEventListener('click', (event) => {
+    starredTab.tabElement.style.zIndex = "10";
+    changeAllTabStatuses(starredTab, recentsTab, viewAllTab);
+    recentsTab.tabElement.style.zIndex = "5";
+    viewAllTab.tabElement.style.zIndex = "1";
+    // apply starred active class to tab bar
+    changeTabBarStatus(starredTab);
+});
+
 
 // hide hover images 'homeHover' and 'optionsHover'
 let homeHover = document.getElementById("homeHover");
