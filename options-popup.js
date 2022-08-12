@@ -50,7 +50,7 @@ function exportData() {
 
             builder += `WORD ${i + 1}: ${word}\nURLs:\n`;
             for (let j = 0; j < theUrls.length; j++) {
-                builder += `${j + 1}) ${theUrls[j]}\n`;
+                builder += `${j + 1}) ${theUrls[j].url}\n`;
             }
             builder += "\n";
         }

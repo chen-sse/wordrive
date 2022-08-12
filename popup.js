@@ -1,4 +1,4 @@
-import { getDate, getTime, getDictionaryURL } from "./utils.js";
+import { getDate, getTime, getDictionaryURL, getFaviconURL } from "./utils.js";
 
 let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
@@ -60,7 +60,7 @@ function addEntries(wordInput, urlInput, type, event) {
                 // if empty URL, don't add (set 'newUrl = false')
                 if (urlInput !== "") {
                     for (let j = 0; j < entry[type].length; j++) {
-                        if (urlInput === entry[type][j]) {
+                        if (urlInput === entry[type][j].url) {
                             newUrl = false;
                         }
                     }
@@ -73,18 +73,29 @@ function addEntries(wordInput, urlInput, type, event) {
         // save word and/or URL, if not duplicate and not empty
         if (wordInput !== "") {
             if (newWord) {
+                let dictionaryUrl = getDictionaryURL(wordInput);
+
                 data.wordBank.push({
                     text: wordInput,
                     sourceUrls: (urlInput === "")
                         ? []
-                        : [urlInput],
-                    refUrls: [getDictionaryURL(wordInput)],
+                        : [{
+                            url: urlInput,
+                            icon: getFaviconURL(urlInput)
+                        }],
+                    refUrls: [{
+                        url: dictionaryUrl,
+                        icon: getFaviconURL(dictionaryURL)
+                    }],
                     date: getDate(),
                     time: getTime(),
                     notes: ""
                 });
             } else if (newUrl) {
-                data.wordBank[duplicateIndex][type].push(urlInput);
+                data.wordBank[duplicateIndex][type].push({
+                    url: urlInput,
+                    icon: getFaviconURL(urlInput)
+                });
             }
 
             chrome.storage.sync.set({"wordBank": data.wordBank});
@@ -123,7 +134,7 @@ function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
         if (container.innerText === "") {
             container.innerText = (type === "word")
                                 ? data.wordBank[wordIndex].text
-                                : data.wordBank[wordIndex].sourceUrls[urlIndex];
+                                : data.wordBank[wordIndex].sourceUrls[urlIndex].url;
         // if entry is a non-empty string, set the entry to that string
         } else {
             // if edited entry is a word
@@ -142,14 +153,21 @@ function toggleButton(box, container, button, data, wordIndex, urlIndex, type) {
                 // if entered word is duplicate
                 if (firstIndex !== lastIndex) {
                     // merge URLs from duplicate entry to current entry, then remove duplicate entry
-                    for (const url of data.wordBank[wordIndex].sourceUrls) {
+                    for (const urlObj of data.wordBank[wordIndex].sourceUrls) {
                         if (firstIndex === wordIndex) {
-                            if (!data.wordBank[lastIndex].sourceUrls.includes(url)) {
-                                data.wordBank[lastIndex].sourceUrls.push(url);
+                            // for each urlObj, check if there exists another urlObj in sourceUrls with URL equal to urlObj.url
+                            if (!data.wordBank[lastIndex].sourceUrls.some((e) => (e.url === urlObj.url))) {
+                                data.wordBank[lastIndex].sourceUrls.push({
+                                    url: urlObj.url,
+                                    icon: getFaviconURL(urlObj.url)
+                                });
                             }
                         } else {
-                            if (!data.wordBank[firstIndex].sourceUrls.includes(url)) {
-                                data.wordBank[firstIndex].sourceUrls.push(url);
+                            if (!data.wordBank[firstIndex].sourceUrls.some((e) => (e.url === urlObj.url))) {
+                                data.wordBank[firstIndex].sourceUrls.push({
+                                    url: urlObj.url,
+                                    icon: getFaviconURL(urlObj.url)
+                                });
                             }
                         }
                     }
@@ -281,7 +299,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     sourceUrls.innerHTML = "Found at:";
                     dropdown.appendChild(sourceUrls);
                     for (let j = 0; j < entry.sourceUrls.length; j++) {
-                        let wordUrl = entry.sourceUrls[j];
+                        let wordUrl = entry.sourceUrls[j].url;
     
                         /* init a div-span-button set for given URL
                         Note: a urlBox is the parent div for each entry;
@@ -462,7 +480,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     refUrls.innerHTML = "Reference:";
                     dropdown.appendChild(refUrls);
                     for (let j = 0; j < entry.refUrls.length; j++) {
-                        let refUrl = entry.refUrls[j];
+                        let refUrl = entry.refUrls[j].url;
     
                         /* init a div-span-button set for given URL
                         Note: a refBox is the parent div for each entry;

@@ -1,4 +1,4 @@
-import { getDate, getTime, getDictionaryURL } from "./utils.js";
+import { getDate, getTime, getDictionaryURL, getFaviconURL } from "./utils.js";
 
 chrome.runtime.onInstalled.addListener(() => {
     // create context menu
@@ -36,7 +36,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
                 if (entry.text.toLowerCase() === selectedWord.toLowerCase()) {
                     for (let j = 0; j < entry.sourceUrls.length; j++) {
                         // check if URL is already in URL list
-                        if (currentTab.url === entry.sourceUrls[j]) {
+                        if (currentTab.url === entry.sourceUrls[j].url) {
                             newUrl = false;
                             break;
                         }
@@ -44,20 +44,31 @@ chrome.contextMenus.onClicked.addListener((info) => {
                     newWord = false;
                     // if URL is not duplicate, add to URL list
                     if (newUrl) {
-                        entry.sourceUrls.push(currentTab.url);
+                        entry.sourceUrls.push({
+                            url: currentTab.url, 
+                            icon: getFaviconURL(currentTab.url)
+                        });
                         break;
                     }
                 }
             }
             // if word is not duplicate, add to word bank
             if (newWord) {
+                let dictionaryUrl = getDictionaryURL(selectedWord);
+
                 // push new word object to word bank
                 data.wordBank.push({
                     text: (data.lowercaseChecked === true)
                         ? selectedWord.toLowerCase()
                         : selectedWord,
-                    sourceUrls: [currentTab.url],
-                    refUrls: [getDictionaryURL(selectedWord)],
+                    sourceUrls: [{
+                        url: currentTab.url,
+                        icon: getFaviconURL(currentTab.url)
+                    }],
+                    refUrls: [{
+                        url: dictionaryUrl,
+                        icon: getFaviconURL(dictionaryUrl)
+                    }],
                     date: getDate(),
                     time: getTime(),
                     notes: ""
