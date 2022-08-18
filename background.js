@@ -45,8 +45,10 @@ chrome.contextMenus.onClicked.addListener((info) => {
                     // if URL is not duplicate, add to URL list
                     if (newUrl) {
                         entry.sourceUrls.push({
-                            url: currentTab.url, 
-                            icon: getFaviconURL(currentTab.url)
+                            url: currentTab.url,
+                            icon: getFaviconURL(currentTab.url),
+                            title: "",
+                            fetched: false
                         });
                         break;
                     }
@@ -63,11 +65,15 @@ chrome.contextMenus.onClicked.addListener((info) => {
                         : selectedWord,
                     sourceUrls: [{
                         url: currentTab.url,
-                        icon: getFaviconURL(currentTab.url)
+                        icon: getFaviconURL(currentTab.url),
+                        title: "",
+                        fetched: false
                     }],
                     refUrls: [{
                         url: dictionaryUrl,
-                        icon: getFaviconURL(dictionaryUrl)
+                        icon: getFaviconURL(dictionaryUrl),
+                        title: "",
+                        fetched: false
                     }],
                     date: getDate(),
                     time: getTime(),

@@ -178,11 +178,15 @@ function addEntries(wordInput, urlInput, type, event) {
                         ? []
                         : [{
                             url: urlInput,
-                            icon: getFaviconURL(urlInput)
+                            icon: getFaviconURL(urlInput),
+                            title: "",
+                            fetched: false
                         }],
                     refUrls: [{
                         url: dictionaryUrl,
-                        icon: getFaviconURL(dictionaryURL)
+                        icon: getFaviconURL(dictionaryURL),
+                        title: "",
+                        fetched: false
                     }],
                     date: getDate(),
                     time: getTime(),
@@ -191,7 +195,9 @@ function addEntries(wordInput, urlInput, type, event) {
             } else if (newUrl) {
                 data.wordBank[duplicateIndex][type].push({
                     url: urlInput,
-                    icon: getFaviconURL(urlInput)
+                    icon: getFaviconURL(urlInput),
+                    title: "",
+                    fetched: false
                 });
             }
 
@@ -206,6 +212,18 @@ function addEntries(wordInput, urlInput, type, event) {
             event.stopPropagation();
         }
     });
+}
+
+// fetch the HTML title of a specified URL
+async function getTitle(url) {
+    try {
+        const response = await fetch(url);
+        const text = await response.text();
+        const doc = new DOMParser().parseFromString(text, "text/html");
+        return (typeof(doc.title !== "undefined")) ? doc.title : "";
+    } catch (error) {
+        return null;
+    }
 }
 
 // remove any existing dropdown
@@ -252,14 +270,18 @@ function toggleButton(box, container, button, data, wordIndex) {
                         if (!data.wordBank[lastIndex].sourceUrls.some((e) => (e.url === urlObj.url))) {
                             data.wordBank[lastIndex].sourceUrls.push({
                                 url: urlObj.url,
-                                icon: getFaviconURL(urlObj.url)
+                                icon: getFaviconURL(urlObj.url),
+                                title: "",
+                                fetched: false
                             });
                         }
                     } else {
                         if (!data.wordBank[firstIndex].sourceUrls.some((e) => (e.url === urlObj.url))) {
                             data.wordBank[firstIndex].sourceUrls.push({
                                 url: urlObj.url,
-                                icon: getFaviconURL(urlObj.url)
+                                icon: getFaviconURL(urlObj.url),
+                                title: "",
+                                fetched: false
                             });
                         }
                     }
@@ -300,8 +322,62 @@ search.addEventListener("keyup", () => {
     });
 });
 
+// load Wordrive entries
 chrome.storage.sync.get("wordBank", (data) => {
     let addMode = false;
+
+    // fetch and save titles
+    for (let i = 0; i < data.wordBank.length; i++) {
+        let entry = data.wordBank[i];
+        
+        // fetch source URL titles
+        for (let j = 0; j < entry.sourceUrls.length; j++) {
+            let sourceUrl = entry.sourceUrls[j];
+            (async () => {
+                // if URL has never been successfully fetched
+                if (!sourceUrl.fetched) {
+                    // set title to hostname by default
+                    sourceUrl.title = new URL(sourceUrl.url).hostname;
+                    // fetch title
+                    let title = await getTitle(sourceUrl.url);
+                    // if fetch succeeded, mark URL as successfully fetched
+                    if (title !== null) {
+                        sourceUrl.fetched = true;
+                        // set title to fetched title if fetched title isn't empty/undefined
+                        if (title !== "") {
+                            sourceUrl.title = title;
+                        }
+                    }
+                    // sync changes
+                    chrome.storage.sync.set({"wordBank": data.wordBank});
+                }
+            })()
+        }
+
+        // fetch reference URL titles
+        for (let j = 0; j < entry.refUrls.length; j++) {
+            let refUrl = entry.refUrls[j];
+            (async () => {
+                // if URL has never been successfully fetched
+                if (refUrl.fetched !== true) {
+                    // set title to hostname by default
+                    refUrl.title = new URL(refUrl.url).hostname;
+                    // fetch title
+                    let title = await getTitle(refUrl.url);
+                    // if fetch succeeded, mark URL as successfully fetched
+                    if (title !== null) {
+                        refUrl.fetched = true;
+                        // set title to fetched title if fetched title isn't empty/undefined
+                        if (title !== "") {
+                            refUrl.title = title;
+                        }
+                    }
+                    // sync changes
+                    chrome.storage.sync.set({"wordBank": data.wordBank});
+                }
+            })()
+        }
+    }
 
     for (let i = 0; i < data.wordBank.length; i++) {
         let entry = data.wordBank[i];
@@ -373,7 +449,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     sourceUrls.innerHTML = "Found at:";
                     dropdown.appendChild(sourceUrls);
                     for (let j = 0; j < entry.sourceUrls.length; j++) {
-                        let wordUrl = entry.sourceUrls[j].url;
+                        let sourceUrl = entry.sourceUrls[j];
     
                         /* init a div-span set for given URL
                         Note: a urlBox is the parent div for each entry;
@@ -387,7 +463,7 @@ chrome.storage.sync.get("wordBank", (data) => {
     
                         // init attribute 'contenteditable' to span element
                         urlContainer.setAttribute("contenteditable", false);
-                        urlContainer.innerText = wordUrl;
+                        urlContainer.innerText = sourceUrl.title;
     
                         // make 'urlContainer' a child of 'urlBox' and append 'urlBox' to 'sourceUrls'
                         urlBox.appendChild(urlContainer);
@@ -399,7 +475,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                             if (urlContainer.isContentEditable === false) {
                                 chrome.runtime.sendMessage({
                                     msg: "new tab",
-                                    url: wordUrl
+                                    url: sourceUrl.url
                                 });
                             }
                         });
@@ -533,7 +609,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     refUrls.innerHTML = "Reference:";
                     dropdown.appendChild(refUrls);
                     for (let j = 0; j < entry.refUrls.length; j++) {
-                        let refUrl = entry.refUrls[j].url;
+                        let refUrl = entry.refUrls[j];
     
                         /* init a div-span set for given URL
                         Note: a refBox is the parent div for each entry;
@@ -547,7 +623,7 @@ chrome.storage.sync.get("wordBank", (data) => {
     
                         // init attribute 'contenteditable' to span element
                         refContainer.setAttribute("contenteditable", false);
-                        refContainer.innerText = refUrl;
+                        refContainer.innerText = refUrl.title;
     
                         // make 'refContainer' a child of 'refBox' and append 'refBox' to 'refUrls'
                         refBox.appendChild(refContainer);
@@ -559,7 +635,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                             if (refContainer.isContentEditable === false) {
                                 chrome.runtime.sendMessage({
                                     msg: "new tab",
-                                    url: refUrl
+                                    url: refUrl.url
                                 });
                             }
                         });

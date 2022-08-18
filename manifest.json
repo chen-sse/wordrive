@@ -13,6 +13,9 @@
         "storage",
         "tabs"
     ],
+    "host_permissions": [
+        "*://*/"
+    ],
     "action": {
         "default_popup": "popup.html"
     }
