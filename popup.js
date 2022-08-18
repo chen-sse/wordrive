@@ -476,7 +476,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                         // click handler: tell background script to open hyperlink
                         urlBox.addEventListener("click", () => {
                             // only open URL if not in URL edit mode
-                            if (urlContainer.isContentEditable === false) {
+                            if (labelSpan.isContentEditable === false) {
                                 chrome.runtime.sendMessage({
                                     msg: "new tab",
                                     url: sourceUrl.url
@@ -640,7 +640,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                         // click handler: tell background script to open hyperlink
                         refBox.addEventListener("click", () => {
                             // only open URL if not in URL edit mode
-                            if (refContainer.isContentEditable === false) {
+                            if (labelSpan.isContentEditable === false) {
                                 chrome.runtime.sendMessage({
                                     msg: "new tab",
                                     url: refUrl.url
