@@ -34,7 +34,7 @@ function getDictionaryURL(term) {
 }
 
 function getFaviconURL(url) {
-    return "https://www.google.com/s2/favicons?sz=16&domain_url=" + url;
+    return "https://www.google.com/s2/favicons?sz=32&domain_url=" + url;
 }
 
 export { getDate, getTime, getDictionaryURL, getFaviconURL };
