@@ -179,7 +179,7 @@ img {
 .flex-container {
     display: flex;
     flex-direction: column;
-    height: 270px;
+    height: 195px;
     overflow-wrap: break-word;
     overflow-y: auto;
 }
