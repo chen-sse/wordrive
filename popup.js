@@ -451,22 +451,26 @@ chrome.storage.sync.get("wordBank", (data) => {
                     for (let j = 0; j < entry.sourceUrls.length; j++) {
                         let sourceUrl = entry.sourceUrls[j];
     
-                        /* init a div-span set for given URL
-                        Note: a urlBox is the parent div for each entry;
-                        a urlContainer is the span displaying the URL */
+                        /* init a div-span set for given URL;
+                        urlBox is the parent div for each entry */
                         let urlBox = document.createElement("div");
-                        let urlContainer = document.createElement("span");
+                        let labelSpan = document.createElement("span");
     
-                        // add classes to 'urlBox' and 'urlContainer'
+                        // add classes
                         urlBox.classList.add("entryBox");
-                        urlContainer.classList.add("container");
+
+                        // set icon properties
+                        let icon = document.createElement("img");
+                        icon.classList.add("icon");
+                        icon.setAttribute("src", sourceUrl.icon);
     
-                        // init attribute 'contenteditable' to span element
-                        urlContainer.setAttribute("contenteditable", false);
-                        urlContainer.innerText = sourceUrl.title;
+                        // set label properties
+                        labelSpan.setAttribute("contenteditable", false);
+                        labelSpan.innerText = sourceUrl.title;
     
-                        // make 'urlContainer' a child of 'urlBox' and append 'urlBox' to 'sourceUrls'
-                        urlBox.appendChild(urlContainer);
+                        // update DOM
+                        urlBox.appendChild(icon);
+                        urlBox.appendChild(labelSpan);
                         sourceUrls.appendChild(urlBox);
     
                         // click handler: tell background script to open hyperlink
@@ -611,24 +615,28 @@ chrome.storage.sync.get("wordBank", (data) => {
                     for (let j = 0; j < entry.refUrls.length; j++) {
                         let refUrl = entry.refUrls[j];
     
-                        /* init a div-span set for given URL
-                        Note: a refBox is the parent div for each entry;
-                        a refContainer is the span displaying the URL */
+                        /* init a div-span set for given URL;
+                        refBox is the parent div for each entry */
                         let refBox = document.createElement("div");
-                        let refContainer = document.createElement("span");
+                        let labelSpan = document.createElement("span");
     
-                        // add classes to 'refBox' and 'refContainer'
+                        // add classes
                         refBox.classList.add("entryBox");
-                        refContainer.classList.add("container");
+
+                        // set icon properties
+                        let icon = document.createElement("img");
+                        icon.classList.add("icon");
+                        icon.setAttribute("src", refUrl.icon);
     
-                        // init attribute 'contenteditable' to span element
-                        refContainer.setAttribute("contenteditable", false);
-                        refContainer.innerText = refUrl.title;
+                        // set label properties
+                        labelSpan.setAttribute("contenteditable", false);
+                        labelSpan.innerText = refUrl.title;
     
-                        // make 'refContainer' a child of 'refBox' and append 'refBox' to 'refUrls'
-                        refBox.appendChild(refContainer);
+                        // update DOM
+                        refBox.appendChild(icon);
+                        refBox.appendChild(labelSpan);
                         refUrls.appendChild(refBox);
-    
+
                         // click handler: tell background script to open hyperlink
                         refBox.addEventListener("click", () => {
                             // only open URL if not in URL edit mode

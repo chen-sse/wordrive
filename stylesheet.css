@@ -184,11 +184,6 @@ img {
     overflow-y: auto;
 }
 
-.container {
-    display: block;
-    overflow: hidden;
-}
-
 .editButton {
     float: right;
     visibility: hidden;
@@ -314,4 +309,11 @@ nav {
     padding: 2px 5px 2px 5px;
     border: 3px solid #CDB0EE;
     margin-bottom: 3px;
+}
+
+.icon {
+    display: inline-block;
+    height: 100%;
+    vertical-align: center;
+    margin-right: 4px;
 }
