@@ -400,7 +400,7 @@ chrome.storage.sync.get("wordBank", (data) => {
         wordContainer.innerText = entry.text;
         wordEditButton.innerHTML = "Edit";
 
-        // make 'wordEditButton' and 'wordContainer' children of 'entryBox'
+        // update DOM
         entryBox.appendChild(wordEditButton);
         entryBox.appendChild(wordContainer);
         wordsDiv.appendChild(entryBox);
@@ -427,12 +427,16 @@ chrome.storage.sync.get("wordBank", (data) => {
             if (wordContainer.isContentEditable === false) {
                 // if off, turn URL mode on and create dropdown
                 if (!entryBox.classList.contains("url-mode-on")) {
+                    // toggle URL mode on
+                    entryBox.classList.add("url-mode-on");
+
                     // remove any existing dropdown
                     removeDropdown();
 
-                    // init add mode booleans
+                    // init mode booleans
                     let sourceUrlAddMode = false;
                     let refUrlAddMode = false;
+                    let editMode = false;
 
                     // init dropdown
                     let dropdown = document.createElement("div");
@@ -443,6 +447,12 @@ chrome.storage.sync.get("wordBank", (data) => {
                     let timestamp = document.createElement("div");
                     timestamp.innerHTML = `Added at ${entry.time} on ${entry.date}`;
                     dropdown.appendChild(timestamp);
+
+                    // insert edit icon
+                    let editIcon = document.createElement("img");
+                    editIcon.setAttribute("src", "images/edit-icon.svg");
+                    editIcon.classList.add("edit-save-icon");
+                    timestamp.appendChild(editIcon);
 
                     // insert source URLs
                     let sourceUrls = document.createElement("div");
@@ -489,14 +499,15 @@ chrome.storage.sync.get("wordBank", (data) => {
                     let sourceUrlAdder = document.createElement("div");
                     let sourceUrlAdderLabel = document.createElement("span");
 
-                    // add classes to 'sourceUrlAdder'
+                    // add 'sourceUrlAdder' properties
                     sourceUrlAdder.classList.add("container");
                     sourceUrlAdder.classList.add("adder");
+                    sourceUrlAdder.style.display = "none";
 
                     // set source URL adder label
                     sourceUrlAdderLabel.innerHTML = "+ Add source URL...";
 
-                    // make 'sourceUrlAdder' child of 'sourceUrls' and 'sourceUrlAdderLabel' child of 'sourceUrlAdder'
+                    // update DOM
                     sourceUrls.appendChild(sourceUrlAdder);
                     sourceUrlAdder.appendChild(sourceUrlAdderLabel);
 
@@ -653,14 +664,15 @@ chrome.storage.sync.get("wordBank", (data) => {
                     let refUrlAdder = document.createElement("div");
                     let refUrlAdderLabel = document.createElement("span");
 
-                    // add classes to 'refUrlAdder'
+                    // add 'refUrlAdder' properties
                     refUrlAdder.classList.add("container");
                     refUrlAdder.classList.add("adder");
+                    refUrlAdder.style.display = "none";
 
                     // set reference URL adder label
                     refUrlAdderLabel.innerHTML = "+ Add reference URL...";
 
-                    // make 'refUrlAdder' child of 'refUrls' and 'refUrlAdderLabel' child of 'refUrlAdder'
+                    // update DOM
                     refUrls.appendChild(refUrlAdder);
                     refUrlAdder.appendChild(refUrlAdderLabel);
 
@@ -791,8 +803,20 @@ chrome.storage.sync.get("wordBank", (data) => {
                         chrome.storage.sync.set({"wordBank": data.wordBank});
                     });
 
-                    // toggle URL mode on
-                    entryBox.classList.add("url-mode-on");
+                    // toggle edit mode on 'editIcon' click
+                    editIcon.addEventListener("click", () => {
+                        if (!editMode) {
+                            editIcon.setAttribute("src", "images/save-icon.svg");
+                            sourceUrlAdder.style.display = "";
+                            refUrlAdder.style.display = "";
+                        } else {
+                            editIcon.setAttribute("src", "images/edit-icon.svg");
+                            sourceUrlAdder.style.display = "none";
+                            refUrlAdder.style.display = "none";
+                        }
+
+                        editMode = !editMode;
+                    });
                 // if on, turn URL mode off and remove dropdown
                 } else {
                     document.getElementsByClassName("dropdown")[0].remove();

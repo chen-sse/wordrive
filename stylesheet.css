@@ -317,3 +317,7 @@ nav {
     vertical-align: center;
     margin-right: 4px;
 }
+
+.edit-save-icon {
+    float: right;
+}
