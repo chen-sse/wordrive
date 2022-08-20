@@ -427,11 +427,11 @@ chrome.storage.sync.get("wordBank", (data) => {
             if (wordContainer.isContentEditable === false) {
                 // if off, turn URL mode on and create dropdown
                 if (!entryBox.classList.contains("url-mode-on")) {
-                    // toggle URL mode on
-                    entryBox.classList.add("url-mode-on");
-
                     // remove any existing dropdown
                     removeDropdown();
+
+                    // toggle URL mode on
+                    entryBox.classList.add("url-mode-on");
 
                     // init mode booleans
                     let sourceUrlAddMode = false;
