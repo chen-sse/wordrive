@@ -3,7 +3,7 @@ import { getDate, getTime, getDictionaryURL, getFaviconURL } from "./utils.js";
 let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
-let search = document.getElementById("search");
+let searchInput = document.getElementById("search-input");
 let entryBoxes = [];
 let recentsTab = {
     tabElement: document.getElementById("recents-tab"),
@@ -307,11 +307,11 @@ function toggleButton(box, container, button, data, wordIndex) {
 }
 
 // actively return matching Wordrive entries on user input
-search.addEventListener("keyup", () => {
+searchInput.addEventListener("keyup", () => {
     // remove any existing dropdown
     removeDropdown();
 
-    let filter = search.value.toLowerCase().trim();
+    let filter = searchInput.value.toLowerCase().trim();
     chrome.storage.sync.get("wordBank", (data) => {
         for (let i = 0; i < data.wordBank.length; i++) {
             let entry = data.wordBank[i];
