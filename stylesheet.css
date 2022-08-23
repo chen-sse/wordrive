@@ -94,25 +94,31 @@ input {
     overflow: hidden;
     max-height: 55px;
 }
+
 #recents-tab {
     position: relative;
     left: 2.5em;
     z-index: 10;
 }
+
 .recents-active {
     fill: #C1E6AE;
 }
+
 .recents-inactive {
     fill: #D5EFC8;
 }
+
 #view-all-tab {
     position: relative;
     left: 0.4em;
     z-index: 5;
 }
+
 .view-all-active {
     fill: #B1B1F9;
 }
+
 .view-all-inactive {
     fill: #D4CBF7;
 }
@@ -122,9 +128,11 @@ input {
     right: 1.7em;
     z-index: 1;
 }
+
 .starred-active {
     fill: #FBD651;
 }
+
 .starred-inactive {
     fill: #FBEAAC;
 }
@@ -149,11 +157,13 @@ input {
     display: flex;
     justify-content: center;
 }
+
 #search-label {
     position: relative;
     bottom: 1.3em;
     width: 86.667%;
 }
+
 #search-input {
     max-width: 90%;
     width: 100%;
@@ -163,6 +173,7 @@ input {
     background-position: 8px 6px;
     font-size: 1.2em;
 }
+
 #sort-by-dropdown-container {
     width: 86.667%;
     margin-bottom: 4em;
@@ -175,6 +186,7 @@ input {
     left: 2.667em;
     color: #858585;
 }
+
 #sort-by-dropdown-button {
     padding: 1.5px 4px;
 }
