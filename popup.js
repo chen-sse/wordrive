@@ -4,7 +4,7 @@ let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
 let searchInput = document.getElementById("search-input");
-let entryBoxes = [];
+let entryContainers = [];
 let recentsTab = {
     tabElement: document.getElementById("recents-tab"),
     tabWrapper: document.getElementById("recents-tab-wrapper"),
@@ -241,7 +241,7 @@ function toggleButton(box, container, button, data, wordIndex) {
 
     // if not in edit mode, enter it and generate 'Save' button
     if (container.isContentEditable === false) {
-        box.classList.add("entryBoxEditMode");
+        box.classList.add("entryContainerEditMode");
         button.innerHTML = "Save";
     // if in edit mode, exit it and save changes
     } else {
@@ -296,7 +296,7 @@ function toggleButton(box, container, button, data, wordIndex) {
         }
 
         button.innerHTML = "Edit";
-        box.classList.remove("entryBoxEditMode");
+        box.classList.remove("entryContainerEditMode");
     }
 
     // toggle 'contenteditable' permission
@@ -315,7 +315,7 @@ searchInput.addEventListener("keyup", () => {
     chrome.storage.sync.get("wordBank", (data) => {
         for (let i = 0; i < data.wordBank.length; i++) {
             let entry = data.wordBank[i];
-            entryBoxes[i].style.display = (entry.text.indexOf(filter) > -1) 
+            entryContainers[i].style.display = (entry.text.indexOf(filter) > -1)
                                         ? "" 
                                         : "none";
         }
@@ -383,15 +383,15 @@ chrome.storage.sync.get("wordBank", (data) => {
         let entry = data.wordBank[i];
 
         /* init a div-span-button set for given word
-           Note: an 'entryBox' is the parent div for each entry;
+           Note: an 'entryContainer' is the parent div for each entry;
            a 'wordContainer' is the span displaying the word */
-        let entryBox = document.createElement("div");
+        let entryContainer = document.createElement("div");
         let wordContainer = document.createElement("span");
         let wordEditButton = document.createElement("button");
-        entryBoxes.push(entryBox);
+        entryContainers.push(entryContainer);
 
-        // add classes to 'entryBox,' 'wordContainer,' and 'wordEditButton'
-        entryBox.classList.add("entryBox");
+        // add classes to 'entryContainer,' 'wordContainer,' and 'wordEditButton'
+        entryContainer.classList.add("entryContainer");
         wordContainer.classList.add("container");
         wordEditButton.classList.add("editButton");
 
@@ -401,37 +401,37 @@ chrome.storage.sync.get("wordBank", (data) => {
         wordEditButton.innerHTML = "Edit";
 
         // update DOM
-        entryBox.appendChild(wordEditButton);
-        entryBox.appendChild(wordContainer);
-        wordsDiv.appendChild(entryBox);
+        entryContainer.appendChild(wordEditButton);
+        entryContainer.appendChild(wordContainer);
+        wordsDiv.appendChild(entryContainer);
 
         // save changes and exit edit mode with 'Enter'
         wordContainer.addEventListener("keydown", (event) => {
             if (event.code === "Enter") {
-                toggleButton(entryBox, wordContainer, wordEditButton, data, i);
+                toggleButton(entryContainer, wordContainer, wordEditButton, data, i);
             }
         });
 
         // toggle edit/save button on click
         wordEditButton.addEventListener("click", (event) => {
             wordEditButton.classList.add("beingEdited");
-            toggleButton(entryBox, wordContainer, wordEditButton, data, i);
+            toggleButton(entryContainer, wordContainer, wordEditButton, data, i);
 
-            // prevent URL drop-down menu from firing ('entryBox' parent click event)
+            // prevent URL drop-down menu from firing ('entryContainer' parent click event)
             event.stopPropagation();
         });
 
         // toggle URL drop-down menu on click
-        entryBox.addEventListener("click", () => {
+        entryContainer.addEventListener("click", () => {
             // only toggle dropdown if not in word edit mode 
             if (wordContainer.isContentEditable === false) {
                 // if off, turn URL mode on and create dropdown
-                if (!entryBox.classList.contains("url-mode-on")) {
+                if (!entryContainer.classList.contains("url-mode-on")) {
                     // remove any existing dropdown
                     removeDropdown();
 
                     // toggle URL mode on
-                    entryBox.classList.add("url-mode-on");
+                    entryContainer.classList.add("url-mode-on");
 
                     // init mode booleans
                     let sourceUrlAddMode = false;
@@ -441,7 +441,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                     // init dropdown
                     let dropdown = document.createElement("div");
                     dropdown.classList.add("dropdown");
-                    entryBox.insertAdjacentElement("afterend", dropdown);
+                    entryContainer.insertAdjacentElement("afterend", dropdown);
     
                     // insert timestamp
                     let timestamp = document.createElement("div");
@@ -467,7 +467,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                         let labelSpan = document.createElement("span");
     
                         // add classes
-                        urlBox.classList.add("entryBox");
+                        urlBox.classList.add("entryContainer");
 
                         // set icon properties
                         let icon = document.createElement("img");
@@ -632,7 +632,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                         let labelSpan = document.createElement("span");
     
                         // add classes
-                        refBox.classList.add("entryBox");
+                        refBox.classList.add("entryContainer");
 
                         // set icon properties
                         let icon = document.createElement("img");
@@ -820,7 +820,7 @@ chrome.storage.sync.get("wordBank", (data) => {
                 // if on, turn URL mode off and remove dropdown
                 } else {
                     document.getElementsByClassName("dropdown")[0].remove();
-                    entryBox.classList.remove("url-mode-on");
+                    entryContainer.classList.remove("url-mode-on");
                 }
             }
         });
