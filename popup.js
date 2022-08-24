@@ -30,13 +30,13 @@ let starredTab = {
 // change active class applied to tab-bar (tab bar cannot be inactive)
 function changeTabBarStatus (tab) {
     let constituentOne = document.getElementById("tab-bar-constituent1");
-    constituentOne.setAttribute("class", "")
-    constituentOne.style.zIndex = "10";
+    constituentOne.setAttribute("class", "");
     constituentOne.style.fill = tab.activeColor;
     let constituentTwo = document.getElementById("tab-bar-constituent2");
-    constituentTwo.setAttribute("class", "")
-    constituentTwo.style.zIndex = "10";
+    constituentTwo.setAttribute("class", "");
     constituentTwo.style.fill = tab.activeColor;
+    let tabBarElement = document.getElementById("tab-bar");
+    tabBarElement.style.zIndex = "10";
 }
 
 // boolean 'activate' -- true if tab is to be activated, false if it is to be deactivated
