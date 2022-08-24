@@ -1,12 +1,25 @@
 /* ||General Styles|| */
+@font-face {
+    font-family: "Sulphur Point Bold";
+    src: url("./fonts/SulphurPoint-Bold.otf") format("opentype")
+}
+
+@font-face {
+    font-family: "Sora Regular";
+    src: url("./fonts/Sora-Regular.otf") format("opentype")
+}
+
+@font-face {
+    font-family: "Sora SemiBold";
+    src: url("fonts/Sora-SemiBold.otf") format("opentype")
+}
+
 body {
     position: relative;
     width: 300px;
     margin: 0px;
     background-color: #FFFEFA;
-    /*default font color, typeface, and weight*/
-    font-family: 'Raleway', sans-serif;
-    font-weight: 500;
+    font-family: 'Sora Regular', sans-serif;
 }
 
 button {
@@ -17,8 +30,8 @@ button {
     border-radius: 6px;
     background-color: #F4F4F4;
     color: #858585;
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.75em;
+    font-family: 'Sora Regular', sans-serif;
+    font-size: 8px;
     font-weight: 500;
     text-align: center;
     cursor: pointer;
@@ -45,8 +58,12 @@ input {
     border: none;
     border-radius: 9px;
     outline: none;
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: 'Sora Regular', sans-serif;
     background-repeat: no-repeat;
+}
+
+input::placeholder {
+    color: #858585;
 }
 
 .header {
@@ -62,7 +79,8 @@ input {
 #page-header {
     position: relative;
     left: 18px;
-    font-size: 1.84em;
+    font-size: 1.95em;
+    font-family: 'Sulphur Point Bold', sans-serif;
 }
 
 #language-dropdown {
@@ -147,8 +165,8 @@ input {
     position: relative;
     left: 7.55em;
     bottom: 1.8em;
-    font-family: 'Rubik', sans-serif;
-    font-size: 15px;
+    font-family: 'Sora SemiBold', sans-serif;
+    font-size: 1.22em;
     font-weight: 500;
 }
 
@@ -167,40 +185,42 @@ input {
 #search-input {
     max-width: 90%;
     width: 100%;
-    padding: 3px 0px 3px 28px;
+    padding: 5px 0px 5px 28px;
     background-color: #F4F4F4;
     background-image: url("images/magnifying-icon.svg");
     background-position: 8px 6px;
-    font-size: 1.2em;
+    color: #858585;
+    font-size: 1em;
 }
 
 #sort-by-dropdown-container {
     position: relative;
-    bottom: 2em;
+    bottom: 1.2em;
     width: 86.667%;
-    margin-bottom: 2em;
-    font-size: 0.6em;
+    margin-bottom: 1.5em;
 }
 
 #sort-by-dropdown {
     float: right;
     position: relative;
-    left: 2.667em;
+    left: 2.6em;
     color: #858585;
+    font-size: 8px;
 }
 
 #sort-by-dropdown-button {
     padding: 1.5px 4px;
+    font-size: 8px;
 }
 
 .entryContainer {
-    font-size: 1.3em;
+    font-size: 1.15em;
     border-radius: 8px;
     padding: 5px;
     height: 20px;
     width: 84%;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 400;
-    background-color: #CDB0EE;
+    background-color: #D9E8F6;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -260,7 +280,7 @@ input {
 }
 
 .entryContainer:hover, .adder:hover {
-    background-color: #E9CBFF
+    background-color: #A5C9EA
 }
 
 .entryContainer:hover > button {
