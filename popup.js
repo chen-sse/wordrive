@@ -315,9 +315,11 @@ searchInput.addEventListener("keyup", () => {
     chrome.storage.sync.get("wordBank", (data) => {
         for (let i = 0; i < data.wordBank.length; i++) {
             let entry = data.wordBank[i];
-            entryContainers[i].style.display = (entry.text.indexOf(filter) > -1)
-                                        ? "" 
-                                        : "none";
+            if (entry.text.toLowerCase().indexOf(filter) > -1) {
+                entryContainers[i].style.display = "";
+            } else {
+                entryContainers[i].style.display = "none";
+            }
         }
     });
 });
