@@ -10,16 +10,17 @@
     </head>
     <body>
     <!--||Page Header section: header & language dropdown-->
-    <div id="page-header-container" class="top-container">
-        <span id="page-header">Wordrive</span>
+    <div id="page-header-container">
+        <span id="page-header" class="header">Wordrive</span>
         <button id="language-dropdown-button">
-            <span class="dropdown-arrow"></span>
+            <svg id="language-dropdown-arrow" width="7" height="5" viewBox="0 0 6 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1.10938L2.93566 3.04504L5.04481 0.935883" stroke="#858585" stroke-width="0.5" stroke-linecap="round"/>
+            </svg>
             <span id="language-dropdown-text">ENG</span>
         </button>
     </div>
-
     <!--||Tabs section: tabs & tab header-->
-    <div id="tabs-container" class="top-container">
+    <div id="tabs-container">
         <svg id="recents-tab" class="recents-active" width="95" height="40" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <a id="recents-tab-wrapper" class="svg-click-wrapper">
                 <path class="recents-active" fill-rule="evenodd" clip-rule="evenodd" d="M0.601868 32H12.0173H108.5H119.573C112.684 32 106.279 28.4541 102.623 22.6157L94.3364 9.38428C90.6797 3.5459 84.2754 0 77.3862 0H42.3326C35.2579 0 28.7097 3.73779 25.1119 9.8291L17.8226 22.1709C14.2248 28.2622 7.67651 32 0.601868 32Z" fill="#C1E6AE"/>
@@ -56,14 +57,33 @@
                 <path id="tab-bar-constituent2" fill-rule="evenodd" clip-rule="evenodd" d="M-3 26C-3 12.1929 8.19287 1 22 1H356C369.807 1 381 12.1929 381 26V43C381 26.4315 367.569 13 351 13H27C10.4315 13 -3 26.4315 -3 43V26ZM-3 425.5V461.5H381V425.5C381 442.069 367.569 455.5 351 455.5H27C10.4315 455.5 -3 442.069 -3 425.5Z" fill="#C1E6AE"/>
             </g>
         </svg>
-        <span id="tab-header">RECENTS</span>
     </div>
+    <div id="tab-header-container">
+        <div id="tab-header" class="header">R E C E N T</div>
+    </div>
+
     <!--||Main section: search input field, sort-by dropdown, entries,
     add-new-word input field, select-all button, export button, delete button-->
-    <input id="search" type="text" placeholder="Search...">
+    <div id="search-container">
+        <label id="search-label">
+            <input id="search-input" type="text" placeholder="Search list">
+        </label>
+    </div>
+    <div id="sort-by-dropdown-container">
+        <div id="sort-by-dropdown">
+            <span id="sort-by-dropdown-label">SORT BY:</span>
+            <button id="sort-by-dropdown-button">
+                <svg id="sort-by-dropdown-arrow" width="7" height="5" viewBox="0 0 6 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1.10938L2.93566 3.04504L5.04481 0.935883" stroke="#858585" stroke-width="0.5" stroke-linecap="round"/>
+                </svg>
+                <span id="sort-by-dropdown-button-text">NEWEST</span>
+            </button>
+        </div>
+    </div>
+
     <div class="flex-container" id="wordsDiv"></div>
     <div id="wordAdder" class="adder">
-        <div id="wordAdderLabel" class="adder"> &nbsp;&nbsp;&nbsp;<span id="plus">+</span>
+        <div id="wordAdderLabel" class="adder"> &nbsp;&nbsp;<span id="plus">+</span>
             &nbsp;&nbsp;&nbsp;&nbsp;add new word to Wordrive
         </div>
     </div>
@@ -80,3 +100,7 @@
         <script type="module" src="popup.js"></script>
     </body>
 </html>
+<!--<button id="sort-by-dropdown-button">
+                <span class="dropdown-arrow"></span>
+                <span id="sort-by-dropdown-text">NEWEST</span>
+            </button>-->
