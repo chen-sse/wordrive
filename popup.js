@@ -1,5 +1,7 @@
 import { getDate, getTime, getDictionaryURL, getFaviconURL } from "./utils.js";
 
+let DELETE_TIMEOUT = 1500;
+
 let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
@@ -433,10 +435,41 @@ chrome.storage.sync.get("wordBank", (data) => {
                     // toggle URL mode on
                     entryBox.classList.add("url-mode-on");
 
-                    // init mode booleans
+                    // init mode booleans and arrays
                     let sourceUrlAddMode = false;
                     let refUrlAddMode = false;
                     let editMode = false;
+                    let textDivs = [];
+                    let subtractButtons = [];
+                    let subtractClickedObjects = [];
+                    let urlObjs = [];
+                    let timeoutIDs = [];
+                    
+                    function subtractButtonCallback(subtractButton, subtractClicked, urlBox, url, array) {
+                        if (!subtractClicked.clicked) {
+                            subtractButton.setAttribute("src", "images/delete-icon.svg");
+                            subtractButton.classList.add("delete-icon");
+                            subtractClicked.clicked = true;
+                    
+                            // set delete button timeout
+                            let timeoutID = setTimeout(() => {
+                                subtractClicked.clicked = false;
+                                subtractButton.setAttribute("src", "images/subtract-icon.svg");
+                                subtractButton.classList.remove("delete-icon");
+                            }, DELETE_TIMEOUT);
+                            timeoutIDs.push(timeoutID);
+                        } else {
+                            // hide current URL
+                            urlBox.style.display = "none";
+                    
+                            // delete current URL
+                            let deleteIndex = entry[array].findIndex((element) => {
+                                return (element.url === url.url) ? true : false;
+                            });
+                            entry[array].splice(deleteIndex, 1);
+                            chrome.storage.sync.set({"wordBank": data.wordBank});
+                        }
+                    }
 
                     // init dropdown
                     let dropdown = document.createElement("div");
@@ -460,38 +493,79 @@ chrome.storage.sync.get("wordBank", (data) => {
                     dropdown.appendChild(sourceUrls);
                     for (let j = 0; j < entry.sourceUrls.length; j++) {
                         let sourceUrl = entry.sourceUrls[j];
+                        let subtractClicked = {clicked: false};
+                        subtractClickedObjects.push(subtractClicked);
     
                         /* init a div-span set for given URL;
                         urlBox is the parent div for each entry */
                         let urlBox = document.createElement("div");
-                        let labelSpan = document.createElement("span");
+                        let iconDiv = document.createElement("div");
+                        let textDiv = document.createElement("div");
+                        let buttonDiv = document.createElement("div");
     
                         // add classes
                         urlBox.classList.add("entryBox");
+                        urlBox.classList.add("url-box");
+                        iconDiv.classList.add("icon-div");
+                        textDiv.classList.add("text-div");
+                        buttonDiv.classList.add("button-div");
 
-                        // set icon properties
+                        // create icon and set properties
                         let icon = document.createElement("img");
                         icon.classList.add("icon");
                         icon.setAttribute("src", sourceUrl.icon);
+
+                        // create subtract button and set properties
+                        let subtractButton = document.createElement("img");
+                        subtractButton.classList.add("icon");
+                        subtractButton.setAttribute("src", "images/subtract-icon.svg");
+                        subtractButton.style.display = "none";
+                        subtractButtons.push(subtractButton);
     
                         // set label properties
-                        labelSpan.setAttribute("contenteditable", false);
-                        labelSpan.innerText = sourceUrl.title;
+                        textDiv.setAttribute("contenteditable", false);
+                        textDiv.setAttribute("data-url", sourceUrl.url);
+                        textDiv.innerText = sourceUrl.title;
+                        textDivs.push({
+                            textDiv: textDiv,
+                            array: "sourceUrls"
+                        });
     
                         // update DOM
-                        urlBox.appendChild(icon);
-                        urlBox.appendChild(labelSpan);
+                        urlBox.appendChild(iconDiv);
+                        urlBox.appendChild(textDiv);
+                        urlBox.appendChild(buttonDiv);
+                        iconDiv.appendChild(icon);
+                        buttonDiv.appendChild(subtractButton);
                         sourceUrls.appendChild(urlBox);
     
-                        // click handler: tell background script to open hyperlink
-                        urlBox.addEventListener("click", () => {
+                        // click handlers: tell background script to open hyperlink
+                        iconDiv.addEventListener("click", () => {
                             // only open URL if not in URL edit mode
-                            if (labelSpan.isContentEditable === false) {
+                            if (!editMode) {
                                 chrome.runtime.sendMessage({
                                     msg: "new tab",
                                     url: sourceUrl.url
                                 });
                             }
+                        });
+                        textDiv.addEventListener("click", () => {
+                            // only open URL if not in URL edit mode
+                            if (!editMode) {
+                                chrome.runtime.sendMessage({
+                                    msg: "new tab",
+                                    url: sourceUrl.url
+                                });
+                            }
+                        });
+
+                        // package URL-specific variables into object
+                        urlObjs.push({
+                            subtractButton: subtractButton,
+                            subtractClicked: subtractClicked,
+                            urlBox: urlBox,
+                            url: sourceUrl,
+                            array: "sourceUrls"
                         });
                     }
 
@@ -625,38 +699,79 @@ chrome.storage.sync.get("wordBank", (data) => {
                     dropdown.appendChild(refUrls);
                     for (let j = 0; j < entry.refUrls.length; j++) {
                         let refUrl = entry.refUrls[j];
+                        let subtractClicked = {clicked: false};
+                        subtractClickedObjects.push(subtractClicked);
     
                         /* init a div-span set for given URL;
-                        refBox is the parent div for each entry */
-                        let refBox = document.createElement("div");
-                        let labelSpan = document.createElement("span");
+                        urlBox is the parent div for each entry */
+                        let urlBox = document.createElement("div");
+                        let iconDiv = document.createElement("div");
+                        let textDiv = document.createElement("div");
+                        let buttonDiv = document.createElement("div");
     
                         // add classes
-                        refBox.classList.add("entryBox");
+                        urlBox.classList.add("entryBox");
+                        urlBox.classList.add("url-box");
+                        iconDiv.classList.add("icon-div");
+                        textDiv.classList.add("text-div");
+                        buttonDiv.classList.add("button-div");
 
-                        // set icon properties
+                        // create icon and set properties
                         let icon = document.createElement("img");
                         icon.classList.add("icon");
                         icon.setAttribute("src", refUrl.icon);
+
+                        // create subtract button and set properties
+                        let subtractButton = document.createElement("img");
+                        subtractButton.classList.add("icon");
+                        subtractButton.setAttribute("src", "images/subtract-icon.svg");
+                        subtractButton.style.display = "none";
+                        subtractButtons.push(subtractButton);
     
                         // set label properties
-                        labelSpan.setAttribute("contenteditable", false);
-                        labelSpan.innerText = refUrl.title;
+                        textDiv.setAttribute("contenteditable", false);
+                        textDiv.setAttribute("data-url", refUrl.url);
+                        textDiv.innerText = refUrl.title;
+                        textDivs.push({
+                            textDiv: textDiv,
+                            array: "refUrls"
+                        });
     
                         // update DOM
-                        refBox.appendChild(icon);
-                        refBox.appendChild(labelSpan);
-                        refUrls.appendChild(refBox);
-
-                        // click handler: tell background script to open hyperlink
-                        refBox.addEventListener("click", () => {
+                        urlBox.appendChild(iconDiv);
+                        urlBox.appendChild(textDiv);
+                        urlBox.appendChild(buttonDiv);
+                        iconDiv.appendChild(icon);
+                        buttonDiv.appendChild(subtractButton);
+                        refUrls.appendChild(urlBox);
+    
+                        // click handlers: tell background script to open hyperlink
+                        iconDiv.addEventListener("click", () => {
                             // only open URL if not in URL edit mode
-                            if (labelSpan.isContentEditable === false) {
+                            if (!editMode) {
                                 chrome.runtime.sendMessage({
                                     msg: "new tab",
                                     url: refUrl.url
                                 });
                             }
+                        });
+                        textDiv.addEventListener("click", () => {
+                            // only open URL if not in URL edit mode
+                            if (!editMode) {
+                                chrome.runtime.sendMessage({
+                                    msg: "new tab",
+                                    url: refUrl.url
+                                });
+                            }
+                        });
+
+                        // package URL-specific variables into object
+                        urlObjs.push({
+                            subtractButton: subtractButton,
+                            subtractClicked: subtractClicked,
+                            urlBox: urlBox,
+                            url: refUrl,
+                            array: "refUrls"
                         });
                     }
 
@@ -803,16 +918,76 @@ chrome.storage.sync.get("wordBank", (data) => {
                         chrome.storage.sync.set({"wordBank": data.wordBank});
                     });
 
+                    // add subtract button click handlers--verify on first click, delete on second click
+                    urlObjs.forEach((urlObj) => {
+                        urlObj.subtractButton.addEventListener("click", function() {
+                            subtractButtonCallback(urlObj.subtractButton, urlObj.subtractClicked, urlObj.urlBox, urlObj.url, urlObj.array);
+                        });
+                    });
+
                     // toggle edit mode on 'editIcon' click
                     editIcon.addEventListener("click", () => {
                         if (!editMode) {
                             editIcon.setAttribute("src", "images/save-icon.svg");
                             sourceUrlAdder.style.display = "";
                             refUrlAdder.style.display = "";
+
+                            subtractButtons.forEach((subtractButton) => {
+                                subtractButton.style.display = "";
+                            });
+
+                            textDivs.forEach((textDiv) => {
+                                textDiv.textDiv.setAttribute("contenteditable", "true");
+                                textDiv.textDiv.addEventListener("keyup", () => {
+                                    let originalUrl = textDiv.textDiv.getAttribute("data-url");
+                                    let updateIndex = entry[textDiv.array].findIndex((element) => {
+                                        return (element.url === originalUrl) ? true : false;
+                                    });
+                                    entry[textDiv.array][updateIndex].title = textDiv.textDiv.innerText;
+                                    entry[textDiv.array][updateIndex].fetched = true;
+                                    chrome.storage.sync.set({"wordBank": data.wordBank});
+                                });
+                                textDiv.textDiv.addEventListener("keydown", (event) => {
+                                    if (event.code === "Enter") {
+                                        event.preventDefault();
+                                        document.activeElement.blur();
+                                    }
+                                });
+
+                                // hide subtract button while editing title
+                                textDiv.textDiv.addEventListener("focus", () => {
+                                    textDiv.textDiv.nextSibling.style.display = "none";
+                                });
+                                textDiv.textDiv.addEventListener("blur", () => {
+                                    textDiv.textDiv.nextSibling.style.display = "";
+                                });
+                            });
                         } else {
                             editIcon.setAttribute("src", "images/edit-icon.svg");
                             sourceUrlAdder.style.display = "none";
                             refUrlAdder.style.display = "none";
+
+                            subtractButtons.forEach((subtractButton) => {
+                                subtractButton.style.display = "none";
+                                subtractButton.setAttribute("src", "images/subtract-icon.svg");
+                                subtractButton.classList.remove("delete-icon");
+                            });
+                            subtractClickedObjects.forEach((subtractClicked) => {
+                                subtractClicked.clicked = false;
+                            });
+
+                            // remove subtract button event listeners
+                            urlObjs.forEach((urlObj) => {
+                                urlObj.subtractButton.removeEventListener("click", function() {
+                                    subtractButtonCallback(urlObj.subtractButton, urlObj.subtractClicked, urlObj.urlBox, urlObj.url, urlObj.array);
+                                });
+                            });
+
+                            // clear delete button timeouts
+                            timeoutIDs.forEach((timeoutID) => {
+                                clearTimeout(timeoutID);
+                            });
+                            timeoutIDs = [];
                         }
 
                         editMode = !editMode;
