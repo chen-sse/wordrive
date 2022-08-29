@@ -6,6 +6,7 @@ let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
 let searchInput = document.getElementById("search-input");
+let tabHeader = document.getElementById("tab-header");
 let entryContainers = [];
 let recentsTab = {
     tabElement: document.getElementById("recents-tab"),
@@ -84,6 +85,8 @@ document.getElementById("recents-tab-wrapper").addEventListener('click', (event)
     starredTab.tabElement.style.zIndex = "1";
     // apply recents active class to tab bar
     changeTabBarStatus(recentsTab);
+    // change text of tab-header
+    tabHeader.innerText = "R E C E N T";
 });
 
 // activate view-all tab and display relevant entries
@@ -94,6 +97,8 @@ document.getElementById("view-all-tab-wrapper").addEventListener('click', (event
     starredTab.tabElement.style.zIndex = "1";
     // apply view-all active class to tab bar
     changeTabBarStatus(viewAllTab);
+    // change text of tab-header
+    tabHeader.innerText = "A L L";
 });
 // activate starred tab and display relevant entries
 document.getElementById("starred-tab-wrapper").addEventListener('click', (event) => {
@@ -103,6 +108,8 @@ document.getElementById("starred-tab-wrapper").addEventListener('click', (event)
     viewAllTab.tabElement.style.zIndex = "1";
     // apply starred active class to tab bar
     changeTabBarStatus(starredTab);
+    // change text of tab-header
+    tabHeader.innerText = "S T A R R E D";
 });
 
 
