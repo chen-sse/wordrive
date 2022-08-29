@@ -168,7 +168,8 @@ input::placeholder {
 
 #tab-header {
     position: relative;
-    left: 7.55em;
+    display: flex;
+    justify-content: center;
     bottom: 1.8em;
     font-family: 'Sora SemiBold', sans-serif;
     font-size: 1.22em;
@@ -200,9 +201,9 @@ input::placeholder {
 
 #sort-by-dropdown-container {
     position: relative;
-    bottom: 1.2em;
+    bottom: 1.12em;
     width: 86.667%;
-    margin-bottom: 1.3em;
+    margin-bottom: 1.13em;
 }
 
 #sort-by-dropdown {
@@ -218,26 +219,76 @@ input::placeholder {
     font-size: 8px;
 }
 
-.entryContainer {
+.entry-container {
     font-size: 1.15em;
     border-radius: 8px;
     padding: 5px;
-    height: 17.5px;
+    height: 18px;
     width: 84%;
     font-family: 'Thasadith Regular', sans-serif;
     font-weight: 400;
     background-color: #D9E8F6;
-    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     flex: none;
 }
 
-.entryCheckbox, input::before {
-    float: right;
-    outline: none;
-    border: none;
+.entry-number {
+    display: flex;
+    justify-content: center;
+    float: left;
+    position: relative;
+    top: 0.73em;
+    right: 1.74em;
+    height: 0em;
+    width: 0em;
+    color: #B4B1B1;
+    font-family: "Sora SemiBold";
+    font-size: 8px;
+    z-index: 20;
 }
+
+.entry-dropdown-arrow {
+    padding: 0px 8px 0.7px 4px;
+}
+
+.entry-star, .entry-checkbox {
+    display: none;
+}
+
+.entry-star-label {
+    float: right;
+    position: relative;
+    right: 0.2em;
+    height: 1.2em;
+    width: 1.2em;
+    background: transparent url("images/star-checkbox.svg") no-repeat 0em 0.1em;
+    cursor: pointer
+}
+
+.entry-star:checked + .entry-star-label {
+    background-image: url("images/star-checkbox-checked.svg");
+}
+
+.entry-star-label:hover {
+    /*Change background image of entry star label when hovering
+    background-image: url("images/star-checkbox-hover.svg");*/
+}
+
+.entry-checkbox-label {
+    float: right;
+    height: 1.38em;
+    width: 1.38em;
+    background: transparent url("images/entry-checkbox.svg") no-repeat 0em 0.05em;
+    cursor: pointer;
+}
+
+.entry-checkbox:checked + .entry-checkbox-label {
+    /*Change background image of entry checkbox label when checked
+    background-image: url("images/star-checkbox.svg");*/
+}
+
+
 /* ||Dropdown (home page only|| */
 
 /* ||Options Main (options page only)||*/
@@ -270,8 +321,9 @@ input::placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
     height: 230px;
+    overflow: hidden;
     overflow-wrap: break-word;
     overflow-y: auto;
 }
@@ -282,17 +334,18 @@ input::placeholder {
     font-size: 12px;
 }
 
-.dropdown .entryContainer {
+.dropdown .entry-container {
     background-color: initial;
+    margin-top: 0.1em;
     padding-top: 2px;
     padding-bottom: 2px;
 }
 
-.entryContainer:hover, .adder:hover {
+.entry-container:hover, .adder:hover {
     background-color: #A5C9EA
 }
 
-.entryContainer:hover > button {
+.entry-container:hover > button {
     visibility: visible;
 }
 
@@ -301,12 +354,12 @@ input::placeholder {
     background-color: #ff9a8e;
 }
 
-.entryContainerEditMode:hover {
+.entry-containerEditMode:hover {
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
     background-color: #ffcdc8;
 }
 
-.entryContainer:hover > button {
+.entry-container:hover > button {
     visibility: visible;
 }
 
@@ -380,7 +433,6 @@ nav {
 .icon {
     height: 85%;
 }
-
 .edit-save-icon {
     float: right;
 }

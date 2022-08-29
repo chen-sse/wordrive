@@ -393,43 +393,74 @@ chrome.storage.sync.get("wordBank", (data) => {
     for (let i = 0; i < data.wordBank.length; i++) {
         let entry = data.wordBank[i];
 
-        /* init a div-span-button set for given word
-           Note: an 'entryContainer' is the parent div for each entry;
-           a 'wordContainer' is the span displaying the word */
+        // init entry container and child elements
+        let entryWrapper = document.createElement("div");
         let entryContainer = document.createElement("div");
+        let entryNumber = document.createElement("span");
+        let entryDropdownArrow = document.createElement("img");
         let wordContainer = document.createElement("span");
-        let wordEditButton = document.createElement("button");
+        let entryStar = document.createElement("input");
+        let entryCheckbox = document.createElement("input");
+        let entryStarLabel = document.createElement("label");
+        let entryCheckboxLabel = document.createElement("label");
+        let testInput = document.createElement("input");
+        testInput.setAttribute("type", "checkbox");
+        testInput.setAttribute("id", "thing");
+        let testLabel = document.createElement("label");
+        testLabel.setAttribute("for", "thing");
         entryContainers.push(entryContainer);
 
-        // add classes to 'entryContainer,' 'wordContainer,' and 'wordEditButton'
-        entryContainer.classList.add("entryContainer");
-        wordContainer.classList.add("container");
-        wordEditButton.classList.add("editButton");
+        // apply classes
+        entryWrapper.classList.add("entry-wrapper");
+        entryContainer.classList.add("entry-container");
+        entryNumber.classList.add("entry-number");
+        entryDropdownArrow.classList.add("entry-dropdown-arrow");
+        entryStar.classList.add("entry-star");
+        entryCheckbox.classList.add("entry-checkbox");
+        entryStarLabel.classList.add("entry-star-label");
+        entryCheckboxLabel.classList.add("entry-checkbox-label");
 
-        // init attribute 'contenteditable' to span element
+        // init attributes and properties
         wordContainer.setAttribute("contenteditable", false);
         wordContainer.innerText = entry.text;
-        wordEditButton.innerHTML = "Edit";
+        let entryNum = i + 1;
+        entryNumber.innerText = entryNum.toString();
+        entryDropdownArrow.setAttribute("src", "images/entry-dropdown-arrow.svg");
+        entryStar.setAttribute("type", "checkbox");
+        entryCheckbox.setAttribute("type", "checkbox");
+
+        // link labels and inputs (create 'for' and 'id' pairs between checkbox label and input)
+        let esID = `entry-star-${entryNum}`;
+        entryStar.setAttribute("id", esID);
+        entryStarLabel.setAttribute("for", esID);
+        let ecID = `entry-checkbox-${entryNum}`;
+        entryCheckbox.setAttribute("id", ecID);
+        entryCheckboxLabel.setAttribute("for", ecID);
+
+        // star entry if previously starred
+        entryStar.checked = entry.starred;
 
         // update DOM
-        entryContainer.appendChild(wordEditButton);
+        entryContainer.appendChild(entryDropdownArrow);
+        entryContainer.appendChild(entryNumber); //naturally appends to unused space right of word
         entryContainer.appendChild(wordContainer);
+        entryContainer.appendChild(entryCheckbox);
+        entryContainer.appendChild(entryCheckboxLabel);
+        entryContainer.appendChild(entryStar);
+        entryContainer.appendChild(entryStarLabel);
         wordsDiv.appendChild(entryContainer);
+
+        // save starred preference
+        entryStar.addEventListener("click", () => {
+            entry.starred = entryStar.checked;
+            chrome.storage.sync.set({"wordBank": data.wordBank});
+        });
 
         // save changes and exit edit mode with 'Enter'
         wordContainer.addEventListener("keydown", (event) => {
             if (event.code === "Enter") {
                 toggleButton(entryContainer, wordContainer, wordEditButton, data, i);
             }
-        });
-
-        // toggle edit/save button on click
-        wordEditButton.addEventListener("click", (event) => {
-            wordEditButton.classList.add("beingEdited");
-            toggleButton(entryContainer, wordContainer, wordEditButton, data, i);
-
-            // prevent URL drop-down menu from firing ('entryContainer' parent click event)
-            event.stopPropagation();
         });
 
         // toggle URL drop-down menu on click

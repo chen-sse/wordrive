@@ -57,7 +57,6 @@ chrome.contextMenus.onClicked.addListener((info) => {
             // if word is not duplicate, add to word bank
             if (newWord) {
                 let dictionaryUrl = getDictionaryURL(selectedWord);
-
                 // push new word object to word bank
                 data.wordBank.push({
                     text: (data.lowercaseChecked === true)
@@ -77,11 +76,16 @@ chrome.contextMenus.onClicked.addListener((info) => {
                     }],
                     date: getDate(),
                     time: getTime(),
-                    notes: ""
+                    notes: "",
+                    starred: false
                 });
             }
             // set key to updated array
-            chrome.storage.sync.set({"wordBank": data.wordBank});
+            chrome.storage.sync.set({"wordBank": data.wordBank}, () => {
+                if(chrome.runtime.lastError) {
+                    console.warn("Uh-oh..." + chrome.runtime.lastError.message);
+                }
+            });
         }
     });
 });
