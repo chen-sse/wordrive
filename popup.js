@@ -68,7 +68,7 @@ function changeTabStatus (tab, activate) {
 }
 
 // activate one tab and deactivate others
-function changeAllTabStatuses (activeTab, inactiveTabOne, inactiveTabTwo) {
+function changeAllTabStatuses(activeTab, inactiveTabOne, inactiveTabTwo) {
     // activate clicked tab
     changeTabStatus(activeTab, true);
     // deactivate other tabs
@@ -76,7 +76,7 @@ function changeAllTabStatuses (activeTab, inactiveTabOne, inactiveTabTwo) {
     changeTabStatus(inactiveTabTwo, false);
 }
 // activate recents tab and display relevant entries
-document.getElementById("recents-tab-wrapper").addEventListener('click', (event) => {
+document.getElementById("recents-tab-wrapper").addEventListener("click", () => {
     recentsTab.tabElement.style.zIndex = "10";
     changeAllTabStatuses(recentsTab, viewAllTab, starredTab);
     viewAllTab.tabElement.style.zIndex = "5";
@@ -91,7 +91,7 @@ document.getElementById("recents-tab-wrapper").addEventListener('click', (event)
 });
 
 // activate view-all tab and display relevant entries
-document.getElementById("view-all-tab-wrapper").addEventListener('click', () => {
+document.getElementById("view-all-tab-wrapper").addEventListener("click", () => {
     viewAllTab.tabElement.style.zIndex = "10"
     changeAllTabStatuses(viewAllTab, recentsTab, starredTab);
     recentsTab.tabElement.style.zIndex = "1";
@@ -105,7 +105,7 @@ document.getElementById("view-all-tab-wrapper").addEventListener('click', () => 
     loadEntries("view-all");
 });
 // activate starred tab and display relevant entries
-document.getElementById("starred-tab-wrapper").addEventListener('click', () => {
+document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
     starredTab.tabElement.style.zIndex = "10";
     changeAllTabStatuses(starredTab, recentsTab, viewAllTab);
     recentsTab.tabElement.style.zIndex = "5";
