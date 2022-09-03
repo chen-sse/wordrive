@@ -45,7 +45,7 @@ function changeTabBarStatus (tab) {
 // boolean 'activate' -- true if tab is to be activated, false if it is to be deactivated
 function changeTabStatus (tab, activate) {
     let svgElements = tab.tabWrapper.children;
-    for (let i=0; i<svgElements.length; i++) {
+    for (let i = 0; i < svgElements.length; i++) {
         let elementClass = svgElements[i].getAttribute("class");
         // apply activity class to element if it is not part of icon graphic
         if (elementClass.indexOf("icon-graphic") === -1) {
@@ -56,16 +56,14 @@ function changeTabStatus (tab, activate) {
                 // apply class to tab SVG element (necessary for proper tab overlap)
                 tab.tabElement.classList.remove(tab.inactiveClass);
                 tab.tabElement.classList.add(tab.activeClass);
-            }
-            else {
+            } else {
                 svgElements[i].classList.remove(tab.activeClass);
                 svgElements[i].classList.add(tab.inactiveClass);
                 // remove class from tab SVG element (necessary for proper tab overlap)
                 tab.tabElement.classList.remove(tab.activeClass);
                 tab.tabElement.classList.add(tab.inactiveClass);
             }
-        }
-        else { break; }
+        } else { break; }
     }
 }
 
@@ -93,7 +91,7 @@ document.getElementById("recents-tab-wrapper").addEventListener('click', (event)
 });
 
 // activate view-all tab and display relevant entries
-document.getElementById("view-all-tab-wrapper").addEventListener('click', (event) => {
+document.getElementById("view-all-tab-wrapper").addEventListener('click', () => {
     viewAllTab.tabElement.style.zIndex = "10"
     changeAllTabStatuses(viewAllTab, recentsTab, starredTab);
     recentsTab.tabElement.style.zIndex = "1";
@@ -107,7 +105,7 @@ document.getElementById("view-all-tab-wrapper").addEventListener('click', (event
     loadEntries("view-all");
 });
 // activate starred tab and display relevant entries
-document.getElementById("starred-tab-wrapper").addEventListener('click', (event) => {
+document.getElementById("starred-tab-wrapper").addEventListener('click', () => {
     starredTab.tabElement.style.zIndex = "10";
     changeAllTabStatuses(starredTab, recentsTab, viewAllTab);
     recentsTab.tabElement.style.zIndex = "5";
@@ -342,7 +340,7 @@ searchInput.addEventListener("keyup", () => {
     });
 });
 
-//by default, load recents
+// by default, load recents
 loadEntries("recents");
 
 // load Wordrive entries
@@ -1188,8 +1186,8 @@ function loadEntries (tab) {
 }
 
 function clearAllEntries() {
-    document.querySelectorAll(".entry-container").forEach(el => el.remove());
-    document.querySelectorAll(".dropdown").forEach(el => el.remove());
+    document.querySelectorAll(".entry-container").forEach(e => e.remove());
+    document.querySelectorAll(".dropdown").forEach(e => e.remove());
 }
 
 // switch to options page
