@@ -85,15 +85,23 @@ document.getElementById("recents-tab-wrapper").addEventListener("click", () => {
     changeAllTabStatuses(recentsTab, viewAllTab, starredTab);
     viewAllTab.tabElement.style.zIndex = "5";
     starredTab.tabElement.style.zIndex = "1";
+
     // apply recents active class to tab bar
     changeTabBarStatus(recentsTab);
+
     // change text of tab-header
     tabHeader.innerText = "R E C E N T";
+
     // clear existing entries
     wordsDiv.replaceChildren();
+
     // load recent entries
     currentTab = "recents";
     loadEntries(currentTab);
+
+    // reload word adder
+    wordAdder.replaceChildren();
+    loadWordAdder();
 });
 // activate view-all tab and display relevant entries
 document.getElementById("view-all-tab-wrapper").addEventListener("click", () => {
@@ -101,15 +109,23 @@ document.getElementById("view-all-tab-wrapper").addEventListener("click", () => 
     changeAllTabStatuses(viewAllTab, recentsTab, starredTab);
     recentsTab.tabElement.style.zIndex = "1";
     starredTab.tabElement.style.zIndex = "1";
+
     // apply view-all active class to tab bar
     changeTabBarStatus(viewAllTab);
+
     // change text of tab-header
     tabHeader.innerText = "A L L";
+
     // clear existing entries
     wordsDiv.replaceChildren();
+
     // load all entries
     currentTab = "view-all";
     loadEntries(currentTab);
+
+    // reload word adder
+    wordAdder.replaceChildren();
+    loadWordAdder();
 });
 // activate starred tab and display relevant entries
 document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
@@ -117,15 +133,23 @@ document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
     changeAllTabStatuses(starredTab, recentsTab, viewAllTab);
     recentsTab.tabElement.style.zIndex = "5";
     viewAllTab.tabElement.style.zIndex = "1";
+
     // apply starred active class to tab bar
     changeTabBarStatus(starredTab);
+
     // change text of tab-header
     tabHeader.innerText = "S T A R R E D";
+
     // clear existing entries
     wordsDiv.replaceChildren();
+
     // load starred entries
     currentTab = "starred";
     loadEntries(currentTab);
+
+    // reload word adder
+    wordAdder.replaceChildren();
+    loadWordAdder();
 });
 
 // add sort-by dropdown click listener
@@ -236,7 +260,9 @@ function addEntries(wordInput, urlInput, type, event) {
                     date: getDate(),
                     time: getTime(),
                     notes: "",
-                    starred: false
+                    starred: (currentTab === "starred")
+                        ? true
+                        : false
                 });
             } else if (newUrl) {
                 data.wordBank[duplicateIndex][type].push({
@@ -250,8 +276,13 @@ function addEntries(wordInput, urlInput, type, event) {
             chrome.storage.sync.set({"wordBank": data.wordBank});
         }
                     
-        // refresh popup
-        document.location.reload();
+        // reload entries
+        wordsDiv.replaceChildren();
+        loadEntries(currentTab);
+
+        // reload word adder
+        wordAdder.replaceChildren();
+        loadWordAdder();
 
         // prevent word adder from reloading ('wordAdder' parent click event), if applicable
         if (event !== null) {
@@ -334,8 +365,9 @@ function toggleButton(box, container, button, data, wordIndex) {
                 }
                 data.wordBank.splice(wordIndex, 1);
 
-                // refresh popup
-                document.location.reload();
+                // reload entries
+                wordsDiv.replaceChildren();
+                loadEntries(currentTab);
             }
 
             chrome.storage.sync.set({"wordBank": data.wordBank});
@@ -1164,6 +1196,13 @@ function loadEntries (tab) {
 // load word adder
 function loadWordAdder() {
     let addMode = false;
+
+    // create label
+    let wordAdderLabel = document.createElement("div");
+    wordAdderLabel.setAttribute("id", "wordAdderLabel");
+    wordAdderLabel.classList.add("adder");
+    wordAdderLabel.innerHTML = "&nbsp;&nbsp;<span id='plus'>+</span>&nbsp;&nbsp;&nbsp;&nbsp;add new word to Wordrive";
+    wordAdder.appendChild(wordAdderLabel);
 
     // create inputs, labels, and button
     let wordInput = document.createElement("input");
