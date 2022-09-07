@@ -89,8 +89,9 @@ document.getElementById("recents-tab-wrapper").addEventListener("click", () => {
     changeTabBarStatus(recentsTab);
     // change text of tab-header
     tabHeader.innerText = "R E C E N T";
+    // clear existing entries
+    wordsDiv.replaceChildren();
     // load recent entries
-    clearAllEntries();
     currentTab = "recents";
     loadEntries(currentTab);
 });
@@ -104,8 +105,9 @@ document.getElementById("view-all-tab-wrapper").addEventListener("click", () => 
     changeTabBarStatus(viewAllTab);
     // change text of tab-header
     tabHeader.innerText = "A L L";
+    // clear existing entries
+    wordsDiv.replaceChildren();
     // load all entries
-    clearAllEntries();
     currentTab = "view-all";
     loadEntries(currentTab);
 });
@@ -119,8 +121,9 @@ document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
     changeTabBarStatus(starredTab);
     // change text of tab-header
     tabHeader.innerText = "S T A R R E D";
+    // clear existing entries
+    wordsDiv.replaceChildren();
     // load starred entries
-    clearAllEntries();
     currentTab = "starred";
     loadEntries(currentTab);
 });
@@ -1271,11 +1274,6 @@ function loadWordAdder() {
 // by default, load recents tab
 loadEntries(currentTab);
 loadWordAdder();
-
-function clearAllEntries() {
-    document.querySelectorAll(".entry-container").forEach(e => e.remove());
-    document.querySelectorAll(".dropdown").forEach(e => e.remove());
-}
 
 // switch to options page
 options.addEventListener("click", () => {
