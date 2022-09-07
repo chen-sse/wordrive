@@ -429,20 +429,23 @@ function loadEntries (tab) {
             sortIndices[i] = i;
         }
 
-        /* ith entry of 'sortIndices' tells us where ith entry of 
+        /* sort word bank and indices according to sort mode:
+        ith entry of 'sortIndices' tells us where ith entry of 
         'wordBank' was mapped to in 'sortedWordBank' */
-        sortIndices.sort((a, b) => {
-            return sortedWordBank[a].text.localeCompare(sortedWordBank[b].text);
-        });
-
-        // sort word bank according to sort mode
         if (sortMode === "oldest") {
+            sortIndices.reverse();
             sortedWordBank.reverse();
         } else if (sortMode === "A-Z") {
+            sortIndices.sort((a, b) => {
+                return sortedWordBank[a].text.localeCompare(sortedWordBank[b].text);
+            });
             sortedWordBank.sort((a, b) => {
                 return a.text.localeCompare(b.text);
             });
         } else if (sortMode === "Z-A") {
+            sortIndices.sort((a, b) => {
+                return sortedWordBank[a].text.localeCompare(sortedWordBank[b].text);
+            }).reverse();
             sortedWordBank.sort((a, b) => {
                 return a.text.localeCompare(b.text);
             }).reverse();
