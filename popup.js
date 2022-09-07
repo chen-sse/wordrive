@@ -235,7 +235,8 @@ function addEntries(wordInput, urlInput, type, event) {
                     }],
                     date: getDate(),
                     time: getTime(),
-                    notes: ""
+                    notes: "",
+                    starred: false
                 });
             } else if (newUrl) {
                 data.wordBank[duplicateIndex][type].push({
