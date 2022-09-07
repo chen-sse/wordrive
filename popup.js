@@ -1,6 +1,9 @@
 import { getDate, getTime, getDictionaryURL, getFaviconURL } from "./utils.js";
 
 let DELETE_TIMEOUT = 1500;
+let NUM_RECENT_ENTRIES = 5;
+let sortMode = "newest";
+let currentTab = "recents";  // set default current tab to 'recents'
 
 let options = document.getElementById("options");
 let wordsDiv = document.getElementById("wordsDiv");
@@ -75,6 +78,7 @@ function changeAllTabStatuses(activeTab, inactiveTabOne, inactiveTabTwo) {
     changeTabStatus(inactiveTabOne, false);
     changeTabStatus(inactiveTabTwo, false);
 }
+
 // activate recents tab and display relevant entries
 document.getElementById("recents-tab-wrapper").addEventListener("click", () => {
     recentsTab.tabElement.style.zIndex = "10";
@@ -87,9 +91,9 @@ document.getElementById("recents-tab-wrapper").addEventListener("click", () => {
     tabHeader.innerText = "R E C E N T";
     // load recent entries
     clearAllEntries();
-    loadEntries("recents");
+    currentTab = "recents";
+    loadEntries(currentTab);
 });
-
 // activate view-all tab and display relevant entries
 document.getElementById("view-all-tab-wrapper").addEventListener("click", () => {
     viewAllTab.tabElement.style.zIndex = "10"
@@ -102,7 +106,8 @@ document.getElementById("view-all-tab-wrapper").addEventListener("click", () => 
     tabHeader.innerText = "A L L";
     // load all entries
     clearAllEntries();
-    loadEntries("view-all");
+    currentTab = "view-all";
+    loadEntries(currentTab);
 });
 // activate starred tab and display relevant entries
 document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
@@ -116,9 +121,32 @@ document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
     tabHeader.innerText = "S T A R R E D";
     // load starred entries
     clearAllEntries();
-    loadEntries("starred");
+    currentTab = "starred";
+    loadEntries(currentTab);
 });
 
+// add sort-by dropdown click listener
+let sortButton = document.getElementById("sort-by-dropdown-button");
+let sortButtonText = document.getElementById("sort-by-dropdown-button-text");
+let clickCounter = 0;
+sortButton.addEventListener("click", () => {
+    if (clickCounter % 4 === 0) {
+        sortMode = "oldest";
+        sortButtonText.innerHTML = "OLDEST";
+    } else if (clickCounter % 4 === 1) {
+        sortMode = "A-Z";
+        sortButtonText.innerHTML = "A-Z";
+    } else if (clickCounter % 4 === 2) {
+        sortMode = "Z-A";
+        sortButtonText.innerHTML = "Z-A";
+    } else if (clickCounter % 4 === 3) {
+        sortMode = "newest";
+        sortButtonText.innerHTML = "NEWEST";
+    }
+    wordsDiv.replaceChildren();
+    loadEntries(currentTab);
+    clickCounter++;
+});
 
 // hide hover images 'homeHover' and 'optionsHover'
 let homeHover = document.getElementById("homeHover");
@@ -127,8 +155,7 @@ let optionsHover = document.getElementById("optionsHover");
 optionsHover.style.visibility = "hidden";
 
 /* make hover image and grab cursor appear when cursor
-hovers over home button, remove it when cursor leaves
- */
+hovers over home button, remove it when cursor leaves */
 let homeDiv = document.getElementById("home");
 homeDiv.addEventListener("mouseover", () => {
     homeHover.style.visibility = "visible";
@@ -140,8 +167,7 @@ homeDiv.addEventListener("mouseout", () => {
 });
 
 /* make hover image and grab cursor appear when cursor
-hovers over options button, remove it when cursor leaves
- */
+hovers over options button, remove it when cursor leaves */
 let optionsDiv = document.getElementById("options")
 optionsDiv.addEventListener("mouseover", () => {
     optionsHover.style.visibility = "visible";
@@ -200,7 +226,7 @@ function addEntries(wordInput, urlInput, type, event) {
                         }],
                     refUrls: [{
                         url: dictionaryUrl,
-                        icon: getFaviconURL(dictionaryURL),
+                        icon: getFaviconURL(dictionaryUrl),
                         title: "",
                         fetched: false
                     }],
@@ -340,14 +366,9 @@ searchInput.addEventListener("keyup", () => {
     });
 });
 
-// by default, load recents
-loadEntries("recents");
-
 // load Wordrive entries
 function loadEntries (tab) {
     chrome.storage.sync.get("wordBank", (data) => {
-        let addMode = false;
-
         // ** PART ONE: fetch and save titles
         for (let i = 0; i < data.wordBank.length; i++) {
             let entry = data.wordBank[i];
@@ -401,19 +422,50 @@ function loadEntries (tab) {
             }
         }
 
-        // ** PART TWO: generate entries
+        // ** PART TWO: sort entries
+        let sortedWordBank = data.wordBank.slice();
+        let sortIndices = new Array(sortedWordBank.length);
+        for (let i = 0; i < sortIndices.length; i++) {
+            sortIndices[i] = i;
+        }
+
+        /* ith entry of 'sortIndices' tells us where ith entry of 
+        'wordBank' was mapped to in 'sortedWordBank' */
+        sortIndices.sort((a, b) => {
+            return sortedWordBank[a].text.localeCompare(sortedWordBank[b].text);
+        });
+
+        // sort word bank according to sort mode
+        if (sortMode === "oldest") {
+            sortedWordBank.reverse();
+        } else if (sortMode === "A-Z") {
+            sortedWordBank.sort((a, b) => {
+                return a.text.localeCompare(b.text);
+            });
+        } else if (sortMode === "Z-A") {
+            sortedWordBank.sort((a, b) => {
+                return a.text.localeCompare(b.text);
+            }).reverse();
+        }
+        
+        // ** PART THREE: generate entries
         let counter = 0;
-        for (let i = 0; i < data.wordBank.length; i++) {
-            let entry = data.wordBank[i];
+
+        for (let i = 0; i < sortedWordBank.length; i++) {
+            let entry = sortedWordBank[i];
+            let originalEntry = data.wordBank[sortIndices.indexOf(i)];
             let isRecent = false;
-            // entry is recent if it is one of last 5 words in list
-            if (i > data.wordBank.length - 6) isRecent = true;
+
+            // entry is recent if it is one of last 5 words in original list
+            if (sortIndices.indexOf(i) >= data.wordBank.length - NUM_RECENT_ENTRIES) {
+                isRecent = true;
+            }
             // if in starred mode and entry is not starred, do not generate entry
             if (tab === "starred" && entry.starred === false) {
                 continue;
             }
             // if in recents mode and entry is not recent, do not generate entry
-            else if (tab == "recents" && isRecent === false) {
+            else if (tab === "recents" && isRecent === false) {
                 continue;
             // else generate all entries (view-all mode)
             } else {
@@ -467,7 +519,7 @@ function loadEntries (tab) {
 
                 // update DOM
                 entryContainer.appendChild(entryDropdownArrow);
-                entryContainer.appendChild(entryNumber); //naturally appends to unused space right of word
+                entryContainer.appendChild(entryNumber);  // naturally appends to unused space left of word
                 entryContainer.appendChild(wordContainer);
                 entryContainer.appendChild(entryCheckbox);
                 entryContainer.appendChild(entryCheckboxLabel);
@@ -478,6 +530,9 @@ function loadEntries (tab) {
                 // save starred preference
                 entryStar.addEventListener("click", () => {
                     entry.starred = entryStar.checked;
+                    originalEntry.starred = entryStar.checked;
+
+                    // sync changes to original word bank
                     chrome.storage.sync.set({"wordBank": data.wordBank});
                 });
 
@@ -486,9 +541,9 @@ function loadEntries (tab) {
                     const starHoverURL = "images/entry-star-star-hover.svg";
                     if (entryStar.checked) {
                         entryStar.style.backgroundImage = `url(${unstarHoverURL})`;
-                        entryStar.style.backgroundPosition
+                        entryStar.style.backgroundPosition;
                     }
-                })
+                });
 
                 // save changes and exit edit mode with 'Enter'
                 wordContainer.addEventListener("keydown", (event) => {
@@ -536,11 +591,17 @@ function loadEntries (tab) {
                                     // hide current URL
                                     urlBox.style.display = "none";
 
-                                    // delete current URL
-                                    let deleteIndex = entry[array].findIndex((element) => {
+                                    // delete current URL in both original and sorted word banks
+                                    let sortedDeleteIndex = entry[array].findIndex((element) => {
                                         return (element.url === url.url) ? true : false;
                                     });
-                                    entry[array].splice(deleteIndex, 1);
+                                    let originalDeleteIndex = originalEntry[array].findIndex((element) => {
+                                        return (element.url === url.url) ? true : false;
+                                    });
+                                    entry[array].splice(sortedDeleteIndex, 1);
+                                    originalEntry[array].splice(originalDeleteIndex, 1);
+
+                                    // sync changes to original word bank
                                     chrome.storage.sync.set({"wordBank": data.wordBank});
                                 }
                             }
@@ -988,7 +1049,11 @@ function loadEntries (tab) {
                             notes.appendChild(notesBox);
 
                             notesBox.addEventListener("keyup", () => {
+                                // update notes in both original and sorted word banks
                                 entry.notes = notesBox.innerText;
+                                originalEntry.notes = notesBox.innerText;
+
+                                // sync changes to original word bank
                                 chrome.storage.sync.set({"wordBank": data.wordBank});
                             });
 
@@ -1014,11 +1079,22 @@ function loadEntries (tab) {
                                         textDiv.textDiv.setAttribute("contenteditable", "true");
                                         textDiv.textDiv.addEventListener("keyup", () => {
                                             let originalUrl = textDiv.textDiv.getAttribute("data-url");
-                                            let updateIndex = entry[textDiv.array].findIndex((element) => {
+
+                                            // compute update index for both original and sorted word banks
+                                            let sortedUpdateIndex = entry[textDiv.array].findIndex((element) => {
                                                 return (element.url === originalUrl) ? true : false;
                                             });
-                                            entry[textDiv.array][updateIndex].title = textDiv.textDiv.innerText;
-                                            entry[textDiv.array][updateIndex].fetched = true;
+                                            let originalUpdateIndex = originalEntry[textDiv.array].findIndex((element) => {
+                                                return (element.url === originalUrl) ? true : false;
+                                            });
+
+                                            // update titles and fetched properties for both original and sorted word banks
+                                            entry[textDiv.array][sortedUpdateIndex].title = textDiv.textDiv.innerText;
+                                            entry[textDiv.array][sortedUpdateIndex].fetched = true;
+                                            originalEntry[textDiv.array][originalUpdateIndex].title = textDiv.textDiv.innerText;
+                                            originalEntry[textDiv.array][originalUpdateIndex].fetched = true;
+
+                                            // sync changes to original word bank
                                             chrome.storage.sync.set({"wordBank": data.wordBank});
                                         });
                                         textDiv.textDiv.addEventListener("keydown", (event) => {
@@ -1075,18 +1151,66 @@ function loadEntries (tab) {
                 });
             }
         }
+    });
+}
 
-        // create add mode elements
-        // create inputs, labels, and button
-        let wordInput = document.createElement("input");
-        let urlInput = document.createElement("input");
-        let wordLabel = document.createElement("label");
-        let urlLabel = document.createElement("label");
-        let cancel = document.createElement("button");
-        let save = document.createElement("button");
-        let isValidURL = true;
+// load word adder
+function loadWordAdder() {
+    let addMode = false;
 
-        // hide word adder elems--only display when word add mode is toggled on
+    // create inputs, labels, and button
+    let wordInput = document.createElement("input");
+    let urlInput = document.createElement("input");
+    let wordLabel = document.createElement("label");
+    let urlLabel = document.createElement("label");
+    let cancel = document.createElement("button");
+    let save = document.createElement("button");
+    let isValidURL = true;
+
+    // hide word adder elems--only display when word add mode is toggled on
+    wordInput.style.display = "none";
+    urlInput.style.display = "none";
+    wordLabel.style.display = "none";
+    urlLabel.style.display = "none";
+    cancel.style.display = "none";
+    save.style.display = "none";
+
+    // edit innerHTML
+    wordLabel.innerHTML = "Word: ";
+    urlLabel.innerHTML = "URL: ";
+    cancel.innerHTML = "Cancel";
+    save.innerHTML = "Save";
+
+    // update DOM tree
+    wordAdder.appendChild(wordLabel);
+    wordAdder.appendChild(wordInput);
+    wordAdder.appendChild(urlLabel);
+    wordAdder.appendChild(urlInput);
+    wordAdder.appendChild(cancel);
+    wordAdder.appendChild(save);
+
+    // set attributes
+    wordInput.setAttribute("id", "wordAdder-word");
+    wordInput.setAttribute("type", "text");
+    urlInput.setAttribute("id", "wordAdder-url");
+    urlInput.setAttribute("type", "url");
+    wordLabel.setAttribute("for", "wordAdder-word");
+    urlLabel.setAttribute("for", "wordAdder-url");
+
+    // set classes
+    wordInput.classList.add("input");
+    urlInput.classList.add("input");
+    urlInput.classList.add("url-input");
+
+    // check for valid URL input--disable save button if invalid
+    urlInput.addEventListener("keyup", () => {
+        urlInput.value = urlInput.value.trim();
+        isValidURL = urlInput.checkValidity();
+        save.disabled = (isValidURL) ? false : true;
+    });
+
+    cancel.addEventListener("click", (event) => {
+        // hide word adder elems
         wordInput.style.display = "none";
         urlInput.style.display = "none";
         wordLabel.style.display = "none";
@@ -1094,96 +1218,56 @@ function loadEntries (tab) {
         cancel.style.display = "none";
         save.style.display = "none";
 
-        // edit innerHTML
-        wordLabel.innerHTML = "Word: ";
-        urlLabel.innerHTML = "URL: ";
-        cancel.innerHTML = "Cancel";
-        save.innerHTML = "Save";
+        // reset word adder label
+        wordAdderLabel.style.display = "";
 
-        // update DOM tree
-        wordAdder.appendChild(wordLabel);
-        wordAdder.appendChild(wordInput);
-        wordAdder.appendChild(urlLabel);
-        wordAdder.appendChild(urlInput);
-        wordAdder.appendChild(cancel);
-        wordAdder.appendChild(save);
+        // turn off add mode
+        addMode = false;
 
-        // set attributes
-        wordInput.setAttribute("id", "wordAdder-word");
-        wordInput.setAttribute("type", "text");
-        urlInput.setAttribute("id", "wordAdder-url");
-        urlInput.setAttribute("type", "url");
-        wordLabel.setAttribute("for", "wordAdder-word");
-        urlLabel.setAttribute("for", "wordAdder-url");
+        // prevent click event from firing on parent div 'wordAdder'
+        event.stopPropagation();
+    });
 
-        // set classes
-        wordInput.classList.add("input");
-        urlInput.classList.add("input");
-        urlInput.classList.add("url-input");
+    // save changes and exit add mode by clicking 'Save' button
+    save.addEventListener("click", (event) => {
+        addEntries(wordInput.value, urlInput.value, "sourceUrls", event);
+    });
 
-        // check for valid URL input--disable save button if invalid
-        urlInput.addEventListener("keyup", () => {
-            urlInput.value = urlInput.value.trim();
-            isValidURL = urlInput.checkValidity();
-            save.disabled = (isValidURL) ? false : true;
-        });
+    // save changes and exit add mode with 'Enter' if URL is valid
+    wordInput.addEventListener("keydown", (event) => {
+        if (event.code === "Enter" && isValidURL) {
+            addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
+        }
+    });
+    urlInput.addEventListener("keydown", (event) => {
+        if (event.code === "Enter" && isValidURL) {
+            addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
+        }
+    });
 
-        cancel.addEventListener("click", (event) => {
-            // hide word adder elems
-            wordInput.style.display = "none";
-            urlInput.style.display = "none";
-            wordLabel.style.display = "none";
-            urlLabel.style.display = "none";
-            cancel.style.display = "none";
-            save.style.display = "none";
+    wordAdder.addEventListener("click", () => {
+        // if not in add mode, enter it
+        if (!addMode) {
+            // hide word adder label
+            wordAdderLabel.style.display = "none";
 
-            // reset word adder label
-            wordAdderLabel.style.display = "";
+            // reveal word adder elems
+            wordInput.style.display = "";
+            urlInput.style.display = "";
+            wordLabel.style.display = "";
+            urlLabel.style.display = "";
+            cancel.style.display = "";
+            save.style.display = "";
 
-            // turn off add mode
-            addMode = false;
-
-            // prevent click event from firing on parent div 'wordAdder'
-            event.stopPropagation();
-        });
-
-        // save changes and exit add mode by clicking 'Save' button
-        save.addEventListener("click", (event) => {
-            addEntries(wordInput.value, urlInput.value, "sourceUrls", event);
-        });
-
-        // save changes and exit add mode with 'Enter' if URL is valid
-        wordInput.addEventListener("keydown", (event) => {
-            if (event.code === "Enter" && isValidURL) {
-                addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
-            }
-        });
-        urlInput.addEventListener("keydown", (event) => {
-            if (event.code === "Enter" && isValidURL) {
-                addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
-            }
-        });
-
-        wordAdder.addEventListener("click", () => {
-            // if not in add mode, enter it
-            if (!addMode) {
-                // hide word adder label
-                wordAdderLabel.style.display = "none";
-
-                // reveal word adder elems
-                wordInput.style.display = "";
-                urlInput.style.display = "";
-                wordLabel.style.display = "";
-                urlLabel.style.display = "";
-                cancel.style.display = "";
-                save.style.display = "";
-
-                // turn on word add mode
-                addMode = true;
-            }
-        });
+            // turn on word add mode
+            addMode = true;
+        }
     });
 }
+
+// by default, load recents tab
+loadEntries(currentTab);
+loadWordAdder();
 
 function clearAllEntries() {
     document.querySelectorAll(".entry-container").forEach(e => e.remove());
