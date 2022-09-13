@@ -10,7 +10,7 @@ let wordsDiv = document.getElementById("wordsDiv");
 let wordAdder = document.getElementById("wordAdder");
 let searchInput = document.getElementById("search-input");
 let tabHeader = document.getElementById("tab-header");
-let entryContainers = [];
+let searchableEntries = [];
 let recentsTab = {
     tabElement: document.getElementById("recents-tab"),
     tabWrapper: document.getElementById("recents-tab-wrapper"),
@@ -92,6 +92,9 @@ document.getElementById("recents-tab-wrapper").addEventListener("click", () => {
     // change text of tab-header
     tabHeader.innerText = "R E C E N T";
 
+    // reset search bar
+    searchInput.value = "";
+
     // clear existing entries
     wordsDiv.replaceChildren();
 
@@ -116,6 +119,9 @@ document.getElementById("view-all-tab-wrapper").addEventListener("click", () => 
     // change text of tab-header
     tabHeader.innerText = "A L L";
 
+    // reset search bar
+    searchInput.value = "";
+
     // clear existing entries
     wordsDiv.replaceChildren();
 
@@ -139,6 +145,9 @@ document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
 
     // change text of tab-header
     tabHeader.innerText = "S T A R R E D";
+
+    // reset search bar
+    searchInput.value = "";
 
     // clear existing entries
     wordsDiv.replaceChildren();
@@ -507,20 +516,24 @@ searchInput.addEventListener("keyup", () => {
     removeDropdown();
 
     let filter = searchInput.value.toLowerCase().trim();
-    chrome.storage.sync.get("wordBank", (data) => {
-        for (let i = 0; i < data.wordBank.length; i++) {
-            let entry = data.wordBank[i];
-            if (entry.text.toLowerCase().indexOf(filter) > -1) {
-                entryContainers[i].style.display = "";
-            } else {
-                entryContainers[i].style.display = "none";
-            }
+    searchableEntries.forEach((entry) => {
+        let word = entry.getElementsByClassName("word-container")[0].innerHTML;
+        if (word.toLowerCase().indexOf(filter) > -1) {
+            entry.style.display = "";
+        } else {
+            entry.style.display = "none";
         }
     });
 });
 
 // load Wordrive entries
 function loadEntries (tab) {
+    // reset list of searchable entries
+    searchableEntries = [];
+
+    // initialize search filter
+    let filter = searchInput.value.toLowerCase().trim();
+
     chrome.storage.sync.get("wordBank", (data) => {
         // ** PART ONE: fetch and save titles
         for (let i = 0; i < data.wordBank.length; i++) {
@@ -640,7 +653,14 @@ function loadEntries (tab) {
                 testInput.setAttribute("id", "thing");
                 let testLabel = document.createElement("label");
                 testLabel.setAttribute("for", "thing");
-                entryContainers.push(entryContainer);
+                searchableEntries.push(entryContainer);
+
+                // apply existing search query filter
+                if (entry.text.toLowerCase().indexOf(filter) > -1) {
+                    entryContainer.style.display = "";
+                } else {
+                    entryContainer.style.display = "none";
+                }
 
                 // apply classes
                 entryWrapper.classList.add("entry-wrapper");
