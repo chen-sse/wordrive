@@ -1,4 +1,4 @@
-// fetch date from local machine
+/* fetch date from local machine
 function getDate() {
     const dateOptions = {
         year: "numeric",
@@ -16,6 +16,30 @@ function getTime() {
         timeZoneName: "short"
     };
     let time = new Date().toLocaleTimeString("en-US", timeOptions).replace("AM", "am").replace("PM", "pm");
+    const timeTokens = time.split(" ");
+    return `${timeTokens[0]}${timeTokens[1]} ${timeTokens[2]}`;
+} */
+
+// get date from date object
+function getDate(dateNumber) {
+    let dateObj = new Date(dateNumber);
+    const dateOptions = {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    };
+    return dateObj.toLocaleDateString("en-US", dateOptions);
+}
+
+// get time from date object
+function getTime(dateNumber) {
+    let dateObj = new Date(dateNumber);
+    const timeOptions = {
+        hour: "numeric",
+        minute: "numeric",
+        timeZoneName: "short"
+    };
+    let time = dateObj.toLocaleTimeString("en-US", timeOptions).replace("AM", "am").replace("PM", "pm");
     const timeTokens = time.split(" ");
     return `${timeTokens[0]}${timeTokens[1]} ${timeTokens[2]}`;
 }

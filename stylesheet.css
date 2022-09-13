@@ -353,13 +353,11 @@ input::placeholder {
 }
 
 .entryContainerEditMode {
-    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
-    background-color: #ff9a8e;
+
 }
 
 .entry-containerEditMode:hover {
-    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
-    background-color: #ffcdc8;
+
 }
 
 .entry-container:hover > button {
@@ -367,7 +365,7 @@ input::placeholder {
 }
 
 .dropdown .entryContainerEditMode {
-    border: 3px solid #ff9a8e;
+    border: 3px solid #D9E8F6;
     padding-top: 2px;
     padding-bottom: 2px;
 }

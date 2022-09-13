@@ -1,4 +1,4 @@
-import { getDate, getTime, getDictionaryURL, getFaviconURL } from "./utils.js";
+import { getDictionaryURL, getFaviconURL } from "./utils.js";
 
 chrome.runtime.onInstalled.addListener(() => {
     // create context menu
@@ -48,7 +48,8 @@ chrome.contextMenus.onClicked.addListener((info) => {
                             url: currentTab.url,
                             icon: getFaviconURL(currentTab.url),
                             title: "",
-                            fetched: false
+                            fetched: false,
+                            userEdited: false
                         });
                         break;
                     }
@@ -57,6 +58,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
             // if word is not duplicate, add to word bank
             if (newWord) {
                 let dictionaryUrl = getDictionaryURL(selectedWord);
+                let dateNumber = new Date().getTime();
                 // push new word object to word bank
                 data.wordBank.push({
                     text: (data.lowercaseChecked === true)
@@ -66,18 +68,19 @@ chrome.contextMenus.onClicked.addListener((info) => {
                         url: currentTab.url,
                         icon: getFaviconURL(currentTab.url),
                         title: "",
-                        fetched: false
+                        fetched: false,
+                        userEdited: false
                     }],
                     refUrls: [{
                         url: dictionaryUrl,
                         icon: getFaviconURL(dictionaryUrl),
                         title: "",
-                        fetched: false
+                        fetched: false,
+                        userEdited: false
                     }],
-                    date: getDate(),
-                    time: getTime(),
+                    date: dateNumber,
                     notes: "",
-                    starred: false
+                    starred: false,
                 });
             }
             // set key to updated array
