@@ -249,7 +249,7 @@ function addEntries(wordInput, urlInput, type, event) {
         if (wordInput !== "") {
             if (newWord) {
                 let dictionaryUrl = getDictionaryURL(wordInput);
-                let dateObj = new Date();
+                let dateNumber = new Date().getTime();
                 // push new word object to word bank
                 data.wordBank.push({
                     text: wordInput,
@@ -269,7 +269,7 @@ function addEntries(wordInput, urlInput, type, event) {
                         fetched: false,
                         userEdited: false
                     }],
-                    date: dateObj,
+                    date: dateNumber,
                     notes: "",
                     starred: (currentTab === "starred")
                         ? true
