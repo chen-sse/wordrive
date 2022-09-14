@@ -249,6 +249,8 @@ input::placeholder {
 }
 
 .entry-dropdown-arrow {
+    position: relative;
+    bottom: 4px;
     padding: 0px 8px 0.7px 4px;
 }
 
@@ -467,4 +469,11 @@ nav {
     position: relative;
     left: 12px;
     height: 75%;
+}
+
+.word-container {
+    display: inline-block;
+    max-width: 185px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
