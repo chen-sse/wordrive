@@ -44,12 +44,14 @@ chrome.contextMenus.onClicked.addListener((info) => {
                     newWord = false;
                     // if URL is not duplicate, add to URL list
                     if (newUrl) {
+                        let dateNumber = new Date().getTime();
                         entry.sourceUrls.push({
                             url: currentTab.url,
                             icon: getFaviconURL(currentTab.url),
                             title: "",
                             fetched: false,
-                            userEdited: false
+                            userEdited: false,
+                            date: dateNumber
                         });
                         break;
                     }
@@ -69,14 +71,16 @@ chrome.contextMenus.onClicked.addListener((info) => {
                         icon: getFaviconURL(currentTab.url),
                         title: "",
                         fetched: false,
-                        userEdited: false
+                        userEdited: false,
+                        date: dateNumber
                     }],
                     refUrls: [{
                         url: dictionaryUrl,
                         icon: getFaviconURL(dictionaryUrl),
                         title: "",
                         fetched: false,
-                        userEdited: false
+                        userEdited: false,
+                        date: dateNumber
                     }],
                     date: dateNumber,
                     notes: "",

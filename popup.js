@@ -260,14 +260,16 @@ function addEntries(wordInput, urlInput, type, event) {
                             icon: getFaviconURL(urlInput),
                             title: "",
                             fetched: false,
-                            userEdited: false
+                            userEdited: false,
+                            date: dateNumber
                         }],
                     refUrls: [{
                         url: dictionaryUrl,
                         icon: getFaviconURL(dictionaryUrl),
                         title: "",
                         fetched: false,
-                        userEdited: false
+                        userEdited: false,
+                        date: dateNumber
                     }],
                     date: dateNumber,
                     notes: "",
@@ -281,7 +283,8 @@ function addEntries(wordInput, urlInput, type, event) {
                     icon: getFaviconURL(urlInput),
                     title: "",
                     fetched: false,
-                    userEdited: false
+                    userEdited: false,
+                    date: dateNumber
                 });
             }
 
