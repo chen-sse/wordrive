@@ -247,9 +247,9 @@ function addEntries(wordInput, urlInput, type, event) {
 
         // save word and/or URL, if not duplicate and not empty
         if (wordInput !== "") {
+            let dateNumber = new Date().getTime();
             if (newWord) {
                 let dictionaryUrl = getDictionaryURL(wordInput);
-                let dateNumber = new Date().getTime();
                 // push new word object to word bank
                 data.wordBank.push({
                     text: wordInput,
