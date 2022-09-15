@@ -571,7 +571,7 @@ function loadEntries (tab) {
                 let refUrl = entry.refUrls[j];
                 (async () => {
                     // if URL has never been successfully fetched or user edited
-                    if (!refUrl.fetched && refUrl.userEdited) {
+                    if (!refUrl.fetched && !refUrl.userEdited) {
                         // set title to hostname by default
                         refUrl.title = new URL(refUrl.url).hostname;
                         // fetch title
