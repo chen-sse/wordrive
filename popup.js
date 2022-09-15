@@ -1322,6 +1322,11 @@ function loadEntries (tab) {
                                     subtractClicked.clicked = false;
                                 });
 
+                                // disable title editing
+                                textDivs.forEach((textDiv) => {
+                                    textDiv.textDiv.setAttribute("contenteditable", "false");
+                                });
+
                                 // remove subtract button event listeners
                                 urlObjs.forEach((urlObj) => {
                                     urlObj.subtractButton.removeEventListener("click", function () {
