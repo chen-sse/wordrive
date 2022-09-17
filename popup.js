@@ -785,14 +785,11 @@ function loadEntries (tab) {
                                 urlBox.remove();
 
                                 // delete current URL in both original and sorted word banks
-                                let sortedDeleteIndex = entry[array].findIndex((element) => {
+                                let deleteIndex = entry[array].findIndex((element) => {
                                     return (element.url === url.url) ? true : false;
                                 });
-                                let originalDeleteIndex = originalEntry[array].findIndex((element) => {
-                                    return (element.url === url.url) ? true : false;
-                                });
-                                entry[array].splice(sortedDeleteIndex, 1);
-                                originalEntry[array].splice(originalDeleteIndex, 1);
+                                entry[array].splice(deleteIndex, 1);
+                                originalEntry[array].splice(deleteIndex, 1);
 
                                 // sync changes to original word bank
                                 chrome.storage.sync.set({"wordBank": data.wordBank});
