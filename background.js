@@ -89,7 +89,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
             }
             // set key to updated array
             chrome.storage.sync.set({"wordBank": data.wordBank}, () => {
-                if(chrome.runtime.lastError) {
+                if (chrome.runtime.lastError) {
                     console.warn("Uh-oh..." + chrome.runtime.lastError.message);
                 }
             });

@@ -566,7 +566,7 @@ function loadEntries (tab) {
                 })()
             }
 
-            // fetch reference URL titles
+            // fetch ref URL titles
             for (let j = 0; j < entry.refUrls.length; j++) {
                 let refUrl = entry.refUrls[j];
                 (async () => {
@@ -742,7 +742,7 @@ function loadEntries (tab) {
                     event.stopPropagation();
                 });
 
-                // toggle URL drop-down menu on click
+                // toggle dropdown on click
                 entryContainer.addEventListener("click", () => {
                     // if on, turn URL mode off and remove dropdown
                     if (entryContainer.classList.contains("url-mode-on")) {
@@ -781,8 +781,8 @@ function loadEntries (tab) {
                                 }, DELETE_TIMEOUT);
                                 timeoutIDs.push(timeoutID);
                             } else {
-                                // hide current URL
-                                urlBox.style.display = "none";
+                                // remove current URL box
+                                urlBox.remove();
 
                                 // delete current URL in both original and sorted word banks
                                 let sortedDeleteIndex = entry[array].findIndex((element) => {
@@ -797,6 +797,44 @@ function loadEntries (tab) {
                                 // sync changes to original word bank
                                 chrome.storage.sync.set({"wordBank": data.wordBank});
                             }
+                        }
+
+                        function enableTextDivEditing(textDiv) {
+                            textDiv.textDiv.setAttribute("contenteditable", "true");
+                            textDiv.textDiv.addEventListener("keyup", () => {
+                                let originalUrl = textDiv.textDiv.getAttribute("data-url");
+
+                                // compute update index for both original and sorted word banks
+                                let sortedUpdateIndex = entry[textDiv.array].findIndex((element) => {
+                                    return (element.url === originalUrl) ? true : false;
+                                });
+                                let originalUpdateIndex = originalEntry[textDiv.array].findIndex((element) => {
+                                    return (element.url === originalUrl) ? true : false;
+                                });
+
+                                // update titles and fetched properties for both original and sorted word banks
+                                entry[textDiv.array][sortedUpdateIndex].title = textDiv.textDiv.innerText;
+                                entry[textDiv.array][sortedUpdateIndex].userEdited = true;
+                                originalEntry[textDiv.array][originalUpdateIndex].title = textDiv.textDiv.innerText;
+                                originalEntry[textDiv.array][originalUpdateIndex].userEdited = true;
+
+                                // sync changes to original word bank
+                                chrome.storage.sync.set({"wordBank": data.wordBank});
+                            });
+                            textDiv.textDiv.addEventListener("keydown", (event) => {
+                                if (event.code === "Enter") {
+                                    event.preventDefault();
+                                    document.activeElement.blur();
+                                }
+                            });
+
+                            // hide subtract button while editing title
+                            textDiv.textDiv.addEventListener("focus", () => {
+                                textDiv.textDiv.nextSibling.style.display = "none";
+                            });
+                            textDiv.textDiv.addEventListener("blur", () => {
+                                textDiv.textDiv.nextSibling.style.display = "";
+                            });
                         }
 
                         // init dropdown
@@ -815,12 +853,16 @@ function loadEntries (tab) {
                         editIcon.classList.add("edit-save-icon");
                         timestamp.appendChild(editIcon);
 
-                        // insert source URLs
+
+
+                        // ** INSERT SOURCE URLs
                         let sourceUrls = document.createElement("div");
                         sourceUrls.innerHTML = "Found at:";
                         dropdown.appendChild(sourceUrls);
-                        for (let j = 0; j < entry.sourceUrls.length; j++) {
-                            let sourceUrl = entry.sourceUrls[j];
+
+                        // load source URL of a given index
+                        function loadSourceURL(index) {
+                            let sourceUrl = entry.sourceUrls[index];
                             let subtractClicked = {clicked: false};
                             subtractClickedObjects.push(subtractClicked);
 
@@ -897,6 +939,13 @@ function loadEntries (tab) {
                             });
                         }
 
+                        // load all source URLs
+                        for (let j = 0; j < entry.sourceUrls.length; j++) {
+                            loadSourceURL(j);
+                        }
+
+
+
                         // insert source URL adder
                         let sourceUrlAdder = document.createElement("div");
                         let sourceUrlAdderLabel = document.createElement("span");
@@ -965,8 +1014,12 @@ function loadEntries (tab) {
                             sourceSave.disabled = (sourceIsValidURL) ? false : true;
                         });
 
-                        // cancel pending changes and exit URL add mode by clicking 'Cancel' button
-                        sourceCancel.addEventListener("click", (event) => {
+                        // cancel pending changes and exit source URL add mode
+                        function resetSourceAdder() {
+                            // reset input fields
+                            sourceTitleInput.value = "";
+                            sourceUrlInput.value = "";
+
                             // hide source URL adder elems
                             sourceTitleInput.style.display = "none";
                             sourceUrlInput.style.display = "none";
@@ -981,24 +1034,104 @@ function loadEntries (tab) {
                             // turn off source URL add mode
                             sourceUrlAddMode = false;
 
+                            sourceUrlAdder.remove();
+                            sourceUrls.appendChild(sourceUrlAdder);
+                        }
+
+                        // cancel pending changes and exit source URL add mode by clicking 'Cancel' button
+                        sourceCancel.addEventListener("click", (event) => {
+                            resetSourceAdder();
+
                             // prevent click event from firing on parent div 'sourceUrlAdder'
                             event.stopPropagation();
                         });
 
+                        function saveSourceURL() {
+                            // generate timestamp
+                            let dateNumber = new Date().getTime();
+
+                            // trim inputs
+                            let titleInput = sourceTitleInput.value.trim();
+                            let urlInput = sourceUrlInput.value.trim();
+
+                            // if URL input isn't empty, ...
+                            if (urlInput !== "") {
+                                // check if added URL is duplicate
+                                let duplicateIndex = -1;
+                                for (let k = 0; k < entry.sourceUrls.length; k++) {
+                                    if (entry.sourceUrls[k].url === urlInput) {
+                                        duplicateIndex = k;
+                                    }
+                                }
+                                
+                                // if URL is duplicate and title is non-empty, merge title data
+                                if (duplicateIndex >= 0) {
+                                    if (titleInput !== "") {
+                                        let duplicateUrlObj = entry.sourceUrls[duplicateIndex];
+                                        duplicateUrlObj.title = titleInput;
+                                        duplicateUrlObj.userEdited = true;
+
+                                        // update title of duplicate URL in UI
+                                        sourceUrls.querySelectorAll(`[data-url="${urlInput}"]`)[0].innerHTML = titleInput;
+                                    }
+                                }
+                                // if URL is not duplicate, push new URL obj
+                                else {
+                                    entry.sourceUrls.push({
+                                        url: urlInput,
+                                        icon: getFaviconURL(urlInput),
+                                        title: (titleInput === "") 
+                                            ? new URL(urlInput).hostname 
+                                            : titleInput,
+                                        fetched: false,
+                                        userEdited: (titleInput === "") 
+                                            ? false 
+                                            : true,
+                                        date: dateNumber
+                                    });
+
+                                    // load new URL entry
+                                    loadSourceURL(entry.sourceUrls.length - 1);
+
+                                    // apply edit mode to new URL entry
+                                    // display subtract button
+                                    subtractButtons[subtractButtons.length - 1].style.display = "";
+
+                                    // add subtract button event listener
+                                    let currentUrlObj = urlObjs[urlObjs.length - 1];
+                                    currentUrlObj.subtractButton.addEventListener("click", function () {
+                                        subtractButtonCallback(currentUrlObj.subtractButton, currentUrlObj.subtractClicked, currentUrlObj.urlBox, currentUrlObj.url, currentUrlObj.array);
+                                    });
+
+                                    // enable title editing and add event listeners to div
+                                    enableTextDivEditing(textDivs[textDivs.length - 1]);
+                                }
+
+                                // sync changes to original word bank
+                                chrome.storage.sync.set({"wordBank": data.wordBank});
+                            }
+
+                            // reset source adder
+                            resetSourceAdder();
+                        }
+
                         // save changes and exit URL add mode by clicking 'Save' button
-                        sourceSave.addEventListener("click", () => {
-                            addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
+                        sourceSave.addEventListener("click", (event) => {
+                            saveSourceURL();
+
+                            // prevent click event from firing on parent div 'sourceUrlAdder'
+                            event.stopPropagation();
                         });
 
                         // save changes and exit URL add mode with 'Enter' if URL is valid
                         sourceTitleInput.addEventListener("keydown", (event) => {
                             if (event.code === "Enter" && sourceIsValidURL) {
-                                addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
+                                saveSourceURL();
                             }
                         });
                         sourceUrlInput.addEventListener("keydown", (event) => {
                             if (event.code === "Enter" && sourceIsValidURL) {
-                                addEntries(entry.text, sourceUrlInput.value, "sourceUrls", null);
+                                saveSourceURL();
                             }
                         });
 
@@ -1021,12 +1154,16 @@ function loadEntries (tab) {
                             }
                         });
 
-                        // insert reference URLs
+
+
+                        // ** INSERT REF URLs
                         let refUrls = document.createElement("div");
                         refUrls.innerHTML = "Reference:";
                         dropdown.appendChild(refUrls);
-                        for (let j = 0; j < entry.refUrls.length; j++) {
-                            let refUrl = entry.refUrls[j];
+
+                        // load ref URL of a given index
+                        function loadRefURL(index) {
+                            let refUrl = entry.refUrls[index];
                             let subtractClicked = {clicked: false};
                             subtractClickedObjects.push(subtractClicked);
 
@@ -1103,7 +1240,14 @@ function loadEntries (tab) {
                             });
                         }
 
-                        // insert reference URL adder
+                        // load all ref URLs
+                        for (let j = 0; j < entry.refUrls.length; j++) {
+                            loadRefURL(j);
+                        }
+
+
+
+                        // insert ref URL adder
                         let refUrlAdder = document.createElement("div");
                         let refUrlAdderLabel = document.createElement("span");
 
@@ -1112,14 +1256,14 @@ function loadEntries (tab) {
                         refUrlAdder.classList.add("adder");
                         refUrlAdder.style.display = "none";
 
-                        // set reference URL adder label
+                        // set ref URL adder label
                         refUrlAdderLabel.innerHTML = "+ Add reference URL...";
 
                         // update DOM
                         refUrls.appendChild(refUrlAdder);
                         refUrlAdder.appendChild(refUrlAdderLabel);
 
-                        // create reference URL adder elements
+                        // create ref URL adder elements
                         // create inputs, labels, and buttons
                         let refTitleInput = document.createElement("input");
                         let refUrlInput = document.createElement("input");
@@ -1129,7 +1273,7 @@ function loadEntries (tab) {
                         let refSave = document.createElement("button");
                         let refIsValidURL = true;
 
-                        // hide reference URL adder elems--only display when reference URL add mode is toggled on
+                        // hide ref URL adder elems--only display when ref URL add mode is toggled on
                         refTitleInput.style.display = "none";
                         refUrlInput.style.display = "none";
                         refTitleLabel.style.display = "none";
@@ -1171,9 +1315,13 @@ function loadEntries (tab) {
                             refSave.disabled = (refIsValidURL) ? false : true;
                         });
 
-                        // cancel pending changes and exit URL add mode by clicking 'Cancel' button
-                        refCancel.addEventListener("click", (event) => {
-                            // hide reference URL adder elems
+                        // cancel pending changes and exit ref URL add mode
+                        function resetRefAdder() {
+                            // reset input fields
+                            refTitleInput.value = "";
+                            refUrlInput.value = "";
+
+                            // hide ref URL adder elems
                             refTitleInput.style.display = "none";
                             refUrlInput.style.display = "none";
                             refTitleLabel.style.display = "none";
@@ -1181,40 +1329,120 @@ function loadEntries (tab) {
                             refCancel.style.display = "none";
                             refSave.style.display = "none";
 
-                            // reset reference URL adder label
+                            // reset ref URL adder label
                             refUrlAdderLabel.style.display = "";
 
-                            // turn off reference URL add mode
+                            // turn off ref URL add mode
                             refUrlAddMode = false;
+
+                            refUrlAdder.remove();
+                            refUrls.appendChild(refUrlAdder);
+                        }
+
+                        // cancel pending changes and exit URL add mode by clicking 'Cancel' button
+                        refCancel.addEventListener("click", (event) => {
+                            resetRefAdder();
 
                             // prevent click event from firing on parent div 'refUrlAdder'
                             event.stopPropagation();
                         });
 
+                        function saveRefURL() {
+                            // generate timestamp
+                            let dateNumber = new Date().getTime();
+
+                            // trim inputs
+                            let titleInput = refTitleInput.value.trim();
+                            let urlInput = refUrlInput.value.trim();
+
+                            // if URL input isn't empty, ...
+                            if (urlInput !== "") {
+                                // check if added URL is duplicate
+                                let duplicateIndex = -1;
+                                for (let k = 0; k < entry.refUrls.length; k++) {
+                                    if (entry.refUrls[k].url === urlInput) {
+                                        duplicateIndex = k;
+                                    }
+                                }
+                                
+                                // if URL is duplicate and title is non-empty, merge title data
+                                if (duplicateIndex >= 0) {
+                                    if (titleInput !== "") {
+                                        let duplicateUrlObj = entry.refUrls[duplicateIndex];
+                                        duplicateUrlObj.title = titleInput;
+                                        duplicateUrlObj.userEdited = true;
+
+                                        // update title of duplicate URL in UI
+                                        refUrls.querySelectorAll(`[data-url="${urlInput}"]`)[0].innerHTML = titleInput;
+                                    }
+                                }
+                                // if URL is not duplicate, push new URL obj
+                                else {
+                                    entry.refUrls.push({
+                                        url: urlInput,
+                                        icon: getFaviconURL(urlInput),
+                                        title: (titleInput === "") 
+                                            ? new URL(urlInput).hostname 
+                                            : titleInput,
+                                        fetched: false,
+                                        userEdited: (titleInput === "") 
+                                            ? false 
+                                            : true,
+                                        date: dateNumber
+                                    });
+
+                                    // load new URL entry
+                                    loadRefURL(entry.refUrls.length - 1);
+
+                                    // apply edit mode to new URL entry
+                                    // display subtract button
+                                    subtractButtons[subtractButtons.length - 1].style.display = "";
+
+                                    // add subtract button event listener
+                                    let currentUrlObj = urlObjs[urlObjs.length - 1];
+                                    currentUrlObj.subtractButton.addEventListener("click", function () {
+                                        subtractButtonCallback(currentUrlObj.subtractButton, currentUrlObj.subtractClicked, currentUrlObj.urlBox, currentUrlObj.url, currentUrlObj.array);
+                                    });
+
+                                    // enable title editing and add event listeners to div
+                                    enableTextDivEditing(textDivs[textDivs.length - 1]);
+                                }
+
+                                // sync changes to original word bank
+                                chrome.storage.sync.set({"wordBank": data.wordBank});
+                            }
+
+                            // reset ref adder
+                            resetRefAdder();
+                        }
+
                         // save changes and exit URL add mode by clicking 'Save' button
-                        refSave.addEventListener("click", () => {
-                            addEntries(entry.text, refUrlInput.value, "refUrls", null);
+                        refSave.addEventListener("click", (event) => {
+                            saveRefURL();
+
+                            // prevent click event from firing on parent div 'refUrlAdder'
+                            event.stopPropagation();
                         });
 
                         // save changes and exit URL add mode with 'Enter' if URL is valid
                         refTitleInput.addEventListener("keydown", (event) => {
                             if (event.code === "Enter" && refIsValidURL) {
-                                addEntries(entry.text, refUrlInput.value, "refUrls", null);
+                                saveRefURL();
                             }
                         });
                         refUrlInput.addEventListener("keydown", (event) => {
                             if (event.code === "Enter" && refIsValidURL) {
-                                addEntries(entry.text, refUrlInput.value, "refUrls", null);
+                                saveRefURL();
                             }
                         });
 
                         refUrlAdder.addEventListener("click", () => {
-                            // if not in reference URL add mode, enter it
+                            // if not in ref URL add mode, enter it
                             if (!refUrlAddMode) {
-                                // hide reference URL adder label
+                                // hide ref URL adder label
                                 refUrlAdderLabel.style.display = "none";
 
-                                // reveal reference URL adder elems
+                                // reveal ref URL adder elems
                                 refTitleInput.style.display = "";
                                 refUrlInput.style.display = "";
                                 refTitleLabel.style.display = "";
@@ -1222,7 +1450,7 @@ function loadEntries (tab) {
                                 refCancel.style.display = "";
                                 refSave.style.display = "";
 
-                                // turn on reference URL add mode
+                                // turn on ref URL add mode
                                 refUrlAddMode = true;
                             }
                         });
@@ -1257,6 +1485,8 @@ function loadEntries (tab) {
                             });
                         });
 
+                        // ** EDIT MODE
+
                         // toggle edit mode on 'editIcon' click
                         editIcon.addEventListener("click", () => {
                             if (!editMode) {
@@ -1269,41 +1499,7 @@ function loadEntries (tab) {
                                 });
 
                                 textDivs.forEach((textDiv) => {
-                                    textDiv.textDiv.setAttribute("contenteditable", "true");
-                                    textDiv.textDiv.addEventListener("keyup", () => {
-                                        let originalUrl = textDiv.textDiv.getAttribute("data-url");
-
-                                        // compute update index for both original and sorted word banks
-                                        let sortedUpdateIndex = entry[textDiv.array].findIndex((element) => {
-                                            return (element.url === originalUrl) ? true : false;
-                                        });
-                                        let originalUpdateIndex = originalEntry[textDiv.array].findIndex((element) => {
-                                            return (element.url === originalUrl) ? true : false;
-                                        });
-
-                                        // update titles and fetched properties for both original and sorted word banks
-                                        entry[textDiv.array][sortedUpdateIndex].title = textDiv.textDiv.innerText;
-                                        entry[textDiv.array][sortedUpdateIndex].userEdited = true;
-                                        originalEntry[textDiv.array][originalUpdateIndex].title = textDiv.textDiv.innerText;
-                                        originalEntry[textDiv.array][originalUpdateIndex].userEdited = true;
-
-                                        // sync changes to original word bank
-                                        chrome.storage.sync.set({"wordBank": data.wordBank});
-                                    });
-                                    textDiv.textDiv.addEventListener("keydown", (event) => {
-                                        if (event.code === "Enter") {
-                                            event.preventDefault();
-                                            document.activeElement.blur();
-                                        }
-                                    });
-
-                                    // hide subtract button while editing title
-                                    textDiv.textDiv.addEventListener("focus", () => {
-                                        textDiv.textDiv.nextSibling.style.display = "none";
-                                    });
-                                    textDiv.textDiv.addEventListener("blur", () => {
-                                        textDiv.textDiv.nextSibling.style.display = "";
-                                    });
+                                    enableTextDivEditing(textDiv);
                                 });
 
                                 // enable word editing
