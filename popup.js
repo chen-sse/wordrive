@@ -760,7 +760,6 @@ function loadEntries (tab) {
                         // init mode booleans and arrays
                         let sourceUrlAddMode = false;
                         let refUrlAddMode = false;
-                        let noteAddMode = false;
                         let editMode = false;
                         let textDivs = [];
                         let subtractButtons = [];
@@ -1464,17 +1463,26 @@ function loadEntries (tab) {
                         function loadNote(index) {
                             let notesBox = document.createElement("div");
 
+                            // set properties
                             notesBox.setAttribute("contenteditable", true);
                             notesBox.classList.add("notes-clicked");
                             notesBox.innerHTML = entry.notes[index];
+
+                            // update DOM
                             notes.appendChild(notesBox);
 
+                            // save note on blur or 'Enter'
                             notesBox.addEventListener("blur", () => {
                                 entry.notes[index] = notesBox.innerText;
                                 originalEntry.notes[index] = notesBox.innerText;
 
                                 // sync changes to original word bank
                                 chrome.storage.sync.set({"wordBank": data.wordBank});
+                            });
+                            notesBox.addEventListener("keydown", (event) => {
+                                if (event.code === "Enter") {
+                                    notesBox.blur();
+                                }
                             });
                         }
 
@@ -1485,14 +1493,19 @@ function loadEntries (tab) {
 
                         // insert notes adder
                         let notesAdder = document.createElement("div");
-                        notesAdder.style.display = "none";
+
+                        // set properties
+                        notesAdder.setAttribute("contenteditable", true);
                         notesAdder.classList.add("notes");
                         notesAdder.innerHTML = "+ Add note...";
-                        notesAdder.setAttribute("contenteditable", true);
+
+                        // update DOM
                         notes.appendChild(notesAdder);
 
                         function saveNewNote() {
                             let noteInput = notesAdder.innerText.trim();
+
+                            // add new note to note array
                             originalEntry.notes.push(noteInput);
 
                             // sync changes to original word bank
@@ -1503,9 +1516,9 @@ function loadEntries (tab) {
                         }
 
                         function resetNoteAdder() {
+                            // update properties
                             notesAdder.classList.replace("notes-clicked", "notes");
                             notesAdder.innerHTML = "+ Add note..."
-                            noteAddMode = false;
 
                             // re-append note adder to end of section
                             notesAdder.remove();
@@ -1514,13 +1527,8 @@ function loadEntries (tab) {
 
                         // enter note add mode on click
                         notesAdder.addEventListener("click", () => {
-                            // if not in note add mode, enter it
-                            if (!noteAddMode) {
-                                notesAdder.classList.add("notes-clicked");
-                                notesAdder.innerHTML = "";
-                                // turn on note add mode
-                                noteAddMode = true;
-                            }
+                            notesAdder.classList.add("notes-clicked");
+                            notesAdder.innerHTML = "";
                         });
                         
                         // save new note on blur or 'Enter'
@@ -1551,7 +1559,6 @@ function loadEntries (tab) {
                                 editIcon.setAttribute("src", "images/save-icon.svg");
                                 sourceUrlAdder.style.display = "";
                                 refUrlAdder.style.display = "";
-                                notesAdder.style.display = "";
 
                                 subtractButtons.forEach((subtractButton) => {
                                     subtractButton.style.display = "";
@@ -1567,7 +1574,6 @@ function loadEntries (tab) {
                                 editIcon.setAttribute("src", "images/edit-icon.svg");
                                 sourceUrlAdder.style.display = "none";
                                 refUrlAdder.style.display = "none";
-                                notesAdder.style.display = "none";
 
                                 subtractButtons.forEach((subtractButton) => {
                                     subtractButton.style.display = "none";
