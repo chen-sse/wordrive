@@ -798,7 +798,7 @@ function loadEntries (tab) {
 
                         function enableTextDivEditing(textDiv) {
                             textDiv.textDiv.setAttribute("contenteditable", "true");
-                            textDiv.textDiv.addEventListener("keyup", () => {
+                            textDiv.textDiv.addEventListener("blur", () => {
                                 let originalUrl = textDiv.textDiv.getAttribute("data-url");
 
                                 // compute update index for both original and sorted word banks
