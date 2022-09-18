@@ -6,7 +6,7 @@ let sortMode = "newest";
 let currentTab = "recents";  // set default current tab to 'recents'
 
 let options = document.getElementById("options");
-let wordsDiv = document.getElementById("wordsDiv");
+let entriesContainer = document.getElementById("entries-container");
 let wordAdder = document.getElementById("wordAdder");
 let searchInput = document.getElementById("search-input");
 let tabHeader = document.getElementById("tab-header");
@@ -96,7 +96,7 @@ document.getElementById("recents-tab-wrapper").addEventListener("click", () => {
     searchInput.value = "";
 
     // clear existing entries
-    wordsDiv.replaceChildren();
+    entriesContainer.replaceChildren();
 
     // load recent entries
     currentTab = "recents";
@@ -123,7 +123,7 @@ document.getElementById("view-all-tab-wrapper").addEventListener("click", () => 
     searchInput.value = "";
 
     // clear existing entries
-    wordsDiv.replaceChildren();
+    entriesContainer.replaceChildren();
 
     // load all entries
     currentTab = "view-all";
@@ -150,7 +150,7 @@ document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
     searchInput.value = "";
 
     // clear existing entries
-    wordsDiv.replaceChildren();
+    entriesContainer.replaceChildren();
 
     // load starred entries
     currentTab = "starred";
@@ -179,7 +179,7 @@ sortButton.addEventListener("click", () => {
         sortMode = "newest";
         sortButtonText.innerHTML = "NEWEST";
     }
-    wordsDiv.replaceChildren();
+    entriesContainer.replaceChildren();
     loadEntries(currentTab);
     clickCounter++;
 });
@@ -292,7 +292,7 @@ function addEntries(wordInput, urlInput, type, event) {
         }
                     
         // reload entries
-        wordsDiv.replaceChildren();
+        entriesContainer.replaceChildren();
         loadEntries(currentTab);
 
         // reload word adder
@@ -498,7 +498,7 @@ function syncWordEdits(box, container, originalWordBank, sortedWordBank, sortInd
                 chrome.storage.sync.set({"wordBank": originalWordBank});
 
                 // reload entries
-                wordsDiv.replaceChildren();
+                entriesContainer.replaceChildren();
                 loadEntries(currentTab);
             } else {
                 // sync changes to original word bank before reloading entries
@@ -705,7 +705,7 @@ function loadEntries (tab) {
                 entryContainer.appendChild(entryCheckboxLabel);
                 entryContainer.appendChild(entryStar);
                 entryContainer.appendChild(entryStarLabel);
-                wordsDiv.appendChild(entryContainer);
+                entriesContainer.appendChild(entryContainer);
 
                 // save starred preference
                 entryStar.addEventListener("click", () => {

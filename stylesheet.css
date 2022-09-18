@@ -233,6 +233,10 @@ input::placeholder {
     flex: none;
 }
 
+.entry-container:hover {
+    background-color: #A5C9EA
+}
+
 .entry-number {
     display: flex;
     justify-content: center;
@@ -293,6 +297,24 @@ input::placeholder {
     background-image: url("images/entry-checkbox-checked.svg");
 }
 
+#footer-container {
+    height: 2.5em;
+    display: flex;
+    justify-content: space-evenly;
+    border: 1px solid red;
+    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
+    font-size: 1em;
+}
+
+.footer-button {
+
+}
+
+#add-new-word-button {
+    width: 55%;
+}
+
+
 
 /* ||Dropdown (home page only|| */
 
@@ -346,9 +368,7 @@ input::placeholder {
     padding-bottom: 2px;
 }
 
-.entry-container:hover, .adder:hover {
-    background-color: #A5C9EA
-}
+
 
 .entry-container:hover > button {
     visibility: visible;
@@ -370,16 +390,6 @@ input::placeholder {
     border: 3px solid #D9E8F6;
     padding-top: 2px;
     padding-bottom: 2px;
-}
-
-#wordAdder {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    border-radius: 5px;
-    font-size: 15px;
-    font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
 }
 
 nav {
