@@ -272,7 +272,7 @@ function addEntries(wordInput, urlInput, type, event) {
                         date: dateNumber
                     }],
                     date: dateNumber,
-                    notes: "",
+                    notes: [],
                     starred: (currentTab === "starred")
                         ? true
                         : false
@@ -760,6 +760,7 @@ function loadEntries (tab) {
                         // init mode booleans and arrays
                         let sourceUrlAddMode = false;
                         let refUrlAddMode = false;
+                        let noteAddMode = false;
                         let editMode = false;
                         let textDivs = [];
                         let subtractButtons = [];
@@ -1031,6 +1032,7 @@ function loadEntries (tab) {
                             // turn off source URL add mode
                             sourceUrlAddMode = false;
 
+                            // re-append source URL adder to end of section
                             sourceUrlAdder.remove();
                             sourceUrls.appendChild(sourceUrlAdder);
                         }
@@ -1332,6 +1334,7 @@ function loadEntries (tab) {
                             // turn off ref URL add mode
                             refUrlAddMode = false;
 
+                            // re-append ref URL adder to end of section
                             refUrlAdder.remove();
                             refUrls.appendChild(refUrlAdder);
                         }
@@ -1452,27 +1455,85 @@ function loadEntries (tab) {
                             }
                         });
 
-                        // insert notes
+                        // insert notes section
                         let notes = document.createElement("div");
-                        let notesBox = document.createElement("div");
-
                         notes.innerHTML = "Notes:";
-                        entry.notes = entry.notes.trim();
-                        notesBox.innerHTML = (entry.notes === "") ? "Write notes..." : entry.notes;
-
-                        notesBox.setAttribute("contenteditable", true);
-                        notesBox.setAttribute("id", "notesBox");
-
                         dropdown.appendChild(notes);
-                        notes.appendChild(notesBox);
 
-                        notesBox.addEventListener("keyup", () => {
-                            // update notes in both original and sorted word banks
-                            entry.notes = notesBox.innerText;
-                            originalEntry.notes = notesBox.innerText;
+                        // generate note at a given index
+                        function loadNote(index) {
+                            let notesBox = document.createElement("div");
+
+                            notesBox.setAttribute("contenteditable", true);
+                            notesBox.classList.add("notes-clicked");
+                            notesBox.innerHTML = entry.notes[index];
+                            notes.appendChild(notesBox);
+
+                            notesBox.addEventListener("blur", () => {
+                                entry.notes[index] = notesBox.innerText;
+                                originalEntry.notes[index] = notesBox.innerText;
+
+                                // sync changes to original word bank
+                                chrome.storage.sync.set({"wordBank": data.wordBank});
+                            });
+                        }
+
+                        // generate all notes
+                        for (let j = 0; j < entry.notes.length; j++) {
+                            loadNote(j);
+                        }
+
+                        // insert notes adder
+                        let notesAdder = document.createElement("div");
+                        notesAdder.style.display = "none";
+                        notesAdder.classList.add("notes");
+                        notesAdder.innerHTML = "+ Add note...";
+                        notesAdder.setAttribute("contenteditable", true);
+                        notes.appendChild(notesAdder);
+
+                        function saveNewNote() {
+                            let noteInput = notesAdder.innerText.trim();
+                            originalEntry.notes.push(noteInput);
 
                             // sync changes to original word bank
                             chrome.storage.sync.set({"wordBank": data.wordBank});
+
+                            // load newly added note
+                            loadNote(originalEntry.notes.length - 1);
+                        }
+
+                        function resetNoteAdder() {
+                            notesAdder.classList.replace("notes-clicked", "notes");
+                            notesAdder.innerHTML = "+ Add note..."
+                            noteAddMode = false;
+
+                            // re-append note adder to end of section
+                            notesAdder.remove();
+                            notes.appendChild(notesAdder);
+                        }
+
+                        // enter note add mode on click
+                        notesAdder.addEventListener("click", () => {
+                            // if not in note add mode, enter it
+                            if (!noteAddMode) {
+                                notesAdder.classList.add("notes-clicked");
+                                notesAdder.innerHTML = "";
+                                // turn on note add mode
+                                noteAddMode = true;
+                            }
+                        });
+                        
+                        // save new note on blur or 'Enter'
+                        notesAdder.addEventListener("blur", () => {
+                            if (notesAdder.innerText.trim() !== "") {
+                                saveNewNote();
+                            }
+                            resetNoteAdder();
+                        });
+                        notesAdder.addEventListener("keydown", (event) => {
+                            if (event.code === "Enter") {
+                                notesAdder.blur();
+                            }
                         });
 
                         // add subtract button click handlers--verify on first click, delete on second click
@@ -1490,6 +1551,7 @@ function loadEntries (tab) {
                                 editIcon.setAttribute("src", "images/save-icon.svg");
                                 sourceUrlAdder.style.display = "";
                                 refUrlAdder.style.display = "";
+                                notesAdder.style.display = "";
 
                                 subtractButtons.forEach((subtractButton) => {
                                     subtractButton.style.display = "";
@@ -1505,6 +1567,7 @@ function loadEntries (tab) {
                                 editIcon.setAttribute("src", "images/edit-icon.svg");
                                 sourceUrlAdder.style.display = "none";
                                 refUrlAdder.style.display = "none";
+                                notesAdder.style.display = "none";
 
                                 subtractButtons.forEach((subtractButton) => {
                                     subtractButton.style.display = "none";

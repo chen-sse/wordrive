@@ -83,7 +83,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
                         date: dateNumber
                     }],
                     date: dateNumber,
-                    notes: "",
+                    notes: [],
                     starred: false,
                 });
             }

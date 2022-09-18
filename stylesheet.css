@@ -425,12 +425,14 @@ nav {
     border-color: red;
 }
 
-#notesBox {
-    white-space: pre;
-    border-radius: 5px;
-    padding: 2px 5px 2px 5px;
-    border: 3px solid #CDB0EE;
-    margin-bottom: 3px;
+.notes {
+    margin: 3px 5px;
+}
+
+.notes-clicked {
+    margin: 3px 5px;
+    border: 0.25px solid #E1DDDD;
+    border-radius: 2px;
 }
 
 .icon {
