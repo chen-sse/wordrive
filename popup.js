@@ -10,9 +10,11 @@ let entriesContainer = document.getElementById("entries-container");
 let wordAdder = document.getElementById("wordAdder");
 let searchInput = document.getElementById("search-input");
 let tabHeader = document.getElementById("tab-header");
+let selectAllButton = document.getElementById("select-all-button");
 let deleteButton = document.getElementById("delete-button");
 let searchableEntries = [];
 let selectedEntries = [];
+let entryCheckboxes = [];
 let recentsTab = {
     tabElement: document.getElementById("recents-tab"),
     tabWrapper: document.getElementById("recents-tab-wrapper"),
@@ -543,6 +545,9 @@ function loadEntries (tab) {
     // reset list of selected entries
     selectedEntries = [];
 
+    // reset checkbox array
+    entryCheckboxes = [];
+
     // initialize search filter
     let filter = searchInput.value.toLowerCase().trim();
 
@@ -665,7 +670,9 @@ function loadEntries (tab) {
                 testInput.setAttribute("id", "thing");
                 let testLabel = document.createElement("label");
                 testLabel.setAttribute("for", "thing");
+
                 searchableEntries.push(entryContainer);
+                entryCheckboxes.push(entryCheckbox);
 
                 // apply existing search query filter
                 if (entry.text.toLowerCase().indexOf(filter) > -1) {
@@ -1763,28 +1770,55 @@ function loadWordAdder() {
 loadEntries(currentTab);
 loadWordAdder();
 
+// select all button click handler: select/deselect all entries on given tab
+selectAllButton.addEventListener("click", () => {
+    let deselectAll = true;
+
+    /* if any entries are not selected, select all--
+    if all entries are selected, deselect all */
+    entryCheckboxes.forEach((checkbox) => {
+        if (!checkbox.checked) {
+            deselectAll = false;
+        }
+    });
+    
+    if (deselectAll) {
+        entryCheckboxes.forEach((checkbox) => {
+            checkbox.checked = false;
+            selectedEntries = [];
+        });
+    } else {
+        entryCheckboxes.forEach((checkbox) => {
+            checkbox.checked = true;
+            selectedEntries.push(checkbox.parentElement);
+        });
+    }
+});
+
 // delete button click handler: delete all selected entries
 deleteButton.addEventListener("click", () => {
     // remove all selected entries from original word bank
     chrome.storage.sync.get("wordBank", (data) => {
-        selectedEntries.forEach((entry) => {
-            let word = entry.getElementsByClassName("word-container")[0].innerHTML;
-            let deleteIndex = data.wordBank.findIndex((element) => {
-                return (element.text === word) ? true : false;
+        if (selectedEntries.length > 0) {
+            selectedEntries.forEach((entry) => {
+                let word = entry.getElementsByClassName("word-container")[0].innerHTML;
+                let deleteIndex = data.wordBank.findIndex((element) => {
+                    return (element.text === word) ? true : false;
+                });
+    
+                // if matching index is found, delete entry
+                if (deleteIndex !== -1) {
+                    data.wordBank.splice(deleteIndex, 1);
+                }
             });
-
-            // if matching index is found, delete entry
-            if (deleteIndex !== -1) {
-                data.wordBank.splice(deleteIndex, 1);
-            }
-        });
-
-        // sync changes to original word bank
-        chrome.storage.sync.set({"wordBank": data.wordBank});
-
-        // reload entries
-        entriesContainer.replaceChildren();
-        loadEntries(currentTab);
+    
+            // sync changes to original word bank
+            chrome.storage.sync.set({"wordBank": data.wordBank});
+    
+            // reload entries
+            entriesContainer.replaceChildren();
+            loadEntries(currentTab);
+        }
     });
 });
 
