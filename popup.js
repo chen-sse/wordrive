@@ -11,6 +11,7 @@ let wordAdder = document.getElementById("wordAdder");
 let searchInput = document.getElementById("search-input");
 let tabHeader = document.getElementById("tab-header");
 let selectAllButton = document.getElementById("select-all-button");
+let exportButton = document.getElementById("export-button");
 let deleteButton = document.getElementById("delete-button");
 let searchableEntries = [];
 let selectedEntries = [];
@@ -168,8 +169,16 @@ document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
 // add sort-by dropdown click listener
 let sortButton = document.getElementById("sort-by-dropdown-button");
 let sortButtonText = document.getElementById("sort-by-dropdown-button-text");
-let clickCounter = 0;
+let sortDropdownContent = document.getElementById("sort-by-dropdown-content");
+//let clickCounter = 0;
 sortButton.addEventListener("click", () => {
+    let displayValue = window.getComputedStyle(sortDropdownContent).display;
+    if (displayValue === "none") {
+        sortDropdownContent.style.display = "block";
+    } else {
+        sortDropdownContent.style.display = "none";
+    }
+    /*
     if (clickCounter % 4 === 0) {
         sortMode = "oldest";
         sortButtonText.innerHTML = "OLDEST";
@@ -185,7 +194,12 @@ sortButton.addEventListener("click", () => {
     }
     entriesContainer.replaceChildren();
     loadEntries(currentTab);
-    clickCounter++;
+    clickCounter++;*/
+});
+
+// add sort-by dropdown blur listener (for when user clicks outside of dropdown)
+sortButton.addEventListener("blur", ()=> {
+    sortDropdownContent.style.display = "none";
 });
 
 // hide hover images 'homeHover' and 'optionsHover'
@@ -1820,6 +1834,30 @@ deleteButton.addEventListener("click", () => {
             loadEntries(currentTab);
         }
     });
+});
+
+// export button hover handler: change image to different color
+selectAllButton.addEventListener("pointerover", () => {
+    selectAllButton.setAttribute("src", "images/select-all-icon-hover.svg");
+});
+selectAllButton.addEventListener("pointerout", () => {
+    selectAllButton.setAttribute("src", "images/select-all-icon.svg");
+});
+
+// export button hover handler: change image to different color
+exportButton.addEventListener("pointerover", () => {
+    exportButton.setAttribute("src", "images/export-icon-hover.svg");
+});
+exportButton.addEventListener("pointerout", () => {
+    exportButton.setAttribute("src", "images/export-icon.svg");
+});
+
+// delete button hover handler: change image to different color
+deleteButton.addEventListener("pointerover", () => {
+    deleteButton.setAttribute("src", "images/trash-icon-hover.svg");
+});
+deleteButton.addEventListener("pointerout", () => {
+    deleteButton.setAttribute("src", "images/trash-icon.svg");
 });
 
 // switch to options page
