@@ -10,7 +10,9 @@ let entriesContainer = document.getElementById("entries-container");
 let wordAdder = document.getElementById("wordAdder");
 let searchInput = document.getElementById("search-input");
 let tabHeader = document.getElementById("tab-header");
+let deleteButton = document.getElementById("delete-button");
 let searchableEntries = [];
+let selectedEntries = [];
 let recentsTab = {
     tabElement: document.getElementById("recents-tab"),
     tabWrapper: document.getElementById("recents-tab-wrapper"),
@@ -427,7 +429,9 @@ function syncWordEdits(box, container, originalWordBank, sortedWordBank, sortInd
                     }
 
                     // remove newer entry
-                    originalWordBank.splice(lastIndex, 1);
+                    if (lastIndex !== -1) {
+                        originalWordBank.splice(lastIndex, 1);
+                    }
                 }
                 // if second entry is older, merge data from first entry into second
                 else {
@@ -491,7 +495,9 @@ function syncWordEdits(box, container, originalWordBank, sortedWordBank, sortInd
                     }
 
                     // remove newer entry
-                    originalWordBank.splice(firstIndex, 1);
+                    if (firstIndex !== -1) {
+                        originalWordBank.splice(firstIndex, 1);
+                    }
                 }
 
                 // sync changes to original word bank before reloading entries
@@ -533,6 +539,9 @@ searchInput.addEventListener("keyup", () => {
 function loadEntries (tab) {
     // reset list of searchable entries
     searchableEntries = [];
+
+    // reset list of selected entries
+    selectedEntries = [];
 
     // initialize search filter
     let filter = searchInput.value.toLowerCase().trim();
@@ -725,6 +734,19 @@ function loadEntries (tab) {
                     }
                 });
 
+                /* checkbox click handler: select parent entry container if checked,
+                deselect if unchecked */
+                entryCheckbox.addEventListener("click", () => {
+                    if (entryCheckbox.checked) {
+                        selectedEntries.push(entryCheckbox.parentElement);
+                    } else {
+                        let deleteIndex = selectedEntries.indexOf(entryCheckbox.parentElement);
+                        if (deleteIndex !== -1) {
+                            selectedEntries.splice(deleteIndex, 1);
+                        }
+                    }
+                });
+
                 // save changes and exit word edit mode with 'Enter' or blur
                 wordContainer.addEventListener("keydown", (event) => {
                     if (event.code === "Enter") {
@@ -788,11 +810,13 @@ function loadEntries (tab) {
                                 let deleteIndex = entry[array].findIndex((element) => {
                                     return (element.url === url.url) ? true : false;
                                 });
-                                entry[array].splice(deleteIndex, 1);
-                                originalEntry[array].splice(deleteIndex, 1);
+                                if (deleteIndex !== -1) {
+                                    entry[array].splice(deleteIndex, 1);
+                                    originalEntry[array].splice(deleteIndex, 1);
 
-                                // sync changes to original word bank
-                                chrome.storage.sync.set({"wordBank": data.wordBank});
+                                    // sync changes to original word bank
+                                    chrome.storage.sync.set({"wordBank": data.wordBank});
+                                }
                             }
                         }
 
@@ -1738,6 +1762,31 @@ function loadWordAdder() {
 // by default, load recents tab
 loadEntries(currentTab);
 loadWordAdder();
+
+// delete button click handler: delete all selected entries
+deleteButton.addEventListener("click", () => {
+    // remove all selected entries from original word bank
+    chrome.storage.sync.get("wordBank", (data) => {
+        selectedEntries.forEach((entry) => {
+            let word = entry.getElementsByClassName("word-container")[0].innerHTML;
+            let deleteIndex = data.wordBank.findIndex((element) => {
+                return (element.text === word) ? true : false;
+            });
+
+            // if matching index is found, delete entry
+            if (deleteIndex !== -1) {
+                data.wordBank.splice(deleteIndex, 1);
+            }
+        });
+
+        // sync changes to original word bank
+        chrome.storage.sync.set({"wordBank": data.wordBank});
+
+        // reload entries
+        entriesContainer.replaceChildren();
+        loadEntries(currentTab);
+    });
+});
 
 // switch to options page
 options.addEventListener("click", () => {
