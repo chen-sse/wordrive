@@ -215,8 +215,13 @@ input::placeholder {
 }
 
 #sort-by-dropdown-button {
+    width: 6.75em;
     padding: 1.5px 4px;
     font-size: 8px;
+}
+
+#sort-by-dropdown-button-text {
+    width: 80%;
 }
 
 .entry-container {
