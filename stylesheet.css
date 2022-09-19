@@ -298,20 +298,50 @@ input::placeholder {
 }
 
 #footer-container {
-    height: 2.5em;
+    height: 3em;
+    width: 86.667%;
+    margin: 0px auto 8px auto;
     display: flex;
-    justify-content: space-evenly;
-    border: 1px solid red;
+    justify-content: space-between;
+    align-items: center;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 500;
     font-size: 1em;
 }
 
-.footer-button {
+.footer-button-container {
+    width: 8%;
+    height: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+/*fit button svg icon into container; cursor now
+only changes when */
+.footer-button-container > img {
+    height: 75%;
+    width: 95%;
+    cursor: pointer;
+}
+
+/*Minute adjustment to export button positioning*/
+#export-button-container > img {
+    position: relative;
+    left: 0.30em;
 }
 
 #add-new-word-button {
-    width: 55%;
+    width: 64%;
+    height: 70%;
+    padding-left: 0.8em;
+    display: flex;
+    gap: 0.6em;
+    align-items: center;
+    background-color: #E7E7D0;
+    border-radius: 9px;
+    color: #858585;
+    font-family: 'Sora Regular', sans-serif;
+    font-size: 0.8em;
 }
 
 
