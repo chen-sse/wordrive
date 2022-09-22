@@ -1,4 +1,9 @@
 /* ||General Styles|| */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
 @font-face {
     font-family: "Sulphur Point Bold";
     src: url("./fonts/SulphurPoint-Bold.otf") format("opentype")
@@ -273,6 +278,7 @@ input::placeholder {
     white-space: nowrap;
     text-overflow: ellipsis;
     flex: none;
+    animation: fadeIn 0.3s;
 }
 
 .entry-container:hover {
