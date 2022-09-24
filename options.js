@@ -5,40 +5,8 @@ let activeTabCheckbox = document.getElementById("activeTabCheckbox");
 let lowercaseCheckbox = document.getElementById("lowercaseCheckbox");
 let clearAll = document.getElementById("clearAll");
 let exportButton = document.getElementById("exportButton");
-let home = document.getElementById("home");
+let homeButton = document.getElementById("home-button");
 let exportToPDF = document.getElementById("exportToPDF");
-
-// hide hover images 'homeHover' and 'optionsHover'
-let homeHover = document.getElementById("homeHover");
-homeHover.style.visibility = "hidden";
-let optionsHover = document.getElementById("optionsHover");
-optionsHover.style.visibility = "hidden";
-
-/* make hover image and grab cursor appear when cursor
-hovers over home button, remove it when cursor leaves
- */
-let homeDiv = document.getElementById("home");
-homeDiv.addEventListener("mouseover", () => {
-    homeHover.style.visibility = "visible";
-    homeDiv.classList.add("footerButtonHover");
-});
-homeDiv.addEventListener("mouseout", () => {
-    homeHover.style.visibility = "hidden";
-    homeDiv.classList.remove("footerButtonHover");
-});
-
-/* make hover image and grab cursor appear when cursor
-hovers over options button, remove it when cursor leaves
- */
-let optionsDiv = document.getElementById("options");
-optionsDiv.addEventListener("mouseover", () => {
-    optionsHover.style.visibility = "visible";
-    optionsDiv.classList.add("footerButtonHover");
-});
-optionsDiv.addEventListener("mouseout", () => {
-    optionsHover.style.visibility = "hidden";
-    optionsDiv.classList.remove("footerButtonHover");
-});
 
 function exportData() {
     chrome.storage.sync.get("wordBank", ({wordBank}) => {
@@ -110,7 +78,7 @@ exportToPDF.addEventListener("click", () => {
 // message listener: listens to messages from background script
 chrome.runtime.onMessage.addListener((message) => {
     /* pdf download handler: delete all pdf-export-handler scripts from
-    options-popup.html */
+    options.html */
     if (message.msg === "pdf download done") {
         let scriptArr = document.getElementsByClassName("pdf-script");
         for (let element of scriptArr) {
@@ -141,9 +109,6 @@ clearAll.addEventListener("click", () => {
     fireAlert();
 });
 exportButton.addEventListener("click", exportData);
-home.addEventListener("click", () => {
-    window.location.href = "popup.html";
-});
 
 // auto-save: update preferences on any checkbox click
 activeTabCheckbox.addEventListener("click", () => {
@@ -153,4 +118,24 @@ activeTabCheckbox.addEventListener("click", () => {
 lowercaseCheckbox.addEventListener("click", () => {
     let lowercaseChecked = lowercaseCheckbox.checked;
     chrome.storage.sync.set({"lowercaseChecked": lowercaseChecked});
+});
+
+// switch to home page
+homeButton.addEventListener("click", () => {
+    window.location.href = "home.html";
+});
+
+// Helper function
+let domReady = (cb) => {
+    document.readyState === 'interactive' || document.readyState === 'complete'
+        ? cb()
+        : document.addEventListener('DOMContentLoaded', cb);
+};
+
+domReady(() => {
+    // Display body when DOM is loaded
+    setTimeout(()=> {
+        document.body.style.visibility = 'visible';
+    }, 70)
+
 });

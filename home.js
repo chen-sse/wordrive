@@ -5,7 +5,7 @@ let NUM_RECENT_ENTRIES = 5;
 let sortMode = "newest";
 let currentTab = "recents";  // set default current tab to 'recents'
 
-let options = document.getElementById("options");
+let optionsButton = document.getElementById("options-button");
 let entriesContainer = document.getElementById("entries-container");
 let wordAdder = document.getElementById("wordAdder");
 let searchInput = document.getElementById("search-input");
@@ -200,36 +200,6 @@ sortButton.addEventListener("click", () => {
 // add sort-by dropdown blur listener (for when user clicks outside of dropdown)
 sortButton.addEventListener("blur", ()=> {
     sortDropdownContent.style.display = "none";
-});
-
-// hide hover images 'homeHover' and 'optionsHover'
-let homeHover = document.getElementById("homeHover");
-homeHover.style.visibility = "hidden";
-let optionsHover = document.getElementById("optionsHover");
-optionsHover.style.visibility = "hidden";
-
-/* make hover image and grab cursor appear when cursor
-hovers over home button, remove it when cursor leaves */
-let homeDiv = document.getElementById("home");
-homeDiv.addEventListener("mouseover", () => {
-    homeHover.style.visibility = "visible";
-    homeDiv.classList.add("footerButtonHover");
-});
-homeDiv.addEventListener("mouseout", () => {
-    homeHover.style.visibility = "hidden";
-    homeDiv.classList.remove("footerButtonHover");
-});
-
-/* make hover image and grab cursor appear when cursor
-hovers over options button, remove it when cursor leaves */
-let optionsDiv = document.getElementById("options")
-optionsDiv.addEventListener("mouseover", () => {
-    optionsHover.style.visibility = "visible";
-    optionsDiv.classList.add("footerButtonHover");
-});
-optionsDiv.addEventListener("mouseout", () => {
-    optionsHover.style.visibility = "hidden";
-    optionsDiv.classList.remove("footerButtonHover");
 });
 
 // add word and/or URL to Wordrive (through manual word adder)
@@ -1662,60 +1632,34 @@ function loadEntries (tab) {
     });
 }
 
+// add-new-word-button event handler
+let addWordButton = document.getElementById("add-new-word-button");
+let addMenuContainer = document.getElementById("add-new-word-menu-content");
+let addMenuBackground = document.getElementById("add-new-word-menu-background");
+
+addWordButton.addEventListener("click", () => {
+    let buttonVisibility = window.getComputedStyle(addWordButton).visibility
+    if (buttonVisibility === "visible") {
+        // hide the button
+        addWordButton.style.visibility = "hidden";
+        // show the add menu
+        addMenuContainer.style.display = "unset";
+        addMenuBackground.style.display = "unset";
+    } else {
+        // button is hidden, make it visible
+        addWordButton.style.visibility = "visible";
+    }
+});
+
 // load word adder
 function loadWordAdder() {
     let addMode = false;
-
-    // create label
-    let wordAdderLabel = document.createElement("div");
-    wordAdderLabel.setAttribute("id", "wordAdderLabel");
-    wordAdderLabel.classList.add("adder");
-    wordAdderLabel.innerHTML = "&nbsp;&nbsp;<span id='plus'>+</span>&nbsp;&nbsp;&nbsp;&nbsp;add new word to Wordrive";
-    wordAdder.appendChild(wordAdderLabel);
-
-    // create inputs, labels, and button
-    let wordInput = document.createElement("input");
-    let urlInput = document.createElement("input");
-    let wordLabel = document.createElement("label");
-    let urlLabel = document.createElement("label");
-    let cancel = document.createElement("button");
-    let save = document.createElement("button");
     let isValidURL = true;
 
-    // hide word adder elems--only display when word add mode is toggled on
-    wordInput.style.display = "none";
-    urlInput.style.display = "none";
-    wordLabel.style.display = "none";
-    urlLabel.style.display = "none";
-    cancel.style.display = "none";
-    save.style.display = "none";
-
-    // edit innerHTML
-    wordLabel.innerHTML = "Word: ";
-    urlLabel.innerHTML = "URL: ";
-    cancel.innerHTML = "Cancel";
-    save.innerHTML = "Save";
-
-    // update DOM tree
-    wordAdder.appendChild(wordLabel);
-    wordAdder.appendChild(wordInput);
-    wordAdder.appendChild(urlLabel);
-    wordAdder.appendChild(urlInput);
-    wordAdder.appendChild(cancel);
-    wordAdder.appendChild(save);
-
-    // set attributes
-    wordInput.setAttribute("id", "wordAdder-word");
-    wordInput.setAttribute("type", "text");
-    urlInput.setAttribute("id", "wordAdder-url");
-    urlInput.setAttribute("type", "url");
-    wordLabel.setAttribute("for", "wordAdder-word");
-    urlLabel.setAttribute("for", "wordAdder-url");
-
-    // set classes
-    wordInput.classList.add("input");
-    urlInput.classList.add("input");
-    urlInput.classList.add("url-input");
+    let wordInput = document.getElementById("word-input");
+    let urlInput = document.getElementById("url-input");
+    let cancel = document.getElementById("cancel-button");
+    let save = document.getElementById("add-button");
 
     // check for valid URL input--disable save button if invalid
     urlInput.addEventListener("keyup", () => {
@@ -1725,27 +1669,14 @@ function loadWordAdder() {
     });
 
     cancel.addEventListener("click", (event) => {
-        // hide word adder elems
-        wordInput.style.display = "none";
-        urlInput.style.display = "none";
-        wordLabel.style.display = "none";
-        urlLabel.style.display = "none";
-        cancel.style.display = "none";
-        save.style.display = "none";
-
-        // reset word adder label
-        wordAdderLabel.style.display = "";
-
-        // turn off add mode
-        addMode = false;
-
-        // prevent click event from firing on parent div 'wordAdder'
-        event.stopPropagation();
+        addMenuContainer.style.display = "none";
+        addMenuBackground.style.display = "none";
+        addWordButton.style.visibility = "visible";
     });
 
     // save changes and exit add mode by clicking 'Save' button
     save.addEventListener("click", (event) => {
-        addEntries(wordInput.value, urlInput.value, "sourceUrls", event);
+            addEntries(wordInput.value, urlInput.value, "sourceUrls", event);
     });
 
     // save changes and exit add mode with 'Enter' if URL is valid
@@ -1757,25 +1688,6 @@ function loadWordAdder() {
     urlInput.addEventListener("keydown", (event) => {
         if (event.code === "Enter" && isValidURL) {
             addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
-        }
-    });
-
-    wordAdder.addEventListener("click", () => {
-        // if not in add mode, enter it
-        if (!addMode) {
-            // hide word adder label
-            wordAdderLabel.style.display = "none";
-
-            // reveal word adder elems
-            wordInput.style.display = "";
-            urlInput.style.display = "";
-            wordLabel.style.display = "";
-            urlLabel.style.display = "";
-            cancel.style.display = "";
-            save.style.display = "";
-
-            // turn on word add mode
-            addMode = true;
         }
     });
 }
@@ -1861,6 +1773,18 @@ deleteButton.addEventListener("pointerout", () => {
 });
 
 // switch to options page
-options.addEventListener("click", () => {
-    window.location.href = "options-popup.html";
+optionsButton.addEventListener("click", () => {
+    window.location.href = "options.html";
+});
+
+// Helper function
+let domReady = (cb) => {
+    document.readyState === 'interactive' || document.readyState === 'complete'
+        ? cb()
+        : document.addEventListener('DOMContentLoaded', cb);
+};
+
+domReady(() => {
+    // Display body when DOM is loaded
+    document.body.style.visibility = 'visible';
 });
