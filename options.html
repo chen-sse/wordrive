@@ -8,7 +8,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;1,200;1,300;1,400;1,600&display=swap" rel="stylesheet">
     </head>
-    <body>
+    <body id="options-page">
     <!--||Page Header section: header & language dropdown-->
     <div id="page-header-container">
         <span id="page-header" class="header">Wordrive</span>
@@ -20,42 +20,44 @@
         </button>
     </div>
 
-        <div id="optionsContainer">
-            <div class="optionBox">
-                <label>
-                    <input type="checkbox" id="activeTabCheckbox">
-                    Clicked hyperlinks automatically become active tab
-                </label>
-            </div>
-            <div class="optionBox">
-                <label>
-                    <input type="checkbox" id="lowercaseCheckbox">
-                    Auto-lowercase saved words
-                </label>
-            </div>
-            <div class="optionBox">
-                <button id="clearAll">Clear All</button>
-            </div>
-            <div class="optionBox">
-                <button id="exportButton">Export</button>
-            </div>
-            <div class="optionBox">
-                <button id="exportToPDF">PDF Exp</button>
-            </div>
+    <div id="optionsContainer">
+        <div class="optionBox">
+            <label>
+                <input type="checkbox" id="activeTabCheckbox">
+                Clicked hyperlinks automatically become active tab
+            </label>
         </div>
+        <div class="optionBox">
+            <label>
+                <input type="checkbox" id="lowercaseCheckbox">
+                Auto-lowercase saved words
+            </label>
+        </div>
+        <div class="optionBox">
+            <button id="clearAll">Clear All</button>
+        </div>
+        <div class="optionBox">
+            <button id="exportButton">Export</button>
+        </div>
+        <div class="optionBox">
+            <button id="exportToPDF">PDF Exp</button>
+        </div>
+    </div>
 
-        <nav>
-            <div class="navDiv" id="home">
-                <img src="images/home.png">
-                <img id="homeHover" src="images/footerButtonHover.png">
-            </div>
-            <div class="navDiv" id="options">
-                <img src="images/options.png">
-                <img id="optionsHover" src="images/footerButtonHover.png">
-            </div>
-        </nav>
+    <div id="options-page-filler">
+
+    </div>
+
+    <nav id="navigation-bar-container">
+        <div id="home-button" class="navigation-bar-button">
+            <img class="navigation-bar-icon" src="images/home.svg">
+        </div>
+        <div id="options-button" class="navigation-bar-button">
+            <img class="navigation-bar-icon" src="images/options.svg">
+        </div>
+    </nav>
 
         <script src="vendor/sweetalert2/dist/sweetalert2.all.min.js"></script>
-        <script src="options-popup.js"></script>
+        <script src="options.js"></script>
     </body>
 </html>

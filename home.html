@@ -87,13 +87,42 @@
         </div>
     </div>
 
-    <div class="flex-container" id="entries-container"></div>
+    <div id="entries-container" class="flex-container"></div>
 
     <div id="footer-container">
         <div id="add-new-word-button">
             <img src="images/plus-icon.svg">
             <div>Add a new word</div>
         </div>
+
+        <div id="add-new-word-menu-content">
+            <div id="add-menu-content-row-one">
+                <img src="images/plus-icon.svg">
+                <span>Add a new word</span>
+            </div>
+
+            <div id="add-menu-content-row-two">
+                <span>Word: </span>
+                <label for="word-input">
+                    <input id="word-input" class="add-new-word-menu-label" type="text">
+                </label>
+            </div>
+
+            <div id="add-menu-content-row-three">
+                <span>URL: </span>
+                <label for="url-input">
+                    <input id="url-input" class="add-new-word-menu-label" type="text">
+                </label>
+            </div>
+
+            <div id="add-menu-content-row-four">
+                <span id="cancel-button" class="add-new-word-menu-button">Cancel</span>
+                <span id="add-button" class="add-new-word-menu-button">Add</span>
+            </div>
+        </div>
+        <svg id="add-new-word-menu-background" width="256" height="135" viewBox="0 0 341 133" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 10C0 4.47715 4.47715 0 10 0H331C336.523 0 341 4.47715 341 10V89.75C341 95.2728 336.523 99.75 331 99.75H242C236.477 99.75 232 104.227 232 109.75V123C232 128.523 227.523 133 222 133H10C4.47715 133 0 128.523 0 123V10Z" fill="#F0F0E1"/>
+        </svg>
         <div id="select-all-button-container" class="footer-button-container">
             <img id="select-all-button" src="images/select-all-icon.svg">
         </div>
@@ -105,18 +134,16 @@
         </div>
     </div>
 
-    <div id="wordAdder" class="adder"></div>
-    <nav>
-        <div class="navDiv" id="home">
-            <img src="images/home.png">
-            <img id="homeHover" src="images/footerButtonHover.png">
+    <nav id="navigation-bar-container">
+        <div id="home-button" class="navigation-bar-button">
+            <img class="navigation-bar-icon" src="images/home.svg">
         </div>
-        <div class="navDiv" id="options">
-            <img src="images/options.png">
-            <img id="optionsHover" src="images/footerButtonHover.png">
+        <div id="options-button" class="navigation-bar-button">
+            <img class="navigation-bar-icon" src="images/options.svg">
         </div>
     </nav>
-        <script type="module" src="popup.js"></script>
+
+        <script type="module" src="home.js"></script>
     </body>
 </html>
 <!--<button id="sort-by-dropdown-button">
