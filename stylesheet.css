@@ -486,6 +486,7 @@ only changes when */
 /* ||Options Main (options page only)||*/
 #options-page-filler {
     height: 185.7px;
+    display:none;
 }
 
 /* ||Nav Bar|| */
