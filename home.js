@@ -1,4 +1,16 @@
-import { getDate, getTime, getDictionaryURL, getFaviconURL } from "./utils.js";
+import {
+    getDate,
+    getTime,
+    getFaviconURL,
+    getCambridgeURL,
+    getCollinsURL,
+    getDictionaryURL,
+    getGoogleURL,
+    getMerriamWebsterURL,
+    getOneLookURL,
+    getOxfordURL,
+    getWiktionaryURL
+} from "./utils.js";
 
 let DELETE_TIMEOUT = 1500;
 let NUM_RECENT_ENTRIES = 5;
@@ -213,7 +225,17 @@ function addEntries(wordInput, urlInput, type, event) {
     urlInput = urlInput.trim();
 
     // check for duplicate words/URLs
-    chrome.storage.sync.get("wordBank", (data) => {
+    chrome.storage.sync.get([
+        "wordBank",
+        "cambridgeChecked",
+        "collinsChecked",
+        "dictionaryChecked",
+        "googleChecked",
+        "merriamwebsterChecked",
+        "onelookChecked",
+        "oxfordChecked",
+        "wiktionaryChecked"
+    ], (data) => {
         for (let i = 0; i < data.wordBank.length; i++) {
             let entry = data.wordBank[i];
             if (wordInput === entry.text) {
@@ -237,7 +259,47 @@ function addEntries(wordInput, urlInput, type, event) {
         if (wordInput !== "") {
             let dateNumber = new Date().getTime();
             if (newWord) {
-                let dictionaryUrl = getDictionaryURL(wordInput);
+                let refUrls = [];
+                let refUrlObjs = [];
+                
+                // push all default reference URLs
+                if (data.cambridgeChecked) {
+                    refUrls.push(getCambridgeURL(wordInput));
+                }
+                if (data.collinsChecked) {
+                    refUrls.push(getCollinsURL(wordInput));
+                }
+                if (data.dictionaryChecked) {
+                    refUrls.push(getDictionaryURL(wordInput));
+                }
+                if (data.googleChecked) {
+                    refUrls.push(getGoogleURL(wordInput));
+                }
+                if (data.merriamwebsterChecked) {
+                    refUrls.push(getMerriamWebsterURL(wordInput));
+                }
+                if (data.onelookChecked) {
+                    refUrls.push(getOneLookURL(wordInput));
+                }
+                if (data.oxfordChecked) {
+                    refUrls.push(getOxfordURL(wordInput));
+                }
+                if (data.wiktionaryChecked) {
+                    refUrls.push(getWiktionaryURL(wordInput));
+                }
+
+                // generate ref URL obj array
+                refUrls.forEach((url) => {
+                    refUrlObjs.push({
+                        url: url,
+                        icon: getFaviconURL(url),
+                        title: "",
+                        fetched: false,
+                        userEdited: false,
+                        date: dateNumber
+                    });
+                });
+
                 // push new word object to word bank
                 data.wordBank.push({
                     text: wordInput,
@@ -251,14 +313,7 @@ function addEntries(wordInput, urlInput, type, event) {
                             userEdited: false,
                             date: dateNumber
                         }],
-                    refUrls: [{
-                        url: dictionaryUrl,
-                        icon: getFaviconURL(dictionaryUrl),
-                        title: "",
-                        fetched: false,
-                        userEdited: false,
-                        date: dateNumber
-                    }],
+                    refUrls: refUrlObjs,
                     date: dateNumber,
                     notes: [],
                     starred: (currentTab === "starred")

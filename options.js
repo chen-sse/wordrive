@@ -8,6 +8,48 @@ let exportButton = document.getElementById("exportButton");
 let homeButton = document.getElementById("home-button");
 let exportToPDF = document.getElementById("exportToPDF");
 
+// ref URL checkboxes
+let cambridgeCheckbox = document.getElementById("cambridge-checkbox");
+let collinsCheckbox = document.getElementById("collins-checkbox");
+let dictionaryCheckbox = document.getElementById("dictionary-checkbox");
+let googleCheckbox = document.getElementById("google-checkbox");
+let merriamwebsterCheckbox = document.getElementById("merriamwebster-checkbox");
+let onelookCheckbox = document.getElementById("onelook-checkbox");
+let oxfordCheckbox = document.getElementById("oxford-checkbox");
+let wiktionaryCheckbox = document.getElementById("wiktionary-checkbox");
+
+// hide hover images 'homeHover' and 'optionsHover'
+let homeHover = document.getElementById("homeHover");
+homeHover.style.visibility = "hidden";
+let optionsHover = document.getElementById("optionsHover");
+optionsHover.style.visibility = "hidden";
+
+/* make hover image and grab cursor appear when cursor
+hovers over home button, remove it when cursor leaves
+ */
+let homeDiv = document.getElementById("home");
+homeDiv.addEventListener("mouseover", () => {
+    homeHover.style.visibility = "visible";
+    homeDiv.classList.add("footerButtonHover");
+});
+homeDiv.addEventListener("mouseout", () => {
+    homeHover.style.visibility = "hidden";
+    homeDiv.classList.remove("footerButtonHover");
+});
+
+/* make hover image and grab cursor appear when cursor
+hovers over options button, remove it when cursor leaves
+ */
+let optionsDiv = document.getElementById("options");
+optionsDiv.addEventListener("mouseover", () => {
+    optionsHover.style.visibility = "visible";
+    optionsDiv.classList.add("footerButtonHover");
+});
+optionsDiv.addEventListener("mouseout", () => {
+    optionsHover.style.visibility = "hidden";
+    optionsDiv.classList.remove("footerButtonHover");
+});
+
 function exportData() {
     chrome.storage.sync.get("wordBank", ({wordBank}) => {
         let builder = "Your Wordrive: \n\n";
@@ -94,10 +136,26 @@ function restoreOptions() {
     chrome.storage.sync.get({
         // default values
         "activeTabChecked": false,
-        "lowercaseChecked": true
+        "lowercaseChecked": true,
+        "cambridgeChecked": false,
+        "collinsChecked": false,
+        "dictionaryChecked": false,
+        "googleChecked": false,
+        "merriamwebsterChecked": true,
+        "onelookChecked": false,
+        "oxfordChecked": false,
+        "wiktionaryChecked": false
     }, (options) => {
         activeTabCheckbox.checked = options.activeTabChecked;
         lowercaseCheckbox.checked = options.lowercaseChecked;
+        cambridgeCheckbox.checked = options.cambridgeChecked;
+        collinsCheckbox.checked = options.collinsChecked;
+        dictionaryCheckbox.checked = options.dictionaryChecked;
+        googleCheckbox.checked = options.googleChecked;
+        merriamwebsterCheckbox.checked = options.merriamwebsterChecked;
+        onelookCheckbox.checked = options.onelookChecked;
+        oxfordCheckbox.checked = options.oxfordChecked;
+        wiktionaryCheckbox.checked = options.wiktionaryChecked;
     });
 }
 
@@ -119,6 +177,30 @@ lowercaseCheckbox.addEventListener("click", () => {
     let lowercaseChecked = lowercaseCheckbox.checked;
     chrome.storage.sync.set({"lowercaseChecked": lowercaseChecked});
 });
+cambridgeCheckbox.addEventListener("click", () => {
+    chrome.storage.sync.set({"cambridgeChecked": cambridgeCheckbox.checked});
+});
+collinsCheckbox.addEventListener("click", () => {
+    chrome.storage.sync.set({"collinsChecked": collinsCheckbox.checked});
+});
+dictionaryCheckbox.addEventListener("click", () => {
+    chrome.storage.sync.set({"dictionaryChecked": dictionaryCheckbox.checked});
+});
+googleCheckbox.addEventListener("click", () => {
+    chrome.storage.sync.set({"googleChecked": googleCheckbox.checked});
+});
+merriamwebsterCheckbox.addEventListener("click", () => {
+    chrome.storage.sync.set({"merriamwebsterChecked": merriamwebsterCheckbox.checked});
+});
+onelookCheckbox.addEventListener("click", () => {
+    chrome.storage.sync.set({"onelookChecked": onelookCheckbox.checked});
+});
+oxfordCheckbox.addEventListener("click", () => {
+    chrome.storage.sync.set({"oxfordChecked": oxfordCheckbox.checked});
+});
+wiktionaryCheckbox.addEventListener("click", () => {
+    chrome.storage.sync.set({"wiktionaryChecked": wiktionaryCheckbox.checked});
+});
 
 // switch to home page
 homeButton.addEventListener("click", () => {
@@ -137,5 +219,4 @@ domReady(() => {
     setTimeout(()=> {
         document.body.style.visibility = 'visible';
     }, 70)
-
 });

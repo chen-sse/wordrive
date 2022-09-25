@@ -1,4 +1,16 @@
-import { getDictionaryURL, getFaviconURL } from "./utils.js";
+import {
+    getDate,
+    getTime,
+    getFaviconURL,
+    getCambridgeURL,
+    getCollinsURL,
+    getDictionaryURL,
+    getGoogleURL,
+    getMerriamWebsterURL,
+    getOneLookURL,
+    getOxfordURL,
+    getWiktionaryURL
+} from "./utils.js";
 
 chrome.runtime.onInstalled.addListener(() => {
     // create context menu
@@ -12,7 +24,15 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.sync.get({
         "wordBank": [],
         "activeTabChecked": false,
-        "lowercaseChecked": true 
+        "lowercaseChecked": true,
+        "cambridgeChecked": false,
+        "collinsChecked": false,
+        "dictionaryChecked": false,
+        "googleChecked": false,
+        "merriamwebsterChecked": true,
+        "onelookChecked": false,
+        "oxfordChecked": false,
+        "wiktionaryChecked": false
     }, (data) => {
         chrome.storage.sync.set(data);
     });
@@ -21,7 +41,18 @@ chrome.runtime.onInstalled.addListener(() => {
 // click handler: add text to Wordrive
 chrome.contextMenus.onClicked.addListener((info) => {
     // retrieve word bank and user capitalization preference (initialize default values for both)
-    chrome.storage.sync.get(["wordBank", "lowercaseChecked"], async (data) => {
+    chrome.storage.sync.get([
+        "wordBank", 
+        "lowercaseChecked",
+        "cambridgeChecked",
+        "collinsChecked",
+        "dictionaryChecked",
+        "googleChecked",
+        "merriamwebsterChecked",
+        "onelookChecked",
+        "oxfordChecked",
+        "wiktionaryChecked"
+    ], async (data) => {
         let [currentTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
         // add new word object to array if selected text isn't whitespace
         if (typeof(info.selectionText) !== "undefined") {
@@ -59,8 +90,48 @@ chrome.contextMenus.onClicked.addListener((info) => {
             }
             // if word is not duplicate, add to word bank
             if (newWord) {
-                let dictionaryUrl = getDictionaryURL(selectedWord);
+                let refUrls = [];
+                let refUrlObjs = [];
                 let dateNumber = new Date().getTime();
+
+                // push all default reference URLs
+                if (data.cambridgeChecked) {
+                    refUrls.push(getCambridgeURL(selectedWord));
+                }
+                if (data.collinsChecked) {
+                    refUrls.push(getCollinsURL(selectedWord));
+                }
+                if (data.dictionaryChecked) {
+                    refUrls.push(getDictionaryURL(selectedWord));
+                }
+                if (data.googleChecked) {
+                    refUrls.push(getGoogleURL(selectedWord));
+                }
+                if (data.merriamwebsterChecked) {
+                    refUrls.push(getMerriamWebsterURL(selectedWord));
+                }
+                if (data.onelookChecked) {
+                    refUrls.push(getOneLookURL(selectedWord));
+                }
+                if (data.oxfordChecked) {
+                    refUrls.push(getOxfordURL(selectedWord));
+                }
+                if (data.wiktionaryChecked) {
+                    refUrls.push(getWiktionaryURL(selectedWord));
+                }
+
+                // generate ref URL obj array
+                refUrls.forEach((url) => {
+                    refUrlObjs.push({
+                        url: url,
+                        icon: getFaviconURL(url),
+                        title: "",
+                        fetched: false,
+                        userEdited: false,
+                        date: dateNumber
+                    });
+                });
+
                 // push new word object to word bank
                 data.wordBank.push({
                     text: (data.lowercaseChecked === true)
@@ -74,14 +145,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
                         userEdited: false,
                         date: dateNumber
                     }],
-                    refUrls: [{
-                        url: dictionaryUrl,
-                        icon: getFaviconURL(dictionaryUrl),
-                        title: "",
-                        fetched: false,
-                        userEdited: false,
-                        date: dateNumber
-                    }],
+                    refUrls: refUrlObjs,
                     date: dateNumber,
                     notes: [],
                     starred: false,

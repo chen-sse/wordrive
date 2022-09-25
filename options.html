@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html id="options-tab">
     <head>
         <link rel="stylesheet" href="stylesheet.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,12 +20,71 @@
         </button>
     </div>
 
-    <div id="optionsContainer">
-        <div class="optionBox">
-            <label>
-                <input type="checkbox" id="activeTabCheckbox">
-                Clicked hyperlinks automatically become active tab
-            </label>
+        <div id="optionsContainer">
+            <div class="optionBox">
+                <label>
+                    <input type="checkbox" id="activeTabCheckbox">
+                    Clicked hyperlinks automatically become active tab
+                </label>
+            </div>
+            <div class="optionBox">
+                <label>
+                    <input type="checkbox" id="lowercaseCheckbox">
+                    Auto-lowercase saved words
+                </label>
+            </div>
+            <div class="optionBox">
+                Automatically generate reference URLs for:
+                <br>
+                <label>
+                    <input type="checkbox" id="cambridge-checkbox">
+                    Cambridge
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="collins-checkbox">
+                    Collins
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="dictionary-checkbox">
+                    Dictionary.com
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="google-checkbox">
+                    Google
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="merriamwebster-checkbox">
+                    Merriam-Webster
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="onelook-checkbox">
+                    OneLook
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="oxford-checkbox">
+                    Oxford
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="wiktionary-checkbox">
+                    Wiktionary
+                </label>
+            </div>
+            <div class="optionBox">
+                <button id="clearAll">Clear All</button>
+            </div>
+            <div class="optionBox">
+                <button id="exportButton">Export</button>
+            </div>
+            <div class="optionBox">
+                <button id="exportToPDF">PDF Exp</button>
+            </div>
         </div>
         <div class="optionBox">
             <label>
