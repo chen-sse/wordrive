@@ -363,6 +363,7 @@ input::placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 30;
 }
 
 /*fit button svg icon into container; cursor now
@@ -485,8 +486,7 @@ only changes when */
 
 /* ||Options Main (options page only)||*/
 #options-page-filler {
-    height: 185.7px;
-    display:none;
+    height: 5px;
 }
 
 /* ||Nav Bar|| */
@@ -592,14 +592,13 @@ only changes when */
 }
 
 #optionsContainer {
-    height: 407px;
+    height: 384px;
     margin-bottom: 20px;
 }
 
 .optionBox {
     font-size: 15px;
-    border-radius: 5px;
-    padding: 5px;
+    border-radius: 2px;
     font-family: 'Source Sans Pro', sans-serif; font-weight: 400;
     margin-bottom: 5px;
     flex: none;
