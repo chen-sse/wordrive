@@ -1380,6 +1380,8 @@ function loadEntries (tab) {
                         refUrlInput.addEventListener("keyup", () => {
                             refUrlInput.value = refUrlInput.value.trim();
                             refIsValidURL = refUrlInput.checkValidity();
+                            console.log("URL Validity: " + refIsValidURL + "URL: " + refUrlInput.value);
+
                             refSave.disabled = (refIsValidURL) ? false : true;
                         });
 
@@ -1706,50 +1708,48 @@ addWordButton.addEventListener("click", () => {
     }
 });
 
-// load word adder
-function loadWordAdder() {
-    let addMode = false;
-    let isValidURL = true;
+let addMode = false;
+let isValidURL = true;
 
-    let wordInput = document.getElementById("word-input");
-    let urlInput = document.getElementById("url-input");
-    let cancel = document.getElementById("cancel-button");
-    let save = document.getElementById("add-button");
+let wordInput = document.getElementById("word-input");
+let urlInput = document.getElementById("url-input");
+let cancel = document.getElementById("cancel-button");
+let save = document.getElementById("add-button");
 
-    // check for valid URL input--disable save button if invalid
-    urlInput.addEventListener("keyup", () => {
-        urlInput.value = urlInput.value.trim();
-        isValidURL = urlInput.checkValidity();
-        save.disabled = (isValidURL) ? false : true;
-    });
+// check for valid URL input--disable save button if invalid
+urlInput.addEventListener("keyup", () => {
+    urlInput.value = urlInput.value.trim();
+    isValidURL = urlInput.checkValidity();
+    console.log("URL Validity: " + isValidURL + "URL: " + urlInput.value);
+    save.disabled = (isValidURL) ? false : true;
+    console.log(save.disabled);
+});
 
-    cancel.addEventListener("click", (event) => {
-        addMenuContainer.style.display = "none";
-        addMenuBackground.style.display = "none";
-        addWordButton.style.visibility = "visible";
-    });
+cancel.addEventListener("click", (event) => {
+    addMenuContainer.style.display = "none";
+    addMenuBackground.style.display = "none";
+    addWordButton.style.visibility = "visible";
+});
 
-    // save changes and exit add mode by clicking 'Save' button
-    save.addEventListener("click", (event) => {
-            addEntries(wordInput.value, urlInput.value, "sourceUrls", event);
-    });
+// save changes and exit add mode by clicking 'Save' button
+save.addEventListener("click", (event) => {
+        addEntries(wordInput.value, urlInput.value, "sourceUrls", event);
+});
 
-    // save changes and exit add mode with 'Enter' if URL is valid
-    wordInput.addEventListener("keydown", (event) => {
-        if (event.code === "Enter" && isValidURL) {
-            addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
-        }
-    });
-    urlInput.addEventListener("keydown", (event) => {
-        if (event.code === "Enter" && isValidURL) {
-            addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
-        }
-    });
-}
+// save changes and exit add mode with 'Enter' if URL is valid
+wordInput.addEventListener("keydown", (event) => {
+    if (event.code === "Enter" && isValidURL) {
+        addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
+    }
+});
+urlInput.addEventListener("keydown", (event) => {
+    if (event.code === "Enter" && isValidURL) {
+        addEntries(wordInput.value, urlInput.value, "sourceUrls", null);
+    }
+});
 
 // by default, load recents tab
 loadEntries(currentTab);
-loadWordAdder();
 
 // select all button click handler: select/deselect all entries on given tab
 selectAllButton.addEventListener("click", () => {
