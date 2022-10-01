@@ -16,10 +16,8 @@ let DELETE_TIMEOUT = 1500;
 let NUM_RECENT_ENTRIES = 5;
 let sortMode = "newest";
 let currentTab = "recents";  // set default current tab to 'recents'
-
 let optionsButton = document.getElementById("options-button");
 let entriesContainer = document.getElementById("entries-container");
-let wordAdder = document.getElementById("wordAdder");
 let searchInput = document.getElementById("search-input");
 let tabHeader = document.getElementById("tab-header");
 let selectAllButton = document.getElementById("select-all-button");
@@ -118,11 +116,8 @@ document.getElementById("recents-tab-wrapper").addEventListener("click", () => {
     // load recent entries
     currentTab = "recents";
     loadEntries(currentTab);
-
-    // reload word adder
-    wordAdder.replaceChildren();
-    loadWordAdder();
 });
+
 // activate view-all tab and display relevant entries
 document.getElementById("view-all-tab-wrapper").addEventListener("click", () => {
     viewAllTab.tabElement.style.zIndex = "10"
@@ -145,11 +140,8 @@ document.getElementById("view-all-tab-wrapper").addEventListener("click", () => 
     // load all entries
     currentTab = "view-all";
     loadEntries(currentTab);
-
-    // reload word adder
-    wordAdder.replaceChildren();
-    loadWordAdder();
 });
+
 // activate starred tab and display relevant entries
 document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
     starredTab.tabElement.style.zIndex = "10";
@@ -172,10 +164,6 @@ document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
     // load starred entries
     currentTab = "starred";
     loadEntries(currentTab);
-
-    // reload word adder
-    wordAdder.replaceChildren();
-    loadWordAdder();
 });
 
 // add sort-by dropdown click listener
@@ -337,15 +325,6 @@ function addEntries(wordInput, urlInput, type, event) {
         // reload entries
         entriesContainer.replaceChildren();
         loadEntries(currentTab);
-
-        // reload word adder
-        wordAdder.replaceChildren();
-        loadWordAdder();
-
-        // prevent word adder from reloading ('wordAdder' parent click event), if applicable
-        if (event !== null) {
-            event.stopPropagation();
-        }
     });
 }
 
@@ -364,10 +343,19 @@ async function getTitle(url) {
 // remove any existing dropdown
 function removeDropdown() {
     if (document.getElementsByClassName("dropdown").length !== 0) {
-        let activeEntry = document.getElementsByClassName("url-mode-on")[0];
+        let activeEntry = document.getElementsByClassName("entry-focus-mode")[0];
+        // rotate entry dropdown arrow up on last active entry
+        setTimeout(() => {
+            console.log("A dropdown was removed");
+            let entryArrow= activeEntry.getElementsByClassName("entry-dropdown-arrow")[0];
+            entryArrow.classList.remove("rotate-up");
+            entryArrow.classList.add("rotate-down");
+            entryArrow.classList.remove("rotate-down");
+        }, 2);
 
-        // toggle URL mode off
-        activeEntry.classList.remove("url-mode-on");
+
+        // toggle entry focus mode off
+        activeEntry.classList.remove("entry-focus-mode");
 
         // toggle 'contenteditable' off for word container
         activeEntry.getElementsByClassName("word-container")[0].setAttribute("contenteditable", false);
@@ -763,15 +751,19 @@ function loadEntries (tab) {
                 entriesContainer.appendChild(entryContainer);
 
                 // save starred preference
-                entryStar.addEventListener("click", () => {
+                entryStar.addEventListener("click", (event) => {
+                    console.log("STAR CLICKED");
                     entry.starred = entryStar.checked;
                     originalEntry.starred = entryStar.checked;
 
                     // sync changes to original word bank
                     chrome.storage.sync.set({"wordBank": data.wordBank});
+                    event.stopPropagation();
                 });
 
-                entryStar.addEventListener("mouseover", () => {
+
+                entryStar.addEventListener("mouseover", (event) => {
+                    console.log("Star clicked");
                     const unstarHoverURL = "images/entry-star-unstar-hover.svg";
                     const starHoverURL = "images/entry-star-star-hover.svg";
                     if (entryStar.checked) {
@@ -782,7 +774,8 @@ function loadEntries (tab) {
 
                 /* checkbox click handler: select parent entry container if checked,
                 deselect if unchecked */
-                entryCheckbox.addEventListener("click", () => {
+                entryCheckbox.addEventListener("click", (event) => {
+                    console.log("Checkbox Clicked");
                     if (entryCheckbox.checked) {
                         selectedEntries.push(entryCheckbox.parentElement);
                     } else {
@@ -791,6 +784,7 @@ function loadEntries (tab) {
                             selectedEntries.splice(deleteIndex, 1);
                         }
                     }
+                    event.stopPropagation();
                 });
 
                 // save changes and exit word edit mode with 'Enter' or blur
@@ -806,24 +800,27 @@ function loadEntries (tab) {
                 wordContainer.addEventListener("blur", () => {
                     syncWordEdits(entryContainer, wordContainer, data.wordBank, sortedWordBank, sortIndices, i);
                 });
-                wordContainer.addEventListener("click", (event) => {
-                    event.stopPropagation();
-                });
 
                 // toggle dropdown on click
                 entryContainer.addEventListener("click", () => {
-                    // if on, turn URL mode off and remove dropdown
-                    if (entryContainer.classList.contains("url-mode-on")) {
+                    console.log("Entry container clicked")
+                    // rotate entry arrow up
+                    let entryArrow = entryContainer.getElementsByClassName("entry-dropdown-arrow")[0];
+                    entryArrow.classList.add("rotate-up");
+
+                    // if on, entry focus mode off and remove dropdown
+                    if (entryContainer.classList.contains("entry-focus-mode")) {
                         // remove any existing dropdown
                         removeDropdown();
                     }
+
                     // if off, turn URL mode on and create dropdown
                     else {
                         // remove any existing dropdown
                         removeDropdown();            
 
                         // toggle URL mode on
-                        entryContainer.classList.add("url-mode-on");
+                        entryContainer.classList.add("entry-focus-mode");
 
                         // init mode booleans and arrays
                         let sourceUrlAddMode = false;
@@ -911,6 +908,7 @@ function loadEntries (tab) {
 
                         // insert timestamp
                         let timestamp = document.createElement("div");
+                        timestamp.setAttribute("class", "timestamp");
                         timestamp.innerHTML = `Added at ${getTime(entry.date)} on ${getDate(entry.date)}`;
                         dropdown.appendChild(timestamp);
 
@@ -925,6 +923,7 @@ function loadEntries (tab) {
                         // ** INSERT SOURCE URLs
                         let sourceUrls = document.createElement("div");
                         sourceUrls.innerHTML = "Found at:";
+                        sourceUrls.setAttribute("class", "sources-url-label");
                         dropdown.appendChild(sourceUrls);
 
                         // load source URL of a given index
@@ -943,9 +942,9 @@ function loadEntries (tab) {
                             // add classes
                             urlBox.classList.add("entryContainer");
                             urlBox.classList.add("url-box");
-                            iconDiv.classList.add("icon-div");
-                            textDiv.classList.add("text-div");
-                            buttonDiv.classList.add("button-div");
+                            iconDiv.classList.add("url-icon");
+                            textDiv.classList.add("url-text");
+                            buttonDiv.classList.add("url-button");
 
                             // create icon and set properties
                             let icon = document.createElement("img");
@@ -1227,6 +1226,7 @@ function loadEntries (tab) {
                         // ** INSERT REF URLs
                         let refUrls = document.createElement("div");
                         refUrls.innerHTML = "Reference:";
+                        refUrls.setAttribute("class", "refs-url-label")
                         dropdown.appendChild(refUrls);
 
                         // load ref URL of a given index
@@ -1245,9 +1245,9 @@ function loadEntries (tab) {
                             // add classes
                             urlBox.classList.add("entryContainer");
                             urlBox.classList.add("url-box");
-                            iconDiv.classList.add("icon-div");
-                            textDiv.classList.add("text-div");
-                            buttonDiv.classList.add("button-div");
+                            iconDiv.classList.add("url-icon");
+                            textDiv.classList.add("url-text");
+                            buttonDiv.classList.add("url-button");
 
                             // create icon and set properties
                             let icon = document.createElement("img");
@@ -1528,15 +1528,16 @@ function loadEntries (tab) {
 
                         // insert notes section
                         let notes = document.createElement("div");
+                        notes.setAttribute("id", "notes-label")
                         notes.innerHTML = "Notes:";
                         dropdown.appendChild(notes);
 
                         // generate note at a given index
                         function loadNote(index) {
-                            let notesBox = document.createElement("div");
+                            let notesBox = document.createElement("textarea");
 
                             // set properties
-                            notesBox.setAttribute("contenteditable", true);
+                            notesBox.classList.add("notes-box");
                             notesBox.classList.add("notes-clicked");
                             notesBox.innerHTML = entry.notes[index];
 
@@ -1545,12 +1546,14 @@ function loadEntries (tab) {
 
                             // save note on blur or 'Enter'
                             notesBox.addEventListener("blur", () => {
-                                entry.notes[index] = notesBox.innerText;
-                                originalEntry.notes[index] = notesBox.innerText;
+                                entry.notes[index] = notesBox.value;
+                                console.log(notesBox.value);
+                                originalEntry.notes[index] = notesBox.value;
 
                                 // sync changes to original word bank
                                 chrome.storage.sync.set({"wordBank": data.wordBank});
                             });
+
                             notesBox.addEventListener("keydown", (event) => {
                                 if (event.code === "Enter") {
                                     notesBox.blur();
@@ -1569,7 +1572,7 @@ function loadEntries (tab) {
                         // set properties
                         notesAdder.setAttribute("contenteditable", true);
                         notesAdder.classList.add("notes");
-                        notesAdder.innerHTML = "+ Add note...";
+                        notesAdder.innerHTML = "+  add new note  ";
 
                         // update DOM
                         notes.appendChild(notesAdder);
@@ -1590,7 +1593,7 @@ function loadEntries (tab) {
                         function resetNoteAdder() {
                             // update properties
                             notesAdder.classList.replace("notes-clicked", "notes");
-                            notesAdder.innerHTML = "+ Add note..."
+                            notesAdder.innerHTML = "+  add new note  "
 
                             // re-append note adder to end of section
                             notesAdder.remove();
@@ -1709,31 +1712,40 @@ addWordButton.addEventListener("click", () => {
 });
 
 let addMode = false;
-let isValidURL = true;
+let isValidURL = false;
 
 let wordInput = document.getElementById("word-input");
 let urlInput = document.getElementById("url-input");
 let cancel = document.getElementById("cancel-button");
-let save = document.getElementById("add-button");
+let add = document.getElementById("add-button");
 
 // check for valid URL input--disable save button if invalid
 urlInput.addEventListener("keyup", () => {
     urlInput.value = urlInput.value.trim();
     isValidURL = urlInput.checkValidity();
-    console.log("URL Validity: " + isValidURL + "URL: " + urlInput.value);
-    save.disabled = (isValidURL) ? false : true;
-    console.log(save.disabled);
+    add.disabled = (!isValidURL);
 });
 
 cancel.addEventListener("click", (event) => {
+    wordInput.value = "";
+    urlInput.value = "";
     addMenuContainer.style.display = "none";
     addMenuBackground.style.display = "none";
     addWordButton.style.visibility = "visible";
 });
 
 // save changes and exit add mode by clicking 'Save' button
-save.addEventListener("click", (event) => {
+add.addEventListener("click", (event) => {
+    if (isValidURL && wordInput.value.trim().length > 0) {
+        console.log(urlInput.value.trim().length);
+        console.log("VALID URL");
         addEntries(wordInput.value, urlInput.value, "sourceUrls", event);
+        addMenuContainer.style.display = "none";
+        addMenuBackground.style.display = "none";
+        addWordButton.style.visibility = "visible";
+    } else {
+        //
+    }
 });
 
 // save changes and exit add mode with 'Enter' if URL is valid
@@ -1776,6 +1788,8 @@ selectAllButton.addEventListener("click", () => {
     }
 });
 
+
+
 // delete button click handler: delete all selected entries
 deleteButton.addEventListener("click", () => {
     // remove all selected entries from original word bank
@@ -1814,6 +1828,7 @@ selectAllButton.addEventListener("pointerout", () => {
 // export button hover handler: change image to different color
 exportButton.addEventListener("pointerover", () => {
     exportButton.setAttribute("src", "images/export-icon-hover.svg");
+    console.log(document.getElementsByClassName("word-container")[0].nodeName);
 });
 exportButton.addEventListener("pointerout", () => {
     exportButton.setAttribute("src", "images/export-icon.svg");
@@ -1830,16 +1845,4 @@ deleteButton.addEventListener("pointerout", () => {
 // switch to options page
 optionsButton.addEventListener("click", () => {
     window.location.href = "options.html";
-});
-
-// Helper function
-let domReady = (cb) => {
-    document.readyState === 'interactive' || document.readyState === 'complete'
-        ? cb()
-        : document.addEventListener('DOMContentLoaded', cb);
-};
-
-domReady(() => {
-    // Display body when DOM is loaded
-    document.body.style.visibility = 'visible';
 });

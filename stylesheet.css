@@ -20,7 +20,7 @@
 }
 
 @font-face {
-    font-family: "Thasadith Regular";
+    font-family: "Thasadith";
     src: url("fonts/Thasadith Regular 400.ttf") format("truetype")
 }
 
@@ -30,7 +30,6 @@ body {
     margin: 0px;
     background-color: #FFFEFA;
     font-family: 'Sora Regular', sans-serif;
-    visibility: hidden;
 }
 
 button {
@@ -81,6 +80,15 @@ input::placeholder {
     color: black;
 }
 
+.rotate-up {
+    transform: rotate(-90deg);
+    transform-origin: 45% 25%;
+}
+
+.rotate-down {
+    transform: rotate(0deg);
+    transform-origin: 45% 35%;
+}
 
 /* ||Page Header|| */
 #page-header-container {
@@ -273,17 +281,21 @@ input::placeholder {
     padding: 5px;
     height: 18px;
     width: 84%;
-    font-family: 'Thasadith Regular', sans-serif;
-    font-weight: 400;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
     background-color: #D9E8F6;
     white-space: nowrap;
     text-overflow: ellipsis;
-    flex: none;
+    cursor: pointer;
     animation: fadeIn 0.3s;
 }
 
 .entry-container:hover {
     background-color: #A5C9EA
+}
+
+.entry-focus-mode {
+    background-color: #A5C9EA;
 }
 
 .entry-number {
@@ -305,6 +317,7 @@ input::placeholder {
     position: relative;
     bottom: 4px;
     padding: 0px 8px 0.7px 4px;
+    transition: 0.3s;
 }
 
 .entry-star, .entry-checkbox {
@@ -483,6 +496,75 @@ only changes when */
 }
 
 /* ||Dropdown (home page only|| */
+.dropdown {
+    width: 80%;
+    margin: 0.15em 0em 0.15em 0em;
+    font-family: "Source Sans Pro", Arial, san serif;
+    font-size: 1.15em;
+    animation: fadeIn 0.6s;
+    z-index: 20;
+}
+
+.timestamp {
+    font-size: 0.25em;
+    font-style: italic;
+}
+
+.sources-url-label {
+    margin: 0.4em 0 0.4em 0;
+}
+
+.refs-url-label {
+    margin: 0.4em 0 0.4em 0;
+}
+
+.notes-label {
+    margin: 0.4em 0 0.4em 0;
+}
+
+.url-box, .notes-box {
+    display: flex;
+    font-size: 0.82em;
+}
+
+.notes-box {
+    height: 2.5em;
+    width: 100%;
+    background-color: #FFFEFA;
+    font-family: inherit;
+    font-size: 0.82em;
+    resize: none;
+    overflow: auto;
+}
+
+.url-icon, .url-button {
+    display: flex;
+    height: 30%;
+    width: 10%;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+}
+
+.url-icon {
+    margin-left: 1em;
+}
+
+.icon {
+    height: 65%;
+    width: 65%;
+}
+
+.url-text {
+    width: 80%;
+    height: 2em;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #2778c4;
+    cursor: pointer;
+}
 
 /* ||Options Main (options page only)||*/
 #options-page-filler {
@@ -543,25 +625,9 @@ only changes when */
     font-size: 12px;
 }
 
-.dropdown .entry-container {
-    background-color: initial;
-    margin-top: 0.1em;
-    padding-top: 2px;
-    padding-bottom: 2px;
-}
-
-
 
 .entry-container:hover > button {
     visibility: visible;
-}
-
-.entryContainerEditMode {
-
-}
-
-.entry-containerEditMode:hover {
-
 }
 
 .entry-container:hover > button {
@@ -614,36 +680,10 @@ only changes when */
     border-radius: 2px;
 }
 
-.icon {
-    height: 85%;
-}
+
 .edit-save-icon {
     float: right;
-}
-
-.icon-div, .button-div {
-    display: flex;
-    flex: 1;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    min-width: 0;
-}
-
-.text-div {
-    display: inline-block;
-    flex: 7;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-}
-
-.text-div:focus {
-    overflow: visible;
-}
-
-.url-box {
-    display: flex;
+    cursor: pointer;
 }
 
 .delete-icon {
