@@ -1,6 +1,6 @@
 {
     "name": "Wordrive",
-    "description": "Save words for later without interrupting your reading.",
+    "description": "Helping students and language enthusiasts learn the words that fascinate them.",
     "version": "0.0.0.1",
     "manifest_version": 3,
     "background": {
