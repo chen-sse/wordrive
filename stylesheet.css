@@ -670,6 +670,23 @@ only changes when */
     flex: none;
 }
 
+.buttonBox{
+    height: 145px;
+    font-size: 15px;
+    border-radius: 2px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 400;
+    flex: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.buttonBox button {
+    margin-right: 10px;
+}
+
 .notes {
     margin: 3px 5px;
 }
