@@ -170,31 +170,40 @@ document.getElementById("starred-tab-wrapper").addEventListener("click", () => {
 let sortButton = document.getElementById("sort-by-dropdown-button");
 let sortButtonText = document.getElementById("sort-by-dropdown-button-text");
 let sortDropdownContent = document.getElementById("sort-by-dropdown-content");
+
+sortDropdownContent.addEventListener("click", (event) => {
+    if(event.target.id === "sort-by-option-one") {
+        console.log("Option 1 Clicked")
+        sortButtonText.innerHTML = "OLDEST";
+        event.target.innerHTML = "NEWEST";
+        document.getElementById("sort-by-option-two").innerHTML = "A-Z";
+        document.getElementById("sort-by-option-three").innerHTML = "Z-A";
+        sortMode = "oldest";
+    } else if(event.target.id === "sort-by-option-two") {
+        console.log("Option 2 Clicked")
+        sortButtonText.innerHTML = "A-Z";
+        event.target.innerHTML = "NEWEST";
+        document.getElementById("sort-by-option-one").innerHTML = "Z-A";
+        document.getElementById("sort-by-option-three").innerHTML = "OLDEST";
+        sortMode = "newest";
+    }else if(event.target.id === "sort-by-option-three") {
+        console.log("Option 3 Clicked")
+        sortButtonText.innerHTML = "A-Z";
+        event.target.innerHTML = "OLDEST";
+        document.getElementById("sort-by-option-one").innerHTML = "Z-A";
+        document.getElementById("sort-by-option-two").innerHTML = "NEWEST";
+        sortMode = "a-z";
+    }
+});
+
 //let clickCounter = 0;
 sortButton.addEventListener("click", () => {
     let displayValue = window.getComputedStyle(sortDropdownContent).display;
     if (displayValue === "none") {
         sortDropdownContent.style.display = "block";
-    } else {
+    }else{
         sortDropdownContent.style.display = "none";
     }
-    /*
-    if (clickCounter % 4 === 0) {
-        sortMode = "oldest";
-        sortButtonText.innerHTML = "OLDEST";
-    } else if (clickCounter % 4 === 1) {
-        sortMode = "A-Z";
-        sortButtonText.innerHTML = "A-Z";
-    } else if (clickCounter % 4 === 2) {
-        sortMode = "Z-A";
-        sortButtonText.innerHTML = "Z-A";
-    } else if (clickCounter % 4 === 3) {
-        sortMode = "newest";
-        sortButtonText.innerHTML = "NEWEST";
-    }
-    entriesContainer.replaceChildren();
-    loadEntries(currentTab);
-    clickCounter++;*/
 });
 
 // add sort-by dropdown blur listener (for when user clicks outside of dropdown)
@@ -249,7 +258,7 @@ function addEntries(wordInput, urlInput, type, event) {
             if (newWord) {
                 let refUrls = [];
                 let refUrlObjs = [];
-                
+
                 // push all default reference URLs
                 if (data.cambridgeChecked) {
                     refUrls.push(getCambridgeURL(wordInput));
@@ -321,7 +330,7 @@ function addEntries(wordInput, urlInput, type, event) {
 
             chrome.storage.sync.set({"wordBank": data.wordBank});
         }
-                    
+
         // reload entries
         entriesContainer.replaceChildren();
         loadEntries(currentTab);
@@ -359,7 +368,7 @@ function removeDropdown() {
 
         // toggle 'contenteditable' off for word container
         activeEntry.getElementsByClassName("word-container")[0].setAttribute("contenteditable", false);
-        
+
         // remove active dropdown
         document.getElementsByClassName("dropdown")[0].remove();
     }
@@ -373,16 +382,16 @@ function syncWordEdits(box, container, originalWordBank, sortedWordBank, sortInd
     // if not in edit mode, enter it
     if (container.isContentEditable === false) {
         box.classList.add("entryContainerEditMode");
-    // if in edit mode, exit it and save changes
+        // if in edit mode, exit it and save changes
     } else {
         // if entry is an empty string, restore entry box to original word
         if (container.innerText === "") {
             container.innerText = sortedWordBank[editIndex].text;
-        // if entry is a non-empty string, set the entry to that string
+            // if entry is a non-empty string, set the entry to that string
         } else {
             // update original word bank to reflect entered word
             originalWordBank[sortIndices[editIndex]].text = container.innerText;
-            
+
             // compute indices of words that match entered word
             let firstIndex = originalWordBank.findIndex((element) => {
                 return (element.text === container.innerText) ? true : false;
@@ -405,7 +414,7 @@ function syncWordEdits(box, container, originalWordBank, sortedWordBank, sortInd
                         // if new URL, add
                         if (matchingIndex === -1) {
                             firstEntry.sourceUrls.push(newerUrlObj);
-                        } 
+                        }
                         // if existing URL, merge properties
                         else {
                             let olderUrlObj = firstEntry.sourceUrls[matchingIndex];
@@ -432,7 +441,7 @@ function syncWordEdits(box, container, originalWordBank, sortedWordBank, sortInd
                         // if new URL, add
                         if (matchingIndex === -1) {
                             firstEntry.refUrls.push(newerUrlObj);
-                        } 
+                        }
                         // if existing URL, merge properties
                         else {
                             let olderUrlObj = firstEntry.refUrls[matchingIndex];
@@ -471,7 +480,7 @@ function syncWordEdits(box, container, originalWordBank, sortedWordBank, sortInd
                         // if new URL, add
                         if (matchingIndex !== -1) {
                             lastEntry.sourceUrls.push(newerUrlObj);
-                        } 
+                        }
                         // if existing URL, merge properties
                         else {
                             let olderUrlObj = lastEntry.sourceUrls[matchingIndex];
@@ -498,7 +507,7 @@ function syncWordEdits(box, container, originalWordBank, sortedWordBank, sortInd
                         // if new URL, add
                         if (matchingIndex !== -1) {
                             lastEntry.refUrls.push(newerUrlObj);
-                        } 
+                        }
                         // if existing URL, merge properties
                         else {
                             let olderUrlObj = lastEntry.refUrls[matchingIndex];
@@ -660,7 +669,7 @@ function loadEntries (tab) {
                 return a.text.localeCompare(b.text);
             }).reverse();
         }
-        
+
         // ** PART THREE: generate entries
         let counter = 0;
 
@@ -680,7 +689,7 @@ function loadEntries (tab) {
             // if in recents mode and entry is not recent, do not generate entry
             else if (tab === "recents" && isRecent === false) {
                 continue;
-            // else generate all entries (view-all mode)
+                // else generate all entries (view-all mode)
             } else {
                 // init entry container and child elements
                 let entryWrapper = document.createElement("div");
@@ -817,7 +826,7 @@ function loadEntries (tab) {
                     // if off, turn URL mode on and create dropdown
                     else {
                         // remove any existing dropdown
-                        removeDropdown();            
+                        removeDropdown();
 
                         // toggle URL mode on
                         entryContainer.classList.add("entry-focus-mode");
@@ -1130,7 +1139,7 @@ function loadEntries (tab) {
                                         duplicateIndex = k;
                                     }
                                 }
-                                
+
                                 // if URL is duplicate and title is non-empty, merge title data
                                 if (duplicateIndex >= 0) {
                                     if (titleInput !== "") {
@@ -1147,12 +1156,12 @@ function loadEntries (tab) {
                                     entry.sourceUrls.push({
                                         url: urlInput,
                                         icon: getFaviconURL(urlInput),
-                                        title: (titleInput === "") 
-                                            ? new URL(urlInput).hostname 
+                                        title: (titleInput === "")
+                                            ? new URL(urlInput).hostname
                                             : titleInput,
                                         fetched: false,
-                                        userEdited: (titleInput === "") 
-                                            ? false 
+                                        userEdited: (titleInput === "")
+                                            ? false
                                             : true,
                                         date: dateNumber
                                     });
@@ -1435,7 +1444,7 @@ function loadEntries (tab) {
                                         duplicateIndex = k;
                                     }
                                 }
-                                
+
                                 // if URL is duplicate and title is non-empty, merge title data
                                 if (duplicateIndex >= 0) {
                                     if (titleInput !== "") {
@@ -1452,12 +1461,12 @@ function loadEntries (tab) {
                                     entry.refUrls.push({
                                         url: urlInput,
                                         icon: getFaviconURL(urlInput),
-                                        title: (titleInput === "") 
-                                            ? new URL(urlInput).hostname 
+                                        title: (titleInput === "")
+                                            ? new URL(urlInput).hostname
                                             : titleInput,
                                         fetched: false,
-                                        userEdited: (titleInput === "") 
-                                            ? false 
+                                        userEdited: (titleInput === "")
+                                            ? false
                                             : true,
                                         date: dateNumber
                                     });
@@ -1605,7 +1614,7 @@ function loadEntries (tab) {
                             notesAdder.classList.add("notes-clicked");
                             notesAdder.innerHTML = "";
                         });
-                        
+
                         // save new note on blur or 'Enter'
                         notesAdder.addEventListener("blur", () => {
                             if (notesAdder.innerText.trim() !== "") {
@@ -1774,7 +1783,7 @@ selectAllButton.addEventListener("click", () => {
             deselectAll = false;
         }
     });
-    
+
     if (deselectAll) {
         entryCheckboxes.forEach((checkbox) => {
             checkbox.checked = false;
@@ -1800,16 +1809,16 @@ deleteButton.addEventListener("click", () => {
                 let deleteIndex = data.wordBank.findIndex((element) => {
                     return (element.text === word) ? true : false;
                 });
-    
+
                 // if matching index is found, delete entry
                 if (deleteIndex !== -1) {
                     data.wordBank.splice(deleteIndex, 1);
                 }
             });
-    
+
             // sync changes to original word bank
             chrome.storage.sync.set({"wordBank": data.wordBank});
-    
+
             // reload entries
             entriesContainer.replaceChildren();
             loadEntries(currentTab);
